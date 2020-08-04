@@ -5,23 +5,24 @@ from db.QueryBuilder import project_filter, join_table, get_metrics_level, get_i
 
 
 class QueryBuilderUnitTest(unittest.TestCase):
+    maxDiff = None
+
     def test_project_filter(self):
-        sqlExpected: str = "refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\")"
-        sqlBuilt: str = project_filter("refactoringcommit", "integration-test")
+        sqlExpected: str = "RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\")"
+        sqlBuilt: str = project_filter("RefactoringCommit", "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-        sqlExpected: str = "stablecommit.project_id in (select id from project where datasetName = \"integration-test\")"
-        sqlBuilt: str = project_filter("stablecommit", "integration-test")
+        sqlExpected: str = "StableCommit.project_id in (select id from project where datasetName = \"integration-test\")"
+        sqlBuilt: str = project_filter("StableCommit", "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
-
 
     def test_join_tables(self):
-        self.assertEqual(" INNER JOIN commitmetadata ON refactoringcommit.commitmetadata_id = commitmetadata.id",
-                         join_table("refactoringcommit", "commitmetadata"))
-        self.assertEqual(" INNER JOIN processmetrics ON refactoringcommit.processmetrics_id = processmetrics.id",
-                         join_table("refactoringcommit", "processmetrics"))
-        self.assertEqual(" INNER JOIN project ON stablecommit.project_id = project.id", join_table("stablecommit", "project"))
-
+        self.assertEqual(" INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id",
+                         join_table("RefactoringCommit", "CommitMetaData"))
+        self.assertEqual(" INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id",
+                         join_table("RefactoringCommit", "ProcessMetrics"))
+        self.assertEqual(" INNER JOIN project ON StableCommit.project_id = project.id", join_table(
+            "StableCommit", "project"))
 
     def test_get_metrics_level(self):
         self.assertEqual(2, len(get_metrics_level(1)))
@@ -30,71 +31,69 @@ class QueryBuilderUnitTest(unittest.TestCase):
         self.assertEqual(3, len(get_metrics_level(4)))
         self.assertNotEqual(get_metrics_level(2), get_metrics_level(4))
 
-
     def test_get_instance_fields(self):
-        sqlExpected: str = "SELECT refactoringcommit.className, commitmetadata.commitId FROM refactoringcommit INNER JOIN commitmetadata ON refactoringcommit.commitmetadata_id = commitmetadata.id"
-        sqlBuilt: str = get_instance_fields("refactoringcommit",
-                                            [("refactoringcommit", ["className"]), ("commitmetadata", ["commitId"])])
+        sqlExpected: str = "SELECT RefactoringCommit.className, CommitMetaData.commitId FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id"
+        sqlBuilt: str = get_instance_fields("RefactoringCommit",
+                                            [("RefactoringCommit", ["className"]), ("CommitMetaData", ["commitId"])])
         self.assertEqual(sqlExpected, sqlBuilt)
 
-        sqlExpected += " WHERE commitmetadata.parentCommitId != null"
-        sqlBuilt: str = get_instance_fields("refactoringcommit",
-                                            [("refactoringcommit", ["className"]), ("commitmetadata", ["commitId"])],
-                                            "commitmetadata.parentCommitId != null")
+        sqlExpected += " WHERE CommitMetaData.parentCommitId != null"
+        sqlBuilt: str = get_instance_fields("RefactoringCommit",
+                                            [("RefactoringCommit", ["className"]),
+                                             ("CommitMetaData", ["commitId"])],
+                                            "CommitMetaData.parentCommitId != null")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-        sqlExpected += " AND refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\")"
-        sqlBuilt: str = get_instance_fields("refactoringcommit",
-                                            [("refactoringcommit", ["className"]), ("commitmetadata", ["commitId"])],
-                                            "commitmetadata.parentCommitId != null",
+        sqlExpected += " AND RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\")"
+        sqlBuilt: str = get_instance_fields("RefactoringCommit",
+                                            [("RefactoringCommit", ["className"]),
+                                             ("CommitMetaData", ["commitId"])],
+                                            "CommitMetaData.parentCommitId != null",
                                             "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-        sqlExpected += " order by commitmetadata.commitDate"
-        sqlBuilt: str = get_instance_fields("refactoringcommit",
-                                            [("refactoringcommit", ["className"]), ("commitmetadata", ["commitId"])],
-                                            "commitmetadata.parentCommitId != null",
+        sqlExpected += " order by CommitMetaData.commitDate"
+        sqlBuilt: str = get_instance_fields("RefactoringCommit",
+                                            [("RefactoringCommit", ["className"]),
+                                             ("CommitMetaData", ["commitId"])],
+                                            "CommitMetaData.parentCommitId != null",
                                             "integration-test",
-                                            "order by commitmetadata.commitDate")
+                                            "order by CommitMetaData.commitDate")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_refactoring_levels(self):
-        sqlExpected: str = "SELECT refactoring, count(*) total from refactoringcommit where " \
-                           "refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\") AND refactoringcommit.isValid = TRUE " \
+        sqlExpected: str = "SELECT refactoring, count(*) total from RefactoringCommit where " \
+                           "RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\") AND RefactoringCommit.isValid = TRUE " \
                            "group by refactoring order by count(*) desc"
         sqlBuilt: str = get_refactoring_levels("integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_level_refactorings(self):
-        sqlExpected: str = "SELECT classmetric.classAnonymousClassesQty, classmetric.classAssignmentsQty, classmetric.classCbo, classmetric.classComparisonsQty, classmetric.classLambdasQty, classmetric.classLcom, classmetric.classLoc, classmetric.classLoopQty, classmetric.classMathOperationsQty, classmetric.classMaxNestedBlocks, classmetric.classNosi, classmetric.classNumberOfAbstractMethods, classmetric.classNumberOfDefaultFields, classmetric.classNumberOfDefaultMethods, classmetric.classNumberOfFields, classmetric.classNumberOfFinalFields, classmetric.classNumberOfFinalMethods, classmetric.classNumberOfMethods, classmetric.classNumberOfPrivateFields, classmetric.classNumberOfPrivateMethods, classmetric.classNumberOfProtectedFields, classmetric.classNumberOfProtectedMethods, classmetric.classNumberOfPublicFields, classmetric.classNumberOfPublicMethods, classmetric.classNumberOfStaticFields, classmetric.classNumberOfStaticMethods, classmetric.classNumberOfSynchronizedFields, classmetric.classNumberOfSynchronizedMethods, classmetric.classNumbersQty, classmetric.classParenthesizedExpsQty, classmetric.classReturnQty, classmetric.classRfc, classmetric.classStringLiteralsQty, classmetric.classSubClassesQty, classmetric.classTryCatchQty, classmetric.classUniqueWordsQty, classmetric.classVariablesQty, classmetric.classWmc, classmetric.isInnerClass, processmetrics.authorOwnership, processmetrics.bugFixCount, processmetrics.qtyMajorAuthors, processmetrics.qtyMinorAuthors, processmetrics.qtyOfAuthors, processmetrics.qtyOfCommits, processmetrics.refactoringsInvolved FROM refactoringcommit INNER JOIN commitmetadata ON refactoringcommit.commitmetadata_id = commitmetadata.id INNER JOIN classmetric ON refactoringcommit.classmetrics_id = classmetric.id INNER JOIN processmetrics ON refactoringcommit.processmetrics_id = processmetrics.id WHERE refactoringcommit.level = 1 AND refactoringcommit.isValid = TRUE AND refactoringcommit.refactoring = \"Change Parameter Type\" AND refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\")  order by commitmetadata.commitDate"
-        sqlBuilt: str = get_level_refactorings(1, "Change Parameter Type", "integration-test")
+        sqlExpected: str = "SELECT ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.refactoring = \"Change Parameter Type\" AND RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\")  order by CommitMetaData.commitDate"
+        sqlBuilt: str = get_level_refactorings(
+            1, "Change Parameter Type", "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_all_level_refactorings(self):
-        sqlExpected: str = "SELECT classmetric.classAnonymousClassesQty, classmetric.classAssignmentsQty, classmetric.classCbo, classmetric.classComparisonsQty, classmetric.classLambdasQty, classmetric.classLcom, classmetric.classLoc, classmetric.classLoopQty, classmetric.classMathOperationsQty, classmetric.classMaxNestedBlocks, classmetric.classNosi, classmetric.classNumberOfAbstractMethods, classmetric.classNumberOfDefaultFields, classmetric.classNumberOfDefaultMethods, classmetric.classNumberOfFields, classmetric.classNumberOfFinalFields, classmetric.classNumberOfFinalMethods, classmetric.classNumberOfMethods, classmetric.classNumberOfPrivateFields, classmetric.classNumberOfPrivateMethods, classmetric.classNumberOfProtectedFields, classmetric.classNumberOfProtectedMethods, classmetric.classNumberOfPublicFields, classmetric.classNumberOfPublicMethods, classmetric.classNumberOfStaticFields, classmetric.classNumberOfStaticMethods, classmetric.classNumberOfSynchronizedFields, classmetric.classNumberOfSynchronizedMethods, classmetric.classNumbersQty, classmetric.classParenthesizedExpsQty, classmetric.classReturnQty, classmetric.classRfc, classmetric.classStringLiteralsQty, classmetric.classSubClassesQty, classmetric.classTryCatchQty, classmetric.classUniqueWordsQty, classmetric.classVariablesQty, classmetric.classWmc, classmetric.isInnerClass, processmetrics.authorOwnership, processmetrics.bugFixCount, processmetrics.qtyMajorAuthors, processmetrics.qtyMinorAuthors, processmetrics.qtyOfAuthors, processmetrics.qtyOfCommits, processmetrics.refactoringsInvolved FROM refactoringcommit INNER JOIN commitmetadata ON refactoringcommit.commitmetadata_id = commitmetadata.id INNER JOIN classmetric ON refactoringcommit.classmetrics_id = classmetric.id INNER JOIN processmetrics ON refactoringcommit.processmetrics_id = processmetrics.id WHERE refactoringcommit.level = 1 AND refactoringcommit.isValid = TRUE AND refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\")  order by commitmetadata.commitDate"
+        sqlExpected: str = "SELECT ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\")  order by CommitMetaData.commitDate"
         sqlBuilt: str = get_all_level_refactorings(1, "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_all_level_stable(self):
-        sqlExpected: str = "SELECT classmetric.classAnonymousClassesQty, classmetric.classAssignmentsQty, classmetric.classCbo, classmetric.classComparisonsQty, classmetric.classLambdasQty, classmetric.classLcom, classmetric.classLoc, classmetric.classLoopQty, classmetric.classMathOperationsQty, classmetric.classMaxNestedBlocks, classmetric.classNosi, classmetric.classNumberOfAbstractMethods, classmetric.classNumberOfDefaultFields, classmetric.classNumberOfDefaultMethods, classmetric.classNumberOfFields, classmetric.classNumberOfFinalFields, classmetric.classNumberOfFinalMethods, classmetric.classNumberOfMethods, classmetric.classNumberOfPrivateFields, classmetric.classNumberOfPrivateMethods, classmetric.classNumberOfProtectedFields, classmetric.classNumberOfProtectedMethods, classmetric.classNumberOfPublicFields, classmetric.classNumberOfPublicMethods, classmetric.classNumberOfStaticFields, classmetric.classNumberOfStaticMethods, classmetric.classNumberOfSynchronizedFields, classmetric.classNumberOfSynchronizedMethods, classmetric.classNumbersQty, classmetric.classParenthesizedExpsQty, classmetric.classReturnQty, classmetric.classRfc, classmetric.classStringLiteralsQty, classmetric.classSubClassesQty, classmetric.classTryCatchQty, classmetric.classUniqueWordsQty, classmetric.classVariablesQty, classmetric.classWmc, classmetric.isInnerClass, processmetrics.authorOwnership, processmetrics.bugFixCount, processmetrics.qtyMajorAuthors, processmetrics.qtyMinorAuthors, processmetrics.qtyOfAuthors, processmetrics.qtyOfCommits, processmetrics.refactoringsInvolved FROM stablecommit INNER JOIN commitmetadata ON stablecommit.commitmetadata_id = commitmetadata.id INNER JOIN classmetric ON stablecommit.classmetrics_id = classmetric.id INNER JOIN processmetrics ON stablecommit.processmetrics_id = processmetrics.id WHERE stablecommit.level = 1 AND stablecommit.project_id in (select id from project where datasetName = \"integration-test\")  order by commitmetadata.commitDate"
+        sqlExpected: str = "SELECT ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id WHERE StableCommit.level = 1 AND StableCommit.project_id in (select id from project where datasetName = \"integration-test\")  order by CommitMetaData.commitDate"
         sqlBuilt: str = get_all_level_stable(1, "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_level_refactorings_count(self):
-        sqlExpected: str = "SELECT refactoring, count(*) FROM (SELECT refactoringcommit.refactoring FROM refactoringcommit WHERE refactoringcommit.level = 2 AND refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\") AND refactoringcommit.isValid = TRUE) t group by refactoring order by count(*) desc"
+        sqlExpected: str = "SELECT refactoring, count(*) FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.level = 2 AND RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\") AND RefactoringCommit.isValid = TRUE) t group by refactoring order by count(*) desc"
         sqlBuilt: str = get_level_refactorings_count(2, "integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
 
-
     def test_get_refactoring_types(self):
-        sqlExpected: str = "SELECT DISTINCT refactoring FROM (SELECT refactoringcommit.refactoring FROM refactoringcommit WHERE refactoringcommit.project_id in (select id from project where datasetName = \"integration-test\")) t"
+        sqlExpected: str = "SELECT DISTINCT refactoring FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.project_id in (select id from project where datasetName = \"integration-test\")) t"
         sqlBuilt: str = get_refactoring_types("integration-test")
         self.assertEqual(sqlExpected, sqlBuilt)
+
 
 if __name__ == '__main__':
     unittest.main()
