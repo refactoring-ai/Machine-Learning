@@ -1,3 +1,26 @@
+results/*
+results-*.txt
+
+_cache/*
+dbconfig.ini
+
+.idea/*
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.Python
+build/
+
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 .settings
 
 *.iml
