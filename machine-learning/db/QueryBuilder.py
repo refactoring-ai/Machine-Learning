@@ -53,7 +53,7 @@ classMetricsFields = ["classAnonymousClassesQty",
                       "classVariablesQty",
                       "classWmc",
                       "isInnerClass"]
-methodMetricsFields = ["fullMethodName",
+methodMetricsFields = [#"fullMethodName", ToDo: decide if and how to include string objects
                        "methodAnonymousClassesQty",
                        "methodAssignmentsQty",
                        "methodCbo",
@@ -74,12 +74,14 @@ methodMetricsFields = ["fullMethodName",
                        "methodUniqueWordsQty",
                        "methodVariablesQty",
                        "methodWmc",
-                       "shortMethodName",
+                       #"shortMethodName", ToDo: decide if and how to include string objects
                        "startLine"]
 variableMetricsFields = ["variableAppearances",
-                         "variableName"]
+                         #"variableName" ToDo: decide if and how to include string objects
+                         ]
 fieldMetricsFields = ["fieldAppearances",
-                      "fieldName"]
+                      #"fieldName" ToDo: decide if and how to include string objects
+                      ]
 processMetricsFields = ["authorOwnership",
                         "bugFixCount",
                         "qtyMajorAuthors",
