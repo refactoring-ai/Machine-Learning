@@ -42,7 +42,7 @@ SCALE_DATASET = True
 # --------------------------------
 # Feature reduction
 # --------------------------------
-
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # use (or drop) process and authorship metrics
 DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
 #
