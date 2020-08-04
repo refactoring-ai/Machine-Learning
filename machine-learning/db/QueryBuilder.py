@@ -3,15 +3,15 @@ from configs import FILE_TYPE
 
 # region database structure
 # table names for reference:
-commitMetaData: str = "commitmetadata"
-methodMetrics: str = "methodmetric"
-fieldMetrics: str = "fieldmetric"
-variableMetrics: str = "variablemetric"
-processMetrics: str = "processmetrics"
-classMetrics: str = "classmetric"
+commitMetaData: str = "CommitMetaData"
+methodMetrics: str = "MethodMetric"
+fieldMetrics: str = "FieldMetric"
+variableMetrics: str = "VariableMetric"
+processMetrics: str = "ProcessMetrics"
+classMetrics: str = "ClassMetric"
 project: str = "project"
-refactoringCommits: str = "refactoringcommit"
-stableCommits: str = "stablecommit"
+refactoringCommits: str = "RefactoringCommit"
+stableCommits: str = "StableCommit"
 
 # the ids are not included as they are the same for every table: id : long
 classMetricsFields = ["classAnonymousClassesQty",
@@ -208,7 +208,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
 # region Public interaction
 # get the count of all refactoring levels
 def get_refactoring_levels(dataset="") -> str:
-    return "SELECT refactoring, count(*) total from refactoringcommit where " + project_filter("refactoringcommit",
+    return "SELECT refactoring, count(*) total from RefactoringCommit where " + project_filter("RefactoringCommit",
                                                                                                dataset) \
             + valid_refactorings_filter(refactoringCommits) \
             + " group by refactoring order by count(*) desc"
