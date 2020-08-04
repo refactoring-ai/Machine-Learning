@@ -1,5 +1,5 @@
-results/*
-results-*.txt
+**/results/*
+**/results-*.txt
 
 _cache/*
 dbconfig.ini
@@ -30,8 +30,8 @@ venv.bak/
 .classpath
 .project
 ~          
-*/repos/
-*/logs*/
+**/repos/
+**/logs*/
 data-collection/storage/
 
 .DS_Store
