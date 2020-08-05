@@ -1,4 +1,5 @@
 # Machine Learning for Software refactoring
+[![Build Status](https://travis-ci.org/refactoring-ai/Machine-Learning.svg?branch=master)](https://travis-ci.org/refactoring-ai/Machine-Learning)
 
 This repository contains the machine learning part on the use
 of machine learning methods to recommend software refactoring.
