@@ -55,6 +55,7 @@ PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAut
 DROP_METRICS = ["classNumberOfDefaultFields", "classNumberOfDefaultMethods"]
 
 
+
 # perform feature reduction?
 FEATURE_REDUCTION = True
 
