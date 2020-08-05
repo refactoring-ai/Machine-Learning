@@ -1,9 +1,0 @@
-mysql-connector-python
-pandas
-sklearn
-numpy
-imblearn
-configparser
-joblib
-matplotlib
-scipy

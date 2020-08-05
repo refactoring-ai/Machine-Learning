@@ -1,3 +1,26 @@
+**/results/*
+**/results-*.txt
+
+_cache/*
+dbconfig.ini
+
+.idea/*
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.Python
+build/
+
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 .settings
 
 *.iml
@@ -7,8 +30,8 @@
 .classpath
 .project
 ~          
-*/repos/
-*/logs*/
+**/repos/
+**/logs*/
 data-collection/storage/
 
 .DS_Store
@@ -21,3 +44,13 @@ data-collection/storage/
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+.vscode
