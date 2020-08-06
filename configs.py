@@ -50,11 +50,7 @@ DROP_PROCESS_AND_AUTHORSHIP_METRICS = False
 PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
 # Drop these metrics as well
-# TODO: validate this
-#   number of default fields and methods is always 0. Thus, remove them from the data.
-DROP_METRICS = ["classNumberOfDefaultFields", "classNumberOfDefaultMethods"]
-
-
+DROP_METRICS = []
 
 # perform feature reduction?
 FEATURE_REDUCTION = True
