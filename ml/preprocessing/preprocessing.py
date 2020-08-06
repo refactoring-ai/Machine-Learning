@@ -86,7 +86,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # ToDo: do this after the feature reduction to simplify the query and do not drop instances which are not affected by faulty process and authorship metrics, which are not in the feature set
     if DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS and not DROP_PROCESS_AND_AUTHORSHIP_METRICS:
         log("Instance count before dropping faulty process metrics: {}".format(len(merged_dataset.index)), False)
-        metrics = [metric for metric in PROCESS_AND_AUTHORSHIP_METRICS if metric in x.columns.values]
+        metrics = [metric for metric in PROCESS_AND_AUTHORSHIP_METRICS if metric in merged_dataset.columns.values]
         query = " and ".join(["%s != -1" % metric for metric in metrics])
         merged_dataset = merged_dataset.query(query)
         log("Instance count after dropping faulty process metrics: {}".format(len(merged_dataset.index)), False)
