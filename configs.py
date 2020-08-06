@@ -42,19 +42,16 @@ SCALE_DATASET = True
 # --------------------------------
 # Feature reduction
 # --------------------------------
-#Remove all instances where one of process and authorship metrics is -1 (faulty).
+# Remove all instances where one of process and authorship metrics is -1 (faulty).
 DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
 DROP_PROCESS_AND_AUTHORSHIP_METRICS = False
-#a list of all process and authorship metrics
-PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
+# a list of all process and authorship metrics
+PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors",
+                                  "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
 # Drop these metrics as well
-# TODO: validate this
-#   number of default fields and methods is always 0. Thus, remove them from the data.
-DROP_METRICS = ["classNumberOfDefaultFields", "classNumberOfDefaultMethods"]
-
-
+DROP_METRICS = []
 
 # perform feature reduction?
 FEATURE_REDUCTION = True
@@ -81,7 +78,7 @@ N_CV_SEARCH = 5
 # --------------------------------
 
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-TEST_SPLIT_SIZE = -1
+TEST_SPLIT_SIZE = 0.2
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
 VALIDATION_DATASETS = ["test set github", "validation set github"]
@@ -178,7 +175,6 @@ levelMap = {Level.NONE: [],
 # --------------------------------
 if DROP_PROCESS_AND_AUTHORSHIP_METRICS:
     DROP_METRICS += PROCESS_AND_AUTHORSHIP_METRICS
-
 
 # Let's change some parameters (i.e., make them smaller) if this is a test run
 if TEST:
