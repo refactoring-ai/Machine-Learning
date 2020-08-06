@@ -1,5 +1,6 @@
 import json
 from statistics import mean
+from pathlib import Path
 
 
 def format_results(dataset, refactoring_name, model_name, precision_scores, recall_scores,
@@ -127,3 +128,8 @@ def format_best_parameters(tuned_model):
     results += str(best_result)
 
     return results
+
+
+def save_data_frame(df, path: str):
+    Path(path).mkdir(parents=True, exist_ok=True)
+    df.to_csv(f"results/")
