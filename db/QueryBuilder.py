@@ -193,8 +193,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     # remove the last chars because it is either a ", " or an " AND "
     required_fields = required_fields[:-2]
 
-    sql: str = "SELECT " + required_fields + " FROM " + \
-        instance_name + required_tables + " WHERE "
+    sql: str = f"SELECT {required_fields} FROM {instance_name}{required_tables} WHERE "
     if len(conditions) > 2:
         if not sql.endswith(' WHERE '):
             sql += " AND "
@@ -230,7 +229,7 @@ def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str
         refactoring_condition += " AND " + refactoringCommits + ".refactoring = \"" + m_refactoring + "\""\
                                  + file_type_filter()
 
-    return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
+    return get_instance_fields(instance_name, [(instance_name, ["id"]), (commitMetaData, [])] + get_metrics_level(level),
                                refactoring_condition, dataset, " order by " + commitMetaData + ".commitDate")
 
 
