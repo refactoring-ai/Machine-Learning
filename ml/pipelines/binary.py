@@ -129,12 +129,14 @@ class BinaryClassificationPipeline(MLPipeline):
                     # we split in train and test
                     # (note that we use the same split for all the models)
                     # add the db_ids to x again, in order to keep them aligned during the feature
-                    x["id"] = db_ids
+                    x["db_id"] = db_ids
                     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=TEST_SPLIT_SIZE, random_state=42)
-                    #drop the db_ids and only store the test db_ids
-                    x_train = x_train.drop(["id"], axis=1)
-                    db_ids_test = x_test["id"]
-                    x_test = x_test.drop(["id"], axis=1)
+                    # drop the db_ids and only store the test db_ids
+                    #TODO: comeup with a better wy of handling the db_ids for this case, it is quite ugly
+                    x = x.drop(["db_id"], axis=1)
+                    x_train = x_train.drop(["db_id"], axis=1)
+                    db_ids_test = x_test["db_id"]
+                    x_test = x_test.drop(["db_id"], axis=1)
                     self._run_all_models(refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, [x_test], y_train, [y_test], [db_ids_test], ["random split"])
 
     def _run_all_models(self, refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, x_tests, y_train, y_tests, db_ids, test_names):
