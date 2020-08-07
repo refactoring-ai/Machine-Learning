@@ -41,6 +41,9 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # load non-refactoring examples
     non_refactored_instances = refactoring.get_non_refactored_instances(dataset)
 
+    # map all ids onto their respective table
+
+
     log("raw number of refactoring instances: {}".format(refactored_instances.shape[0]), False)
     log("raw number of non-refactoring instances: {}".format(non_refactored_instances.shape[0]), False)
 
@@ -51,11 +54,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
         log("No refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None
+        return None, None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
         log("No non-refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None
+        return None, None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
     log("non-refactoring instances (after dropping NA)s: {}".format(non_refactored_instances.shape[0]), False)

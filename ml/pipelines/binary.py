@@ -1,7 +1,7 @@
 import traceback
 import pandas as pd
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, TEST_SPLIT_SIZE, VALIDATION_DATASETS, TEST
-from ml.utils.output import format_results_single_run, save_data_frame
+from ml.utils.output import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
 from ml.pipelines.pipelines import MLPipeline
@@ -20,7 +20,7 @@ def _build_production_model(model_def, best_params, x, y):
     return super_model
 
 
-def _evaluate_model(search, x_train, x_tests, y_train, y_tests, ids_tests):
+def _evaluate_model(search, x_train, x_tests, y_train, y_tests, db_ids_tests):
     """
     Evaluate the performance of a model by fitting it with the training data and then evaluating it against the test sets.
 
@@ -30,7 +30,7 @@ def _evaluate_model(search, x_train, x_tests, y_train, y_tests, ids_tests):
         x_tests: a collection of the samples for each test data set
         y_train: the labels for the training data set
         y_tests: a collection of the labels for each test data set
-        ids_tests: a collection of database ids for the instances in the test sets
+        db_ids_tests: a collection of database ids for the instances in the test sets
 
     Return:
         test_scores: a collection of test scores (accuracy, precision, recall, tn, fp, fn, tp) for each test set
@@ -47,7 +47,7 @@ def _evaluate_model(search, x_train, x_tests, y_train, y_tests, ids_tests):
     for index, x_test in enumerate(x_tests):
         y_pred = best_estimator.predict(x_test)
         y_test = y_tests[index]
-        ids = ids_tests[index]
+        db_ids = db_ids_tests[index]
         test_scores["accuracy"] += [accuracy_score(y_test, y_pred)]
         test_scores["precision"] += [precision_score(y_test, y_pred)]
         test_scores["recall"] += [recall_score(y_test, y_pred)]
@@ -55,8 +55,8 @@ def _evaluate_model(search, x_train, x_tests, y_train, y_tests, ids_tests):
         test_scores["fp"] += [confusion_matrix(y_test, y_pred).ravel()[1]]
         test_scores["fn"] += [confusion_matrix(y_test, y_pred).ravel()[2]]
         test_scores["tp"] += [confusion_matrix(y_test, y_pred).ravel()[3]]
-        result_df = {"id": ids, "label": y_test, "prediction": y_pred}
-        test_results.append(result_df)
+        data = {"db_id": db_ids, "label": y_test, "prediction": y_pred}
+        test_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]).reset_index())
 
     return test_scores, test_results
 
@@ -92,16 +92,16 @@ class BinaryClassificationPipeline(MLPipeline):
                 # we have two options to select a test set,
                 # 1.) Predefined in the database
                 if TEST_SPLIT_SIZE < 0 and len(VALIDATION_DATASETS) > 0:
-                    train_features, x_train, y_train, ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    train_features, x_train, y_train, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
                     # test if any refactorings were found for the given refactoring type
                     if x_train is None:
                         log("Skip model building for refactoring type: " + refactoring.name())
                         continue
 
-                    x_tests, y_tests, ids_tests, dataset_names = [], [], [], []
+                    x_tests, y_tests, db_ids_tests, dataset_names = [], [], [], []
                     for validation_dataset in VALIDATION_DATASETS:
                         dataset_names.append(validation_dataset)
-                        test_features, x_test, y_test, ids_test, _, = retrieve_labelled_instances(validation_dataset, refactoring,
+                        test_features, x_test, y_test, db_ids_test, _, = retrieve_labelled_instances(validation_dataset, refactoring,
                                                                                        False, scaler, train_features)
                         # test if any refactorings were found for the given refactoring type
                         if x_test is None:
@@ -109,7 +109,7 @@ class BinaryClassificationPipeline(MLPipeline):
                             continue
                         x_tests.append(x_test)
                         y_tests.append(y_test)
-                        ids_tests.append(ids_test)
+                        db_ids_tests.append(db_ids_test)
                     if len(x_tests) == 0:
                         log("Skip model building for refactoring type: " + refactoring.name())
                         continue
@@ -118,26 +118,26 @@ class BinaryClassificationPipeline(MLPipeline):
                     x = pd.concat([x_train] + x_tests)
                     y = pd.concat([y_train] + y_tests)
                     self._run_all_models(refactoring, refactoring_name, dataset, train_features, scaler, x, y, x_train,
-                                         x_tests, y_train, y_tests, ids_tests, dataset_names)
+                                         x_tests, y_train, y_tests, db_ids_tests, dataset_names)
                 # 2.) random percentage train/ test split
                 else:
-                    features, x, y, ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    features, x, y, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
                     # test if any refactorings were found for the given refactoring type
                     if x is None:
                         log("Skip model building for refactoring type: " + refactoring.name())
                         continue
                     # we split in train and test
                     # (note that we use the same split for all the models)
-                    # add the ids to x again, in order to keep them aligned during the feature
-                    x["id"] = ids
+                    # add the db_ids to x again, in order to keep them aligned during the feature
+                    x["id"] = db_ids
                     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=TEST_SPLIT_SIZE, random_state=42)
-                    #drop the ids and only store the test ids
+                    #drop the db_ids and only store the test db_ids
                     x_train = x_train.drop(["id"], axis=1)
-                    ids_test = x_test["id"]
+                    db_ids_test = x_test["id"]
                     x_test = x_test.drop(["id"], axis=1)
-                    self._run_all_models(refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, [x_test], y_train, [y_test], [ids_test], ["random split"])
+                    self._run_all_models(refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, [x_test], y_train, [y_test], [db_ids_test], ["random split"])
 
-    def _run_all_models(self, refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, x_tests, y_train, y_tests, ids, test_names):
+    def _run_all_models(self, refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, x_tests, y_train, y_tests, db_ids, test_names):
         """
         For each model, it:
         1) Performs the hyper parameter search
@@ -151,19 +151,19 @@ class BinaryClassificationPipeline(MLPipeline):
             try:
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
-                test_scores, test_results, model_to_save = self._run_single_model(model, x, y, x_train, x_tests, y_train, y_tests, ids)
+                test_scores, test_results, model_to_save = self._run_single_model(model, x, y, x_train, x_tests, y_train, y_tests, db_ids)
 
                 # log test scores
-                log(format_results_single_run(dataset, refactoring_name, test_names, model_name, test_scores["precision"],
+                formatted_results = format_results_single_run(dataset, refactoring_name, test_names, model_name, test_scores["precision"],
                                             test_scores["recall"], test_scores['accuracy'], test_scores['tn'],
                                             test_scores['fp'], test_scores['fn'], test_scores['tp'],
-                                              model_to_save, features))
-                # store the predictions with labels and ids, to analyze them later
-                for df in test_results:
-                    save_data_frame(df, f"results/predictions/{model_name}_{test_names}_accuracy:{test_scores['accuracy']}_features:{features}.csv")
+                                              model_to_save, features)
+                log(formatted_results)
 
                 # we save the best estimator we had during the search
-                model.persist(dataset, refactoring_name, features, model_to_save, scaler)
+                # Also, store the predictions with labels and db_ids, to analyze them later
+                model.persist(dataset, refactoring_name, features, model_to_save, scaler,
+                              test_results, test_names, formatted_results)
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
                 log("An error occurred while working on refactoring " + refactoring_name + " model " + model.name()
@@ -171,7 +171,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 log(str(e))
                 log(str(traceback.format_exc()))
 
-    def _run_single_model(self, model_def, x, y, x_train, x_tests, y_train, y_tests, ids):
+    def _run_single_model(self, model_def, x, y, x_train, x_tests, y_train, y_tests, db_ids):
         model = model_def.model()
 
         # perform the search for the best hyper parameters
@@ -185,7 +185,7 @@ class BinaryClassificationPipeline(MLPipeline):
             search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), iid=False, n_jobs=-1)
 
         # Train and test the model
-        test_scores, test_results = _evaluate_model(search, x_train, x_tests, y_train, y_tests, ids)
+        test_scores, test_results = _evaluate_model(search, x_train, x_tests, y_train, y_tests, db_ids)
 
         # Run cross validation on whole dataset and safe production ready model
         super_model = _build_production_model(model_def, search.best_params_, x, y)

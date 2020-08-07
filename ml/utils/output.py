@@ -1,7 +1,8 @@
 import json
 from statistics import mean
 from pathlib import Path
-
+import os
+import joblib
 from utils.log import log
 
 
@@ -132,7 +133,21 @@ def format_best_parameters(tuned_model):
     return results
 
 
-def save_data_frame(df, path: str):
-    Path(path).mkdir(parents=True, exist_ok=True)
-    df.to_csv(f"results/")
-    log(f"Stored dataframe as csv at: {path}")
+def store_json(data, path: str):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as f:
+        json.dump(data, f)
+    log(f"Stored data at: {path}")
+
+
+def store_joblib(data, path):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as f:
+        joblib.dump(data, path)
+    log(f"Stored data at: {path}")
+
+
+def store_collection(collection, path):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        f.write("\n".join(str(item) for item in collection))
