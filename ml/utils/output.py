@@ -3,8 +3,8 @@ from statistics import mean
 from pathlib import Path
 import os
 import joblib
-
 from utils.log import log
+
 
 # TODO: can we remove this function? format_results_single_run does the same
 def format_results(dataset, refactoring_name, model_name, precision_scores, recall_scores,

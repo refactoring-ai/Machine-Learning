@@ -89,8 +89,6 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         merged_dataset = merged_dataset.query(query)
         log("Instance count after dropping faulty process metrics: {}".format(len(merged_dataset.index)), False)
 
-    # not all of the balancers of imblearn also shuffle the data after balancing it, thus we ensure it here
-    merged_dataset = merged_dataset.sample(frac=1, random_state=1546654654).reset_index()
     # separate the x from the y (as required by the scikit-learn API)
     x = merged_dataset.drop("prediction", axis=1)
     y = merged_dataset["prediction"]
@@ -105,6 +103,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # shuffle data after balancing it, because some of the samplers order the data during balancing it
     x, y = shuffle(x, y)
+
     # also save the instance ids, we will need them later to analyse the classifier results, but we don't won't to scale them nor drop them during feature reduction
     ids = x["db_id"]
     x = x.drop(["db_id"], axis=1)

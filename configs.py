@@ -49,6 +49,7 @@ DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
 #a list of all process and authorship metrics
 PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
+
 # Drop these metrics as well
 DROP_METRICS = []
 
@@ -77,7 +78,7 @@ N_CV_SEARCH = 5
 # --------------------------------
 
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-TEST_SPLIT_SIZE = -1
+TEST_SPLIT_SIZE = 0.2
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
 VALIDATION_DATASETS = ["test set github", "validation set github"]
@@ -174,7 +175,6 @@ LEVEL_MAP = {Level.NONE: [],
 # --------------------------------
 if DROP_PROCESS_AND_AUTHORSHIP_METRICS:
     DROP_METRICS += PROCESS_AND_AUTHORSHIP_METRICS
-
 
 # Let's change some parameters (i.e., make them smaller) if this is a test run
 if TEST:
