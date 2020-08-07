@@ -7,6 +7,7 @@ from ml.preprocessing.sampling import perform_balancing
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from refactoring import LowLevelRefactoring
 from utils.log import log
+from sklearn.utils import shuffle
 
 
 def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_training_data: bool = True,
@@ -51,10 +52,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # now, combine both datasets (with both TRUE and FALSE predictions)
     if non_refactored_instances.shape[1] != refactored_instances.shape[1]:
         raise ImportError("Number of columns differ from both datasets.")
-    merged_dataset = pd.concat([refactored_instances, non_refactored_instances])
-
-    #just to be sure, shuffle the dataset
-    merged_dataset = merged_dataset.sample(frac=1, random_state = 42)
+    merged_dataset = pd.concat([refactored_instances, non_refactored_instances], ignore_index=True)
 
     # do we want to try the models without some metrics, e.g. process and authorship metrics?
     merged_dataset = merged_dataset.drop(DROP_METRICS, axis=1)
@@ -79,6 +77,9 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         x, y = perform_balancing(x, y)
         assert x.shape[0] == y.shape[0], "Balancing did not work, x and y have different shapes."
         log("instances after balancing: {}".format(Counter(y)), False)
+
+    # shuffle data after balancing it, because some of the samplers order the data during balancing it
+    x, y = shuffle(x, y)
 
     # apply some scaling to speed up the algorithm
     if SCALE_DATASET and scaler is None:
