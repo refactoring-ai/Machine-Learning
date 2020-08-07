@@ -1,4 +1,4 @@
-from configs import Level, levelMap
+from configs import Level, LEVEL_MAP
 from db.QueryBuilder import get_level_refactorings, get_all_level_stable
 from db.DBConnector import execute_query
 from utils.log import log
@@ -28,7 +28,7 @@ class LowLevelRefactoring:
 def build_refactorings():
     all_refactorings = []
     for level in Level:
-        for refactoring in levelMap[level]:
+        for refactoring in LEVEL_MAP[level]:
             all_refactorings += [LowLevelRefactoring(refactoring, level)]
     log("Trying to fetch " + str(len(all_refactorings)) + " refactoring types.")
 
