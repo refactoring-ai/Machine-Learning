@@ -7,7 +7,7 @@ from ml.preprocessing.sampling import perform_balancing
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from refactoring import LowLevelRefactoring
 from utils.log import log
-from sklearn.utils import shuffle
+from sklearn.utils import shuffle, check_X_y
 
 
 def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_training_data: bool = True,
@@ -96,5 +96,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         x = x.drop(drop_list, axis=1)
         assert x.shape[1] == len(allowed_features), "Incorrect number of features for dataset " + dataset
 
+    # finally validate x and y
+    features = x.columns.values
+    x, y = check_X_y(x, y)
+    assert x.shape == (y.shape[0], len(features)), f"X has the wrong shape after checking: {x.shape}"
+    assert y.shape[0] == x.shape[0], f"Y has the wrong shape after checking: {y.shape}"
+
     log("Got %d instances with %d features for the dataset: %s." % (x.shape[0], x.shape[1], dataset))
-    return x.columns.values, x, y, scaler
+    return features, x, y, scaler

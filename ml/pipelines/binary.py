@@ -1,5 +1,5 @@
 import traceback
-import pandas as pd
+import numpy as np
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, TEST_SPLIT_SIZE, VALIDATION_DATASETS, TEST
 from ml.utils.output import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
@@ -95,8 +95,8 @@ class BinaryClassificationPipeline(MLPipeline):
                         continue
 
                     # X and Y where already shuffled in the retrieve_labelled_instances function
-                    x = pd.concat([x_train] + x_tests)
-                    y = pd.concat([y_train] + y_tests)
+                    x = np.concatenate([x_train] + x_tests)
+                    y = np.concatenate([y_train] + y_tests)
                     self._run_all_models(refactoring, refactoring_name, dataset, train_features, scaler, x, y, x_train,
                                          x_tests, y_train, y_tests, dataset_name)
                 # 2.) random percentage train/ test split
