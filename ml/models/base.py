@@ -14,11 +14,11 @@ class MLModel(object):
         pass
 
     def _save_scaler(self, dataset, refactoring_name, scaler_obj):
-        file_name = f"results/scaler/scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}.joblib"
+        file_name = f"results/scaler/scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib"
         store_joblib(scaler_obj, file_name)
 
     def _save_features(self, dataset, refactoring_name, features):
-        file_name = f"results/model/features_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}.csv"
+        file_name = f"results/model/features_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
         store_collection(features, file_name)
 
     def _save_validation_resultss(self, dataset, test_results, test_names, formatted_results):
@@ -55,7 +55,7 @@ class SupervisedMLRefactoringModel(MLModel):
         Persist this model with reference to its dataset, refactoring_type, features, model
         and if specified also the prediction results for the validation sets.
         """
-        file_name = f"results/model/model_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}.joblib"
+        file_name = f"results/model/model_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib"
         store_joblib(model_obj, file_name)
 
         self._save_scaler(dataset, refactoring_name, scaler_obj)
