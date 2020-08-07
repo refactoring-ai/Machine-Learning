@@ -1,6 +1,8 @@
 import json
 from statistics import mean
 
+from utils.log import log
+
 
 def format_results(dataset, refactoring_name, model_name, precision_scores, recall_scores,
                    accuracy_scores, tn, fp, fn, tp, best_model, features):
