@@ -55,7 +55,7 @@ def _evaluate_model(search, x_train, x_tests, y_train, y_tests, db_ids_tests):
         test_scores["fp"] += [confusion_matrix(y_test, y_pred).ravel()[1]]
         test_scores["fn"] += [confusion_matrix(y_test, y_pred).ravel()[2]]
         test_scores["tp"] += [confusion_matrix(y_test, y_pred).ravel()[3]]
-        data = {"db_id": db_ids, "label": y_test, "prediction": y_pred}
+        data = {"db_id": db_ids.values, "label": y_test.values, "prediction": y_pred}
         test_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]).reset_index())
 
     return test_scores, test_results
