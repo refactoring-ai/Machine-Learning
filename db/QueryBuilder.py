@@ -185,7 +185,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     required_fields: str = ""
     required_tables: str = ""
     if get_instance_id:
-        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS id, "
+        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS db_id, "
     for table_name, field_names in fields:
         # don't join the instance with itself
         if (instance_name != table_name):

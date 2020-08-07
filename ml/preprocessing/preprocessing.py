@@ -41,9 +41,6 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # load non-refactoring examples
     non_refactored_instances = refactoring.get_non_refactored_instances(dataset)
 
-    # map all ids onto their respective table
-
-
     log("raw number of refactoring instances: {}".format(refactored_instances.shape[0]), False)
     log("raw number of non-refactoring instances: {}".format(non_refactored_instances.shape[0]), False)
 
@@ -77,10 +74,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # now, combine both datasets (with both TRUE and FALSE predictions)
     if non_refactored_instances.shape[1] != refactored_instances.shape[1]:
         raise ImportError("Number of columns differ from both datasets.")
-    merged_dataset = pd.concat([refactored_instances, non_refactored_instances])
-
-    #just to be sure, shuffle the dataset
-    merged_dataset = merged_dataset.sample(frac=1, random_state = 42)
+    merged_dataset = pd.concat([refactored_instances, non_refactored_instances], ignore_index=True)
 
     # do we want to try the models without some metrics, e.g. process and authorship metrics?
     merged_dataset = merged_dataset.drop(DROP_METRICS, axis=1)
@@ -93,6 +87,9 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         query = " and ".join(["%s != -1" % metric for metric in metrics])
         merged_dataset = merged_dataset.query(query)
         log("Instance count after dropping faulty process metrics: {}".format(len(merged_dataset.index)), False)
+
+    #just to be sure, shuffle the dataset
+    merged_dataset = merged_dataset.sample(frac=1, random_state=1546654654).reset_index()
 
     # separate the x from the y (as required by the scikit-learn API)
     x = merged_dataset.drop("prediction", axis=1)
@@ -107,8 +104,8 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         log("instances after balancing: {}".format(Counter(y)), False)
 
     # also save the instance ids, we will need them later to analyse the classifier results, but we don't won't to scale them nor drop them during feature reduction
-    ids = x["id"]
-    x = x.drop(["id"], axis=1)
+    ids = x["db_id"]
+    x = x.drop(["db_id"], axis=1)
 
     # let's reduce the number of features in the set
     if is_training_data and FEATURE_REDUCTION and allowed_features is None:
