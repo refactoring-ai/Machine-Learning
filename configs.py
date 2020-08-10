@@ -43,21 +43,20 @@ SCALE_DATASET = True
 # Feature reduction
 # --------------------------------
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
-DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
-DROP_PROCESS_AND_AUTHORSHIP_METRICS = False
+DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
 # a list of all process and authorship metrics
-PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors",
-                                  "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
+PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
 # Drop these metrics as well
 DROP_METRICS = []
 
 # perform feature reduction?
-FEATURE_REDUCTION = True
+FEATURE_REDUCTION = False
 
 # number of folds for feature reduction
-N_CV_FEATURE_REDUCTION = 5
+N_CV_FEATURE_REDUCTION = 2
 
 # --------------------------------
 # Hyperparameter search
@@ -164,12 +163,12 @@ FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
 OTHER_LEVEL_REFACTORINGS = ["Move Source Folder",
                             "Change Package"]
 
-levelMap = {Level.NONE: [],
-            Level.Class: CLASS_LEVEL_REFACTORINGS,
-            Level.Method: METHOD_LEVEL_REFACTORINGS,
-            Level.Field: FIELD_LEVEL_REFACTORINGS,
-            Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
-            Level.Other: OTHER_LEVEL_REFACTORINGS}
+LEVEL_MAP = {Level.NONE: [],
+             Level.Class: CLASS_LEVEL_REFACTORINGS,
+             Level.Method: METHOD_LEVEL_REFACTORINGS,
+             Level.Field: FIELD_LEVEL_REFACTORINGS,
+             Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
+             Level.Other: OTHER_LEVEL_REFACTORINGS}
 # --------------------------------
 # DO NOT CHANGE FROM HERE ON
 # --------------------------------

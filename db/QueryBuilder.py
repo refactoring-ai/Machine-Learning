@@ -180,10 +180,12 @@ def get_metrics_level(level: int):
 # Optional conditions: a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
 # Optional dataset: filter the instances based on their project name, e.g. toyproject-1
 # Optional order: order by command, e.g. order by CommitMetaData.commitDate
-def get_instance_fields(instance_name: str, fields, conditions: str = "", dataset: str = "", order: str = "") -> str:
+def get_instance_fields(instance_name: str, fields, conditions: str = "", dataset: str = "", order: str = "", get_instance_id: bool = False) -> str:
     # combine the required fields with their table names
     required_fields: str = ""
     required_tables: str = ""
+    if get_instance_id:
+        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS db_id, "
     for table_name, field_names in fields:
         # don't join the instance with itself
         if (instance_name != table_name):
@@ -193,8 +195,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     # remove the last chars because it is either a ", " or an " AND "
     required_fields = required_fields[:-2]
 
-    sql: str = "SELECT " + required_fields + " FROM " + \
-        instance_name + required_tables + " WHERE "
+    sql: str = f"SELECT {required_fields} FROM {instance_name}{required_tables} WHERE "
     if len(conditions) > 2:
         if not sql.endswith(' WHERE '):
             sql += " AND "
@@ -231,7 +232,7 @@ def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str
                                  + file_type_filter()
 
     return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
-                               refactoring_condition, dataset, " order by " + commitMetaData + ".commitDate")
+                               refactoring_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
 
 
 # Add restriction whether to use only production, test or both files
