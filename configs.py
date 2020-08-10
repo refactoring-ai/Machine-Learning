@@ -40,6 +40,17 @@ BALANCE_DATASET_STRATEGY = "random"
 SCALE_DATASET = True
 
 # --------------------------------
+# Sample size
+# --------------------------------
+
+# fraction of the samples (both true and false) to use for training, [0 - 1]
+TRAINING_SAMPLE_FRACTION = 0.8
+
+# fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
+# If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
+EVALUATION_SAMPLE_FRACTION = 1.0
+
+# --------------------------------
 # Feature reduction
 # --------------------------------
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
@@ -186,3 +197,6 @@ if TEST:
     N_CV_DNN = 2
 
     CV_FEATURE_REDUCTION = 2
+
+    TRAINING_SAMPLE_FRACTION = 0.1
+    EVALUATION_SAMPLE_FRACTION = 0.1

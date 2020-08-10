@@ -1,9 +1,24 @@
-
 import pandas as pd
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
-
 from configs import BALANCE_DATASET_STRATEGY
+from utils.log import log
+
+
+def sample_reduction(dataset, fraction):
+    """
+    Reduce the number of samples in the dataset to the given fraction.
+
+    Parameter:
+    dataset
+        The data frame to reduce
+    fraction
+        Fraction of the initial samples [0 - 1]
+    """
+    initial_count = len(dataset.index)
+    dataset = dataset.sample(frac=fraction)
+    log(f"Reduced number of samples from {initial_count} to {len(dataset.index)} ({fraction})", False)
+    return dataset
 
 
 def perform_balancing(x, y, strategy=None):

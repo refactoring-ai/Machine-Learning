@@ -1,9 +1,10 @@
 from collections import Counter
 import pandas as pd
 from configs import SCALE_DATASET, TEST, FEATURE_REDUCTION, BALANCE_DATASET, DROP_METRICS, \
-    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS
+    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, \
+    TRAINING_SAMPLE_FRACTION, EVALUATION_SAMPLE_FRACTION
 from ml.preprocessing.feature_reduction import perform_feature_reduction
-from ml.preprocessing.sampling import perform_balancing
+from ml.preprocessing.sampling import perform_balancing, sample_reduction
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from refactoring import LowLevelRefactoring
 from utils.log import log
@@ -67,10 +68,13 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     refactored_instances["prediction"] = 1
     non_refactored_instances["prediction"] = 0
 
-    # if it's a test run, we reduce the sample randomly
-    if TEST:
-        refactored_instances = refactored_instances.sample(frac=0.1)
-        non_refactored_instances = non_refactored_instances.sample(frac=0.1)
+    # reduce the amount training samples, if specified
+    if is_training_data and TRAINING_SAMPLE_FRACTION < 1:
+        refactored_instances = sample_reduction(refactored_instances, TRAINING_SAMPLE_FRACTION)
+        non_refactored_instances = sample_reduction(non_refactored_instances, TRAINING_SAMPLE_FRACTION)
+    elif EVALUATION_SAMPLE_FRACTION < 1:
+        refactored_instances = sample_reduction(refactored_instances, EVALUATION_SAMPLE_FRACTION)
+        non_refactored_instances = sample_reduction(non_refactored_instances, EVALUATION_SAMPLE_FRACTION)
 
     # now, combine both datasets (with both TRUE and FALSE predictions)
     if non_refactored_instances.shape[1] != refactored_instances.shape[1]:
