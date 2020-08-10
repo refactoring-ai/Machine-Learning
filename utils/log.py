@@ -1,9 +1,8 @@
+import json
+from os import path
 import random
 from pathlib import Path
-
-from configs import TEST, USE_CACHE, BALANCE_DATASET, BALANCE_DATASET_STRATEGY, SCALE_DATASET, FEATURE_REDUCTION, \
-    N_CV_FEATURE_REDUCTION, SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, N_CV, DATASETS, MODELS, \
-    CLASS_LEVEL_REFACTORINGS, METHOD_LEVEL_REFACTORINGS, VARIABLE_LEVEL_REFACTORINGS, DB_AVAILABLE
+import configs
 
 _f = None
 
@@ -13,26 +12,22 @@ def print_config():
 
     log("--------------")
     log("Configuration:")
-
-    log(f"Test: {TEST}")
-    log(f"Use cache? {USE_CACHE}, DB available? {DB_AVAILABLE}")
-    log(f"Balance dataset? {BALANCE_DATASET} {BALANCE_DATASET_STRATEGY}")
-    log(f"Scale dataset? {SCALE_DATASET}")
-    log(f"Feature reduction? {FEATURE_REDUCTION} {N_CV_FEATURE_REDUCTION}")
-    log(f"CV for Hyper parameter search: {SEARCH} {N_CV_SEARCH} {N_ITER_RANDOM_SEARCH}")
-    log(f"CV for evaluation: {N_CV}")
-    log(f"Datasets: {DATASETS}")
-    log(f"Models: {MODELS}")
-    log(f"Class-level refactorings: {CLASS_LEVEL_REFACTORINGS}")
-    log(f"Method-level refactorings: {METHOD_LEVEL_REFACTORINGS}")
-    log(f"Variable-level refactorings: {VARIABLE_LEVEL_REFACTORINGS}")
+    # create a dict of the entire config class, to capture all fields
+    config_dict = configs.__dict__
+    # filter to get only the public fields that we created
+    config_dict = {k: v for k, v in config_dict.items() if k.isupper()}
+    log(json.dumps(config_dict, indent=2, sort_keys=True))
     log("--------------")
 
 
-def log_init():
+def log_init(log_name: str = ""):
     global _f
-    Path("results/").mkdir(parents=True, exist_ok=True)
-    _f = open("results/{}-result.txt".format(random.randint(1, 999999)), "w+")
+    if len(log_name) > 0:
+        Path(path.dirname(log_name)).mkdir(parents=True, exist_ok=True)
+        _f = open(log_name, "w+")
+    else:
+        Path("results/").mkdir(parents=True, exist_ok=True)
+        _f = open("results/{}-result.txt".format(random.randint(1, 999999)), "w+")
 
     log(r"  __  __ _      _ _    ___      __         _           _           ")
     log(r" |  \/  | |    | | |  | _ \___ / _|__ _ __| |_ ___ _ _(_)_ _  __ _ ")

@@ -3,8 +3,10 @@ from db.QueryBuilder import get_all_level_stable, get_level_refactorings_count, 
 from db.DBConnector import execute_query
 from utils.log import log_init, log_close, log
 import time
+import datetime
 
-log_init()
+
+log_init(f"results/warm-up_cache_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt")
 log('Begin cache warm-up')
 start_time = time.time()
 
