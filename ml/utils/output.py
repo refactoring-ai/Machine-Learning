@@ -1,9 +1,12 @@
 import json
 from statistics import mean
-
+from pathlib import Path
+import os
+import joblib
 from utils.log import log
 
 
+# TODO: can we remove this function? format_results_single_run does the same
 def format_results(dataset, refactoring_name, model_name, precision_scores, recall_scores,
                    accuracy_scores, tn, fp, fn, tp, best_model, features):
     results = "Production Model Results:"
@@ -48,8 +51,10 @@ def format_results(dataset, refactoring_name, model_name, precision_scores, reca
     results += f'\nCSV2,{dataset},{refactoring_name},{model_name},accuracy,{accuracy_scores_str}'
     return results
 
+
+# TODO: can we remove this function? format_results_single_run does the same
 def format_test_results(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores,
-                   accuracy_scores, tn, fp, fn, tp) -> str:
+                        accuracy_scores, tn, fp, fn, tp) -> str:
     results = "Test Results for validation: " + str(validation_names)
 
     accuracy_scores_str = ', '.join(list([f"{e:.2f}" for e in accuracy_scores]))
@@ -79,53 +84,73 @@ def format_test_results(dataset, refactoring_name, validation_names, model_name,
     return results
 
 
-def format_results_single_run(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores, accuracy_scores, tn, fp, fn, tp, best_model, features):
-    results = "Test Results for validation: " + str(validation_names)
-
-    #precision
-    precision_scores_str = ', '.join(list([f"{e:.2f}" for e in precision_scores]))
-    results += "\nPrecision scores: " + precision_scores_str
-    results += f'\nMean precision: {mean(precision_scores):.2f}'
-
-    #recall
-    recall_scores_str = ', '.join(list([f"{e:.2f}" for e in recall_scores]))
-    results += "\nRecall scores: " + recall_scores_str
-    results += f'\nMean recall: {mean(recall_scores):.2f}\n'
-
-    #accuracy
-    accuracy_scores_str = ', '.join(list([f"{e:.2f}" for e in accuracy_scores]))
-    results += "\nAccuracy scores: " + accuracy_scores_str
-    results += "\nMean Accuracy: %0.2f" % mean(accuracy_scores)
-
-    for index, validation_name  in enumerate(validation_names):
-        results += "\nConfusion Matrix for validation set %s: tn=%d, fp=%d, fn=%d, tp=%d" % (validation_name, tn[index], fp[index], fn[index], tp[index])
+def format_results_single_run(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores,
+                              accuracy_scores, tn, fp, fn, tp, best_model, features):
+    """
+    Format all specified scores and other relevant data  of the validation in a json format.
+    """
+    confusion_matrix = ""
+    for index, validation_name in enumerate(validation_names):
+        confusion_matrix += f"\nConfusion Matrix for validation set {validation_name}: " \
+                            f"tn={tn[index]}, fp={fp[index]}, fn={fn[index]}, tp={tp[index]}"
 
     # some models have the 'coef_' attribute, and others have the 'feature_importances_
     # (do not ask me why...)
+    coef_ = ""
+    feature_importance = ""
     if hasattr(best_model, "coef_"):
-        results += "\nFeatures:"
-        results += (', '.join(str(e) for e in list(features)))
-        results += "\nCoefficients:"
-        results += "\n" + ''.join(str(e) for e in best_model.coef_.tolist())
+        coef_ += "\nFeatures:"
+        coef_ += (', '.join(str(e) for e in list(features)))
+        coef_ += "\nCoefficients:"
+        coef_ += "\n" + ''.join(str(e) for e in best_model.coef_.tolist())
     elif hasattr(best_model, "feature_importances_"):
-        results += ("\nFeature Importances: \n" + ''.join(
+        feature_importance += ("\nFeature Importances: \n" + ''.join(
             ["%-33s: %-5.4f\n" % (feature, importance) for feature, importance in
              zip(features, best_model.feature_importances_)]))
     else:
-        results += "\n(Not possible to collect feature importance)"
+        coef_ += "\n(Not possible to collect feature importance)"
+        feature_importance += "\n(Not possible to collect feature importance)"
 
-    results += f'\nCSV,{dataset},{refactoring_name},{model_name},{precision_scores_str},{recall_scores_str},{accuracy_scores_str},{tn},{fp},{fn},{tp}'
-    return results
+    return json.dumps({"Model name": model_name,
+                       "Refactoring type": refactoring_name,
+                       "Training set": dataset,
+                       "Validation sets": str(validation_names),
+                       "Precision scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
+                       "Mean precision": f"{mean(precision_scores):.2f}",
+                       "Recall scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
+                       "Mean recall": f"{mean(recall_scores):.2f}",
+                       "Accuracy scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
+                       "Mean Accuracy": f"{mean(accuracy_scores):.2f}",
+                       "Confusion matrix": confusion_matrix,
+                       "coef_": coef_,
+                       "feature_importance": feature_importance
+                       }, indent=2, sort_keys=True)
 
 
 def format_best_parameters(tuned_model):
-    best_parameters = tuned_model.best_params_
+    """
+    Format the best parameters of the tuned model in a json format.
+    """
+    return json.dumps({"Hyperparametrization": json.dumps(tuned_model.best_params_, indent=2, sort_keys=True),
+                       "Best_result": str(tuned_model.best_score_)}, indent=2, sort_keys=True)
 
-    results = "Hyperparametrization:\n"
-    results += json.dumps(best_parameters, indent=2)
 
-    best_result = tuned_model.best_score_
-    results += "\nBest result: "
-    results += str(best_result)
+def store_json(data, path: str):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2, sort_keys=True)
+    log(f"Stored json at: {path}")
 
-    return results
+
+def store_joblib(data, path):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as f:
+        joblib.dump(data, path)
+    log(f"Stored joblib at: {path}")
+
+
+def store_collection(collection, path):
+    Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        f.write("\n".join(str(item) for item in collection))
+    log(f"Stored collection at: {path}")

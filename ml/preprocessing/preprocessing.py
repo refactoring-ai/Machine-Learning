@@ -11,7 +11,30 @@ from sklearn.utils import shuffle
 
 
 def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_training_data: bool = True,
-                                scaler = None, allowed_features = None):
+                                scaler=None, allowed_features=None):
+    """
+    This method retrieves all the labelled instances for a given refactoring and dataset.
+    It performs the following pipeline:
+      1. Get all refactored and non refactored instances from the db.
+      2. Merge them into a single dataset, having 1=true and 0=false, as labels.
+      3. Removes possible NAs (the data collection process is tough; bad data might had make it through)
+      4. Shuffles the dataset (good practice)
+      5. Balances the dataset (if configured)
+      6. Scales the features values (if configured)
+      7. Performs feature reduction (if configured)
+    :param dataset: a string containing the name of the dataset to be retrieved
+    :param refactoring: the refactoring object, containing the refactoring to be retrieved
+    :param is_training_data: is this training data? If so,
+    :param scaler: a predefined scaler, for this data
+    :param allowed_features: manual selection of allowed features, applied instead of the statistical feature reduction
+
+    :return:
+        features: an array with the features of the instances
+        x: a dataframe with the feature values
+        y: the label (1=true, a refactoring has happened, 0=false, no refactoring has happened)
+        ids: instance ids, to query the actual data from the database
+        scaler: the scaler object used in the scaling process.
+    """
     log("---- Retrieve labeled instances for dataset: %s" % dataset)
 
     # get all refactoring examples we have in our dataset
@@ -29,11 +52,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
         log("No refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None
+        return None, None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
         log("No non-refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None
+        return None, None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
     log("non-refactoring instances (after dropping NA)s: {}".format(non_refactored_instances.shape[0]), False)
@@ -57,7 +80,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # do we want to try the models without some metrics, e.g. process and authorship metrics?
     merged_dataset = merged_dataset.drop(DROP_METRICS, axis=1)
 
-    # Remove all instances with a -1 value in the process and authorship metrics,
+    #Remove all instances with a -1 value in the process and authorship metrics,
     # ToDo: do this after the feature reduction to simplify the query and do not drop instances which are not affected by faulty process and authorship metrics, which are not in the feature set
     if DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS and not DROP_PROCESS_AND_AUTHORSHIP_METRICS:
         log("Instance count before dropping faulty process metrics: {}".format(len(merged_dataset.index)), False)
@@ -81,11 +104,9 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # shuffle data after balancing it, because some of the samplers order the data during balancing it
     x, y = shuffle(x, y)
 
-    # apply some scaling to speed up the algorithm
-    if SCALE_DATASET and scaler is None:
-        x, scaler = perform_fit_scaling(x)
-    elif SCALE_DATASET and scaler is not None:
-        x = perform_scaling(x, scaler)
+    # also save the instance ids, we will need them later to analyse the classifier results, but we don't won't to scale them nor drop them during feature reduction
+    ids = x["db_id"]
+    x = x.drop(["db_id"], axis=1)
 
     # let's reduce the number of features in the set
     if is_training_data and FEATURE_REDUCTION and allowed_features is None:
@@ -96,5 +117,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         x = x.drop(drop_list, axis=1)
         assert x.shape[1] == len(allowed_features), "Incorrect number of features for dataset " + dataset
 
+    # apply some scaling to speed up the algorithm
+    if SCALE_DATASET and scaler is None:
+        x, scaler = perform_fit_scaling(x)
+    elif SCALE_DATASET and scaler is not None:
+        x = perform_scaling(x, scaler)
+
     log("Got %d instances with %d features for the dataset: %s." % (x.shape[0], x.shape[1], dataset))
-    return x.columns.values, x, y, scaler
+    return x.columns.values, x, y, ids, scaler
