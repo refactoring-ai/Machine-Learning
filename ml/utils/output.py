@@ -85,45 +85,40 @@ def format_test_results(dataset, refactoring_name, validation_names, model_name,
 
 
 def format_results_single_run(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores,
-                              accuracy_scores, tn, fp, fn, tp, best_model, features):
+                              accuracy_scores, tn, fp, fn, tp, permutation_importances, best_model, features):
     """
     Format all specified scores and other relevant data  of the validation in a json format.
     """
     confusion_matrix = ""
+    permutation_importances_dict = {}
     for index, validation_name in enumerate(validation_names):
-        confusion_matrix += f"\nConfusion Matrix for validation set {validation_name}: " \
-                            f"tn={tn[index]}, fp={fp[index]}, fn={fn[index]}, tp={tp[index]}"
+        confusion_matrix += f"\n{validation_name}: tn={tn[index]}, fp={fp[index]}, fn={fn[index]}, tp={tp[index]}"
+        permutation_importance = permutation_importances[index]
+        permutation_importances_dict[validation_name] = {feature: (mean, std) for feature, mean, std in zip(features, permutation_importance.importances_mean, permutation_importance.importances_std)}
 
     # some models have the 'coef_' attribute, and others have the 'feature_importances_
     # (do not ask me why...)
-    coef_ = ""
-    feature_importance = ""
+    coefficients = {}
+    feature_importances = {}
     if hasattr(best_model, "coef_"):
-        coef_ += "\nFeatures:"
-        coef_ += (', '.join(str(e) for e in list(features)))
-        coef_ += "\nCoefficients:"
-        coef_ += "\n" + ''.join(str(e) for e in best_model.coef_.tolist())
+        coefficients = {feature: coef for feature, coef in zip(features, best_model.coef_.tolist())}
     elif hasattr(best_model, "feature_importances_"):
-        feature_importance += ("\nFeature Importances: \n" + ''.join(
-            ["%-33s: %-5.4f\n" % (feature, importance) for feature, importance in
-             zip(features, best_model.feature_importances_)]))
-    else:
-        coef_ += "\n(Not possible to collect feature importance)"
-        feature_importance += "\n(Not possible to collect feature importance)"
+        feature_importances = {feature: importance for feature, importance in zip(features, best_model.feature_importances_)}
 
-    return json.dumps({"Model name": model_name,
-                       "Refactoring type": refactoring_name,
-                       "Training set": dataset,
-                       "Validation sets": str(validation_names),
-                       "Precision scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
-                       "Mean precision": f"{mean(precision_scores):.2f}",
-                       "Recall scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
-                       "Mean recall": f"{mean(recall_scores):.2f}",
-                       "Accuracy scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
-                       "Mean Accuracy": f"{mean(accuracy_scores):.2f}",
-                       "Confusion matrix": confusion_matrix,
-                       "coef_": coef_,
-                       "feature_importance": feature_importance
+    return json.dumps({"model_name": model_name,
+                       "refactoring type": refactoring_name,
+                       "training_set": dataset,
+                       "validation_sets": str(validation_names),
+                       "precision_scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
+                       "mean_precision": f"{mean(precision_scores):.2f}",
+                       "recall_scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
+                       "mean_recall": f"{mean(recall_scores):.2f}",
+                       "accuracy_scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
+                       "mean_accuracy": f"{mean(accuracy_scores):.2f}",
+                       "confusion_matrix": confusion_matrix,
+                       "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=True),
+                       "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=True),
+                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=True)
                        }, indent=2, sort_keys=True)
 
 

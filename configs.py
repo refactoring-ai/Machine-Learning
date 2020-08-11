@@ -5,6 +5,7 @@
 # test runs reduce the dataset to 100 instances only
 from enum import IntEnum
 
+# is this a test run?
 TEST = False
 
 # --------------------------------
@@ -88,7 +89,7 @@ N_CV_SEARCH = 5
 # --------------------------------
 
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-TEST_SPLIT_SIZE = 0.2
+VAL_SPLIT_SIZE = -1
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
 VALIDATION_DATASETS = ["test set github", "validation set github"]
