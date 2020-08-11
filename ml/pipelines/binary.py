@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.inspection import permutation_importance
 
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST
+from ml.preprocessing.feature_reduction import perform_feature_reduction
 from ml.utils.output import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
@@ -95,7 +96,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 # we have two options to select a val set,
                 # 1.) Predefined in the database
                 if VAL_SPLIT_SIZE < 0 and len(VALIDATION_DATASETS) > 0:
-                    train_features, x_train, y_train, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    x_train, y_train, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
                     # val if any refactorings were found for the given refactoring type
                     if x_train is None:
                         log("Skip model building for refactoring type: " + refactoring.name())
@@ -104,8 +105,7 @@ class BinaryClassificationPipeline(MLPipeline):
                     x_val_list, y_val_list, db_ids_val_list, dataset_names = [], [], [], []
                     for validation_dataset in VALIDATION_DATASETS:
                         dataset_names.append(validation_dataset)
-                        val_features, x_val, y_val, db_ids_val, _, = retrieve_labelled_instances(validation_dataset, refactoring,
-                                                                                                 False, scaler, train_features)
+                        x_val, y_val, db_ids_val, _, = retrieve_labelled_instances(validation_dataset, refactoring, False, scaler)
                         # val if any refactorings were found for the given refactoring type
                         if x_val is None:
                             log("Skip val set %s for refactoring type: %s" % (validation_dataset, refactoring.name()))
@@ -120,18 +120,18 @@ class BinaryClassificationPipeline(MLPipeline):
                     # X and Y where already shuffled in the retrieve_labelled_instances function
                     x = pd.concat([x_train] + x_val_list)
                     y = pd.concat([y_train] + y_val_list)
-                    self._run_all_models(refactoring, refactoring_name, dataset, train_features, scaler, x, y, x_train,
+                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train,
                                          x_val_list, y_train, y_val_list, db_ids_val_list, dataset_names)
                 # 2.) random percentage train/ val split
                 else:
-                    features, x, y, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    x, y, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
                     # val if any refactorings were found for the given refactoring type
                     if x is None:
                         log("Skip model building for refactoring type: " + refactoring.name())
                         continue
                     # we split in train and val
                     # (note that we use the same split for all the models)
-                    # add the db_ids to x again, in order to keep them aligned during the feature
+                    # add the db_ids to x again, in order to keep them aligned during the splitting
                     x["db_id"] = db_ids
                     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=VAL_SPLIT_SIZE, random_state=42)
                     # drop the db_ids and only store the val db_ids
@@ -140,9 +140,9 @@ class BinaryClassificationPipeline(MLPipeline):
                     x_train = x_train.drop(["db_id"], axis=1)
                     db_ids_val = x_val["db_id"]
                     x_val = x_val.drop(["db_id"], axis=1)
-                    self._run_all_models(refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
+                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
 
-    def _run_all_models(self, refactoring, refactoring_name, dataset, features, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
+    def _run_all_models(self, refactoring, refactoring_name, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
         """
         For each model, it:
         1) Performs the hyper parameter search
@@ -156,7 +156,7 @@ class BinaryClassificationPipeline(MLPipeline):
             try:
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
-                val_scores, val_results, model_to_save = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
+                features, val_scores, val_results, model_to_save = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
 
                 # log val scores
                 formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["precision"],
@@ -176,12 +176,16 @@ class BinaryClassificationPipeline(MLPipeline):
                 log(str(e))
                 log(str(traceback.format_exc()))
 
-    def _run_single_model(self, model_def, x, y, x_train, x_val_list, y_train, y_val_list, db_ids):
+    def _run_single_model(self, model_def, X, y, x_train, x_val_list, y_train, y_val_list, db_ids):
         model = model_def.model()
 
         # perform the search for the best hyper parameters
         param_dist = model_def.params_to_tune()
         search = None
+
+        features, x_train = perform_feature_reduction(model, x_train, y_train)
+        x_val_list = [X for _, X in [
+            perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
 
         # choose which search to apply
         if SEARCH == 'randomized':
@@ -192,8 +196,10 @@ class BinaryClassificationPipeline(MLPipeline):
         # Train and val the model
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
 
+        # reduce the features for the supermodel:
+        features, X = perform_feature_reduction(model, X, y, features)
         # Run cross validation on whole dataset and safe production ready model
-        super_model = _build_production_model(model_def, search.best_params_, x, y)
+        super_model = _build_production_model(model_def, search.best_params_, X, y)
 
         # return the scores and the best estimator
-        return val_scores, val_results, super_model
+        return features, val_scores, val_results, super_model
