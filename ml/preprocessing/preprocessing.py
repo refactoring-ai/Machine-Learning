@@ -1,9 +1,8 @@
 from collections import Counter
 import pandas as pd
-from configs import SCALE_DATASET, TEST, FEATURE_REDUCTION, BALANCE_DATASET, DROP_METRICS, \
+from configs import SCALE_DATASET, BALANCE_DATASET, DROP_METRICS, \
     DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, \
     TRAINING_SAMPLE_FRACTION, EVALUATION_SAMPLE_FRACTION
-from ml.preprocessing.feature_reduction import perform_feature_reduction
 from ml.preprocessing.sampling import perform_balancing, sample_reduction
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from refactoring import LowLevelRefactoring
@@ -11,8 +10,7 @@ from utils.log import log
 from sklearn.utils import shuffle
 
 
-def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_training_data: bool = True,
-                                scaler=None, allowed_features=None):
+def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_training_data: bool = True, scaler=None):
     """
     This method retrieves all the labelled instances for a given refactoring and dataset.
     It performs the following pipeline:
@@ -22,15 +20,13 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
       4. Shuffles the dataset (good practice)
       5. Balances the dataset (if configured)
       6. Scales the features values (if configured)
-      7. Performs feature reduction (if configured)
+
     :param dataset: a string containing the name of the dataset to be retrieved
     :param refactoring: the refactoring object, containing the refactoring to be retrieved
     :param is_training_data: is this training data? If so,
     :param scaler: a predefined scaler, for this data
-    :param allowed_features: manual selection of allowed features, applied instead of the statistical feature reduction
 
     :return:
-        features: an array with the features of the instances
         x: a dataframe with the feature values
         y: the label (1=true, a refactoring has happened, 0=false, no refactoring has happened)
         ids: instance ids, to query the actual data from the database
@@ -53,11 +49,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
         log("No refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None, None
+        return None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
         log("No non-refactorings found for refactoring type: " + refactoring.name())
-        return None, None, None, None, None
+        return None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
     log("non-refactoring instances (after dropping NA)s: {}".format(non_refactored_instances.shape[0]), False)
@@ -112,15 +108,6 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     ids = x["db_id"]
     x = x.drop(["db_id"], axis=1)
 
-    # let's reduce the number of features in the set
-    if is_training_data and FEATURE_REDUCTION and allowed_features is None:
-        x = perform_feature_reduction(x, y)
-    # enforce the specified feature set
-    elif allowed_features is not None:
-        drop_list = [column for column in x.columns.values if column not in allowed_features]
-        x = x.drop(drop_list, axis=1)
-        assert x.shape[1] == len(allowed_features), "Incorrect number of features for dataset " + dataset
-
     # apply some scaling to speed up the algorithm
     if SCALE_DATASET and scaler is None:
         x, scaler = perform_fit_scaling(x)
@@ -128,4 +115,4 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         x = perform_scaling(x, scaler)
 
     log("Got %d instances with %d features for the dataset: %s." % (x.shape[0], x.shape[1], dataset))
-    return x.columns.values, x, y, ids, scaler
+    return x, y, ids, scaler
