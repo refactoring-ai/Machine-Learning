@@ -2,20 +2,34 @@ import mysql.connector
 import pandas as pd
 import hashlib
 import os.path
-
 import configparser
-
 from configs import USE_CACHE, DB_AVAILABLE
 from utils.log import log
+import sshtunnel
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.getcwd(), 'dbconfig.ini'))
 
-mydb = None
-
-if DB_AVAILABLE:
+# connect to the mysql database either via ssh tunnel or directly
+mydb, tunnel = None, None
+if DB_AVAILABLE and config["db"].getboolean("use_tunnel"):
+    tunnel = sshtunnel.SSHTunnelForwarder(
+            (config["ssh_tunnel"]["host"],  int(config["ssh_tunnel"]["port"])),
+            ssh_username=config["ssh_tunnel"]["user"],
+            ssh_password=config["ssh_tunnel"]["pwd"],
+            remote_bind_address=(config["db"]["host"], int(config["db"]["port"]))
+    )
+    tunnel.start()
     mydb = mysql.connector.connect(
-        host=config['db']["ip"],
+            user=config["db"]["user"],
+            password=config["db"]["pwd"],
+            host="127.0.0.1",
+            port=tunnel.local_bind_port,
+            database=config["db"]["database"],
+        )
+elif DB_AVAILABLE:
+    mydb = mysql.connector.connect(
+        host=config['db']["host"],
         user=config['db']["user"],
         passwd=config['db']["pwd"],
         database=config['db']["database"]
@@ -54,10 +68,17 @@ def execute_query(sql_query):
             try:
                 df_raw = pd.read_sql(sql_query, con=mydb)
             except (KeyboardInterrupt, SystemExit):
-                mydb.close()
+                close_connection()
             if not os.path.isdir("_cache"):
                 os.makedirs("_cache")
             df_raw.to_csv(file_path, index=False)
             return df_raw
         else:
             raise Exception("Cache not found, and db connection is not available")
+
+
+def close_connection():
+    if tunnel is not None:
+        tunnel.close()
+    if mydb is not None:
+        mydb.close()
