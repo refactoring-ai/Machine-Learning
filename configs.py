@@ -135,7 +135,6 @@ CLASS_LEVEL_REFACTORINGS = ["Extract Class",
                             "Move Class",
                             "Rename Class",
                             "Introduce Polymorphism",
-                            "Move And Rename Class",
                             "Convert Anonymous Class To Type"]
 
 METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
