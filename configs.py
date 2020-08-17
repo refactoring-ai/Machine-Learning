@@ -1,43 +1,38 @@
-# --------------------------------
-# Testing
-# --------------------------------
+# region Testing
 # is it a test run?
 # test runs reduce the dataset to 100 instances only
 from enum import IntEnum
 
 # is this a test run?
 TEST = False
+# endregion
 
-# --------------------------------
-# FileTypes
-# --------------------------------
+# region FileTypes
 # Do we only look at production or test files or both?
 # 0 = only_production, 1 = only_test, 2 = production_and_test
-FILE_TYPE = 2
+FILE_TYPE = 0
+# endregion
 
-# --------------------------------
-# Database related
-# --------------------------------
+# region Database related
 # do we use the cached results? True=yes, False=no, go always to the db
 USE_CACHE = True
 
 # is the db available? sometimes it's not, but you have all the cache
 DB_AVAILABLE = True
+# endregion
 
-# --------------------------------
-# Dataset balancing
-# --------------------------------
+# region Dataset balancing
 BALANCE_DATASET = True
 
 # how to balance the dataset
 # options = [random, cluster_centroids, nearmiss]
 BALANCE_DATASET_STRATEGY = "random"
+# endregion
 
-# --------------------------------
-# Dataset scaling
-# --------------------------------
+# region Dataset scaling
 # scale using MinMaxScaler?
 SCALE_DATASET = True
+# endregion
 
 # region Sample size
 # fraction of the samples (both true and false) to use for training, [0 - 1]
@@ -281,7 +276,7 @@ STABLE_COMMIT_FIELDS = ["className",
 
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
-LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
+LEVEL_Stable_Thresholds_MAP = {Level.NONE: -1,
                                Level.Class: 15,
                                Level.Method: 30,
                                Level.Variable: 40,

@@ -115,13 +115,11 @@ def get_refactoring_levels(dataset="") -> str:
 
 def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "", conditions: str = "") -> str:
     # only select valid refactorings from the database, if refactorings are selected
-    refactoring_condition: str = instance_name + ".level = " + \
-                                 str(level) + valid_refactorings_filter(instance_name)
+    refactoring_condition: str = f"{instance_name}.level = {str(level)}" + valid_refactorings_filter(instance_name) + file_type_filter(instance_name)
 
     # only select the specified refactoring type from the database
     if m_refactoring != "":
-        refactoring_condition += " AND " + refactoringCommits + ".refactoring = \"" + m_refactoring + "\"" \
-                                 + file_type_filter()
+        refactoring_condition += f" AND {refactoringCommits}.refactoring = \"{m_refactoring}\""
     if len(conditions) > 0:
         refactoring_condition += f" AND {conditions}"
     return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
@@ -129,9 +127,9 @@ def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str
 
 
 # Add restriction whether to use only production, test or both files
-def file_type_filter() -> str:
+def file_type_filter(instance_name: str) -> str:
     if FILE_TYPE != FileType.test_and_production.value:
-        return " AND " + refactoringCommits + ".isTest = " + str(FILE_TYPE)
+        return f" AND {instance_name}.isTest = " + str(FILE_TYPE)
     else:
         return ""
 
