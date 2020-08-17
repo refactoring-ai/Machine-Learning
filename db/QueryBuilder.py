@@ -48,7 +48,7 @@ def join_table(instance_name: str, table_name: str) -> str:
 
     return " INNER JOIN " + table_name + \
            " ON " + instance_name + "." + \
-        join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
+           join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
 
 
 # returns a list of all metrics for the given level
@@ -57,7 +57,7 @@ def get_metrics_level(level: int):
     if level <= 3:
         return [(classMetrics, CLASS_METRICS_Fields), (methodMetrics, METHOD_METRICS_FIELDS),
                 (variableMetrics, VARIABLE_METRICS_FIELDS)][:level] + \
-            [(processMetrics, PROCESS_METRICS_FIELDS)]
+               [(processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 4:
         return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics, FIELD_METRICS_FIELDS),
                 (processMetrics, PROCESS_METRICS_FIELDS)]
@@ -109,20 +109,21 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
 def get_refactoring_levels(dataset="") -> str:
     return "SELECT refactoring, count(*) total from RefactoringCommit where " + project_filter("RefactoringCommit",
                                                                                                dataset) \
-        + valid_refactorings_filter(refactoringCommits) \
-        + " group by refactoring order by count(*) desc"
+           + valid_refactorings_filter(refactoringCommits) \
+           + " group by refactoring order by count(*) desc"
 
 
-def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "") -> str:
+def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "", conditions: str = "") -> str:
     # only select valid refactorings from the database, if refactorings are selected
     refactoring_condition: str = instance_name + ".level = " + \
-        str(level) + valid_refactorings_filter(instance_name)
+                                 str(level) + valid_refactorings_filter(instance_name)
 
     # only select the specified refactoring type from the database
     if m_refactoring != "":
-        refactoring_condition += " AND " + refactoringCommits + ".refactoring = \"" + m_refactoring + "\""\
+        refactoring_condition += " AND " + refactoringCommits + ".refactoring = \"" + m_refactoring + "\"" \
                                  + file_type_filter()
-
+    if len(conditions) > 0:
+        refactoring_condition += f" AND {conditions}"
     return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
                                refactoring_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
 
@@ -163,8 +164,8 @@ def get_all_level_refactorings(level: int, dataset: str = "") -> str:
 
 
 # get all stable instances with the given level and the corresponding metrics
-def get_all_level_stable(level: int, dataset: str = "") -> str:
-    return __get_level(stableCommits, level, "", dataset)
+def get_all_level_stable(level: int, commit_threshold: int, dataset: str = "") -> str:
+    return __get_level(stableCommits, level, "", dataset, conditions=f"{stableCommits}.commitThreshold = {commit_threshold}")
 
 
 # get all unique refactoring types as a list

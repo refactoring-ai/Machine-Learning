@@ -36,24 +36,19 @@ BALANCE_DATASET_STRATEGY = "random"
 # --------------------------------
 # Dataset scaling
 # --------------------------------
-
 # scale using MinMaxScaler?
 SCALE_DATASET = True
 
-# --------------------------------
-# Sample size
-# --------------------------------
-
+# region Sample size
 # fraction of the samples (both true and false) to use for training, [0 - 1]
 TRAINING_SAMPLE_FRACTION = 0.8
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
 EVALUATION_SAMPLE_FRACTION = 1.0
+# endregion
 
-# --------------------------------
-# Feature reduction
-# --------------------------------
+# region Feature reduction
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
 DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
@@ -69,11 +64,9 @@ FEATURE_REDUCTION = False
 
 # number of folds for feature reduction
 N_CV_FEATURE_REDUCTION = 2
+# endregion
 
-# --------------------------------
-# Hyperparameter search
-# --------------------------------
-
+# region Hyperparameter search
 # what type of search for the best hyper params?
 # options = [randomized, grid]
 SEARCH = "grid"
@@ -83,11 +76,9 @@ N_ITER_RANDOM_SEARCH = 100
 
 # number of folds in the search for best parameters
 N_CV_SEARCH = 5
+# endregion
 
-# --------------------------------
-# Evaluation: Cross-validation configuration
-# --------------------------------
-
+# region Evaluation: Cross-validation configuration
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
 VAL_SPLIT_SIZE = -1
 # Or specify test data sets in the database
@@ -99,23 +90,18 @@ N_CV = 10
 
 # number of folds for the DNN
 N_CV_DNN = 10
+# endregion
 
-# --------------------------------
-# Models and datasets
-# --------------------------------
-
+# region Models and datasets
 # models and datasets we have available
 MODELS = ['svm', 'svm-non-linear', 'decision-tree', 'random-forest', 'logistic-regression', 'naive-bayes',
           'extra-trees']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
+# endregion
 
-
-# --------------------------------
-# Refactorings
-# --------------------------------
-
+# region refactorings
 # refactoring levels
 class Level(IntEnum):
     NONE = 0
@@ -124,7 +110,6 @@ class Level(IntEnum):
     Variable = 3
     Field = 4
     Other = 5
-
 
 # Refactorings to study
 CLASS_LEVEL_REFACTORINGS = ["Extract Class",
@@ -174,16 +159,16 @@ FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
 OTHER_LEVEL_REFACTORINGS = ["Move Source Folder",
                             "Change Package"]
 
+# Maps each level onto its refactorings
 LEVEL_MAP = {Level.NONE: [],
              Level.Class: CLASS_LEVEL_REFACTORINGS,
              Level.Method: METHOD_LEVEL_REFACTORINGS,
-             Level.Field: FIELD_LEVEL_REFACTORINGS,
              Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
+             Level.Field: FIELD_LEVEL_REFACTORINGS,
              Level.Other: OTHER_LEVEL_REFACTORINGS}
+# endregion
 
-# --------------------------------
-# Metric Fields
-# --------------------------------
+# region metrics fields
 # the ids are not included as they are the same for every table: id : long
 CLASS_METRICS_Fields = ["classAnonymousClassesQty",
                       "classAssignmentsQty",
@@ -292,6 +277,17 @@ STABLE_COMMIT_FIELDS = ["className",
                       "filePath",
                       "isTest",
                       "level"]
+# endregion
+
+# region non-refactored instances
+# Maps each level onto it stable commit thresholds
+LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
+                               Level.Class: 15,
+                               Level.Method: 30,
+                               Level.Variable: 40,
+                               Level.Field: 30,
+                               Level.Other: -1}
+# endregion
 
 # --------------------------------
 # DO NOT CHANGE FROM HERE ON
