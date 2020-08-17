@@ -7,3 +7,4 @@ configparser
 joblib
 matplotlib
 scipy
+sshtunnel
