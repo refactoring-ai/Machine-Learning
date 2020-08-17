@@ -180,6 +180,119 @@ LEVEL_MAP = {Level.NONE: [],
              Level.Field: FIELD_LEVEL_REFACTORINGS,
              Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
              Level.Other: OTHER_LEVEL_REFACTORINGS}
+
+# --------------------------------
+# Metric Fields
+# --------------------------------
+# the ids are not included as they are the same for every table: id : long
+CLASS_METRICS_Fields = ["classAnonymousClassesQty",
+                      "classAssignmentsQty",
+                      "classCbo",
+                      "classComparisonsQty",
+                      "classLambdasQty",
+                      "classLcom",
+                      "classLoc",
+                      "classLoopQty",
+                      "classMathOperationsQty",
+                      "classMaxNestedBlocks",
+                      "classNosi",
+                      "classNumberOfAbstractMethods",
+                      "classNumberOfDefaultFields",
+                      "classNumberOfDefaultMethods",
+                      "classNumberOfFields",
+                      "classNumberOfFinalFields",
+                      "classNumberOfFinalMethods",
+                      "classNumberOfMethods",
+                      "classNumberOfPrivateFields",
+                      "classNumberOfPrivateMethods",
+                      "classNumberOfProtectedFields",
+                      "classNumberOfProtectedMethods",
+                      "classNumberOfPublicFields",
+                      "classNumberOfPublicMethods",
+                      "classNumberOfStaticFields",
+                      "classNumberOfStaticMethods",
+                      "classNumberOfSynchronizedFields",
+                      "classNumberOfSynchronizedMethods",
+                      "classNumbersQty",
+                      "classParenthesizedExpsQty",
+                      "classReturnQty",
+                      "classRfc",
+                      "classStringLiteralsQty",
+                      "classSubClassesQty",
+                      "classTryCatchQty",
+                      "classUniqueWordsQty",
+                      "classVariablesQty",
+                      "classWmc",
+                      "isInnerClass"]
+METHOD_METRICS_FIELDS = [#"fullMethodName", ToDo: decide if and how to include string objects
+    "methodAnonymousClassesQty",
+    "methodAssignmentsQty",
+    "methodCbo",
+    "methodComparisonsQty",
+    "methodLambdasQty",
+    "methodLoc",
+    "methodLoopQty",
+    "methodMathOperationsQty",
+    "methodMaxNestedBlocks",
+    "methodNumbersQty",
+    "methodParametersQty",
+    "methodParenthesizedExpsQty",
+    "methodReturnQty",
+    "methodRfc",
+    "methodStringLiteralsQty",
+    "methodSubClassesQty",
+    "methodTryCatchQty",
+    "methodUniqueWordsQty",
+    "methodVariablesQty",
+    "methodWmc",
+    #"shortMethodName", ToDo: decide if and how to include string objects
+    "startLine"]
+VARIABLE_METRICS_FIELDS = ["variableAppearances",
+                         #"variableName" ToDo: decide if and how to include string objects
+                         ]
+FIELD_METRICS_FIELDS = ["fieldAppearances",
+                      #"fieldName" ToDo: decide if and how to include string objects
+                      ]
+PROCESS_METRICS_FIELDS = ["authorOwnership",
+                        "bugFixCount",
+                        "qtyMajorAuthors",
+                        "qtyMinorAuthors",
+                        "qtyOfAuthors",
+                        "qtyOfCommits",
+                        "refactoringsInvolved"]
+COMMIT_METADATA_FIELDS = ["commitDate",
+                        "commitId",
+                        "commitMessage",
+                        "commitUrl",
+                        "parentCommitId"]
+PROJECT_FIELDS = ["commitCountThresholds",
+                 "commits",
+                 "datasetName",
+                 "dateOfProcessing",
+                 "exceptionsCount",
+                 "finishedDate",
+                 "gitUrl",
+                 "isLocal",
+                 "javaLoc",
+                 "lastCommitHash",
+                 "numberOfProductionFiles",
+                 "numberOfTestFiles",
+                 "productionLoc",
+                 "projectName",
+                 "projectSizeInBytes",
+                 "testLoc"]
+REFACTORING_COMMIT_FIELDS = ["className",
+                           "filePath",
+                           "isTest",
+                           "level",
+                           # "refactoring", this two fields are not used for the training
+                           # "refactoringSummary"
+                           ]
+STABLE_COMMIT_FIELDS = ["className",
+                      "filePath",
+                      "isTest",
+                      "level"]
+
 # --------------------------------
 # DO NOT CHANGE FROM HERE ON
 # --------------------------------

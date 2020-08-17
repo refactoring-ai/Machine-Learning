@@ -1,5 +1,6 @@
 from ml.enums.filetype import FileType
-from configs import FILE_TYPE
+from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, VARIABLE_METRICS_FIELDS, FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS, COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, STABLE_COMMIT_FIELDS
+
 
 # region database structure
 # table names for reference:
@@ -13,115 +14,6 @@ project: str = "project"
 refactoringCommits: str = "RefactoringCommit"
 stableCommits: str = "StableCommit"
 
-# the ids are not included as they are the same for every table: id : long
-classMetricsFields = ["classAnonymousClassesQty",
-                      "classAssignmentsQty",
-                      "classCbo",
-                      "classComparisonsQty",
-                      "classLambdasQty",
-                      "classLcom",
-                      "classLoc",
-                      "classLoopQty",
-                      "classMathOperationsQty",
-                      "classMaxNestedBlocks",
-                      "classNosi",
-                      "classNumberOfAbstractMethods",
-                      "classNumberOfDefaultFields",
-                      "classNumberOfDefaultMethods",
-                      "classNumberOfFields",
-                      "classNumberOfFinalFields",
-                      "classNumberOfFinalMethods",
-                      "classNumberOfMethods",
-                      "classNumberOfPrivateFields",
-                      "classNumberOfPrivateMethods",
-                      "classNumberOfProtectedFields",
-                      "classNumberOfProtectedMethods",
-                      "classNumberOfPublicFields",
-                      "classNumberOfPublicMethods",
-                      "classNumberOfStaticFields",
-                      "classNumberOfStaticMethods",
-                      "classNumberOfSynchronizedFields",
-                      "classNumberOfSynchronizedMethods",
-                      "classNumbersQty",
-                      "classParenthesizedExpsQty",
-                      "classReturnQty",
-                      "classRfc",
-                      "classStringLiteralsQty",
-                      "classSubClassesQty",
-                      "classTryCatchQty",
-                      "classUniqueWordsQty",
-                      "classVariablesQty",
-                      "classWmc",
-                      "isInnerClass"]
-methodMetricsFields = [#"fullMethodName", ToDo: decide if and how to include string objects
-                       "methodAnonymousClassesQty",
-                       "methodAssignmentsQty",
-                       "methodCbo",
-                       "methodComparisonsQty",
-                       "methodLambdasQty",
-                       "methodLoc",
-                       "methodLoopQty",
-                       "methodMathOperationsQty",
-                       "methodMaxNestedBlocks",
-                       "methodNumbersQty",
-                       "methodParametersQty",
-                       "methodParenthesizedExpsQty",
-                       "methodReturnQty",
-                       "methodRfc",
-                       "methodStringLiteralsQty",
-                       "methodSubClassesQty",
-                       "methodTryCatchQty",
-                       "methodUniqueWordsQty",
-                       "methodVariablesQty",
-                       "methodWmc",
-                       #"shortMethodName", ToDo: decide if and how to include string objects
-                       "startLine"]
-variableMetricsFields = ["variableAppearances",
-                         #"variableName" ToDo: decide if and how to include string objects
-                         ]
-fieldMetricsFields = ["fieldAppearances",
-                      #"fieldName" ToDo: decide if and how to include string objects
-                      ]
-processMetricsFields = ["authorOwnership",
-                        "bugFixCount",
-                        "qtyMajorAuthors",
-                        "qtyMinorAuthors",
-                        "qtyOfAuthors",
-                        "qtyOfCommits",
-                        "refactoringsInvolved"]
-commitMetaDataFields = ["commitDate",
-                        "commitId",
-                        "commitMessage",
-                        "commitUrl",
-                        "parentCommitId"]
-projectFields = ["commitCountThresholds",
-                 "commits",
-                 "datasetName",
-                 "dateOfProcessing",
-                 "exceptionsCount",
-                 "finishedDate",
-                 "gitUrl",
-                 "isLocal",
-                 "javaLoc",
-                 "lastCommitHash",
-                 "numberOfProductionFiles",
-                 "numberOfTestFiles",
-                 "productionLoc",
-                 "projectName",
-                 "projectSizeInBytes",
-                 "testLoc"]
-refactoringCommitFields = ["className",
-                           "filePath",
-                           "isTest",
-                           "level",
-                           # "refactoring", this two fields are not used for the training
-                           # "refactoringSummary"
-                           ]
-stableCommitFields = ["className",
-                      "filePath",
-                      "isTest",
-                      "level"]
-
 # all tables referenced from the instance base class for refactoring commit and stable commit
 instanceReferences = ["classMetrics_id",
                       "commitMetaData_id",
@@ -132,15 +24,15 @@ instanceReferences = ["classMetrics_id",
                       "variableMetrics_id"]
 
 # maps table names onto their instance keys and their fields
-tableMap = {commitMetaData: (commitMetaData + "_id", commitMetaDataFields),
-            methodMetrics: (methodMetrics + "s_id", methodMetricsFields),
-            fieldMetrics: (fieldMetrics + "s_id", fieldMetricsFields),
-            variableMetrics: (variableMetrics + "s_id", variableMetricsFields),
-            processMetrics: (processMetrics + "_id", processMetricsFields),
-            classMetrics: (classMetrics + "s_id", classMetricsFields),
-            project: (project + "_id", projectFields),
-            refactoringCommits: ("id", refactoringCommitFields),
-            stableCommits: ("id", stableCommitFields)}
+tableMap = {commitMetaData: (commitMetaData + "_id", COMMIT_METADATA_FIELDS),
+            methodMetrics: (methodMetrics + "s_id", METHOD_METRICS_FIELDS),
+            fieldMetrics: (fieldMetrics + "s_id", FIELD_METRICS_FIELDS),
+            variableMetrics: (variableMetrics + "s_id", VARIABLE_METRICS_FIELDS),
+            processMetrics: (processMetrics + "_id", PROCESS_METRICS_FIELDS),
+            classMetrics: (classMetrics + "s_id", CLASS_METRICS_Fields),
+            project: (project + "_id", PROJECT_FIELDS),
+            refactoringCommits: ("id", REFACTORING_COMMIT_FIELDS),
+            stableCommits: ("id", STABLE_COMMIT_FIELDS)}
 # endregion
 
 
@@ -163,14 +55,14 @@ def join_table(instance_name: str, table_name: str) -> str:
 # e.g. classMetricsFields, methodMetricsFields and processMetricsFields for level 2 method level
 def get_metrics_level(level: int):
     if level <= 3:
-        return [(classMetrics, classMetricsFields), (methodMetrics, methodMetricsFields),
-                (variableMetrics, variableMetricsFields)][:level] + \
-            [(processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (methodMetrics, METHOD_METRICS_FIELDS),
+                (variableMetrics, VARIABLE_METRICS_FIELDS)][:level] + \
+            [(processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 4:
-        return [(classMetrics, classMetricsFields), (fieldMetrics, fieldMetricsFields),
-                (processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics, FIELD_METRICS_FIELDS),
+                (processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 5:
-        return [(classMetrics, classMetricsFields), (processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (processMetrics, PROCESS_METRICS_FIELDS)]
 
 
 # Create a sql select statement for the given instance and requested fields
