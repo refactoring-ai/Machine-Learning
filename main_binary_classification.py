@@ -1,4 +1,5 @@
 from configs import DATASETS
+from db.DBConnector import close_connection
 from ml.models.builder import build_models
 from ml.pipelines.binary import BinaryClassificationPipeline
 from refactoring import build_refactorings
@@ -19,3 +20,6 @@ pipeline.run()
 
 # That's it, folks.
 log_close()
+close_connection()
+
+exit()

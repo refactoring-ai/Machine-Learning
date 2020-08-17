@@ -1,6 +1,6 @@
 from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP
 from db.QueryBuilder import get_all_level_stable, get_level_refactorings_count, get_level_refactorings
-from db.DBConnector import execute_query
+from db.DBConnector import execute_query, close_connection
 from utils.log import log_init, log_close, log
 import time
 import datetime
@@ -25,3 +25,6 @@ for dataset in (DATASETS + VALIDATION_DATASETS):
 
 log('Cache warm-up took %s seconds.' % (time.time() - start_time))
 log_close()
+close_connection()
+
+exit()
