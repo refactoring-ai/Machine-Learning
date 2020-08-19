@@ -42,7 +42,7 @@ SCALE_DATASET = True
 
 # region Sample size
 # fraction of the samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION = 0.8
+TRAINING_SAMPLE_FRACTION = 1.0
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
