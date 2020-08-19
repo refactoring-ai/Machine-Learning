@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 
+from configs import CORE_COUNT
 from ml.models.base import SupervisedMLRefactoringModel
 
 
@@ -14,7 +15,7 @@ class RandomForestRefactoringModel(SupervisedMLRefactoringModel):
 
     def model(self, best_params=None):
         if best_params is not None:
-            return RandomForestClassifier(random_state=42, n_jobs=-1,
+            return RandomForestClassifier(random_state=42, n_jobs=CORE_COUNT,
                                           max_depth=best_params["max_depth"],
                                           max_features=best_params["max_features"],
                                           min_samples_split=best_params["min_samples_split"],
