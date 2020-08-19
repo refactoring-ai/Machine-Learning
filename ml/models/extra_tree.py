@@ -1,5 +1,6 @@
 from sklearn.ensemble import ExtraTreesClassifier
 
+from configs import CORE_COUNT
 from ml.models.base import SupervisedMLRefactoringModel
 
 
@@ -24,7 +25,8 @@ class ExtraTreeRefactoringModel(SupervisedMLRefactoringModel):
                                         min_samples_leaf=best_params["min_samples_leaf"],
                                         bootstrap=best_params["bootstrap"],
                                         criterion=best_params["criterion"],
-                                        n_estimators=best_params["n_estimators"])
+                                        n_estimators=best_params["n_estimators"],
+                                        n_jobs=CORE_COUNT)
 
         return ExtraTreesClassifier(random_state=42)
 
