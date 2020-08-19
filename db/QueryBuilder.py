@@ -1,5 +1,6 @@
 from ml.enums.filetype import FileType
-from configs import FILE_TYPE
+from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, VARIABLE_METRICS_FIELDS, FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS, COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, STABLE_COMMIT_FIELDS
+
 
 # region database structure
 # table names for reference:
@@ -13,115 +14,6 @@ project: str = "project"
 refactoringCommits: str = "RefactoringCommit"
 stableCommits: str = "StableCommit"
 
-# the ids are not included as they are the same for every table: id : long
-classMetricsFields = ["classAnonymousClassesQty",
-                      "classAssignmentsQty",
-                      "classCbo",
-                      "classComparisonsQty",
-                      "classLambdasQty",
-                      "classLcom",
-                      "classLoc",
-                      "classLoopQty",
-                      "classMathOperationsQty",
-                      "classMaxNestedBlocks",
-                      "classNosi",
-                      "classNumberOfAbstractMethods",
-                      "classNumberOfDefaultFields",
-                      "classNumberOfDefaultMethods",
-                      "classNumberOfFields",
-                      "classNumberOfFinalFields",
-                      "classNumberOfFinalMethods",
-                      "classNumberOfMethods",
-                      "classNumberOfPrivateFields",
-                      "classNumberOfPrivateMethods",
-                      "classNumberOfProtectedFields",
-                      "classNumberOfProtectedMethods",
-                      "classNumberOfPublicFields",
-                      "classNumberOfPublicMethods",
-                      "classNumberOfStaticFields",
-                      "classNumberOfStaticMethods",
-                      "classNumberOfSynchronizedFields",
-                      "classNumberOfSynchronizedMethods",
-                      "classNumbersQty",
-                      "classParenthesizedExpsQty",
-                      "classReturnQty",
-                      "classRfc",
-                      "classStringLiteralsQty",
-                      "classSubClassesQty",
-                      "classTryCatchQty",
-                      "classUniqueWordsQty",
-                      "classVariablesQty",
-                      "classWmc",
-                      "isInnerClass"]
-methodMetricsFields = [#"fullMethodName", ToDo: decide if and how to include string objects
-                       "methodAnonymousClassesQty",
-                       "methodAssignmentsQty",
-                       "methodCbo",
-                       "methodComparisonsQty",
-                       "methodLambdasQty",
-                       "methodLoc",
-                       "methodLoopQty",
-                       "methodMathOperationsQty",
-                       "methodMaxNestedBlocks",
-                       "methodNumbersQty",
-                       "methodParametersQty",
-                       "methodParenthesizedExpsQty",
-                       "methodReturnQty",
-                       "methodRfc",
-                       "methodStringLiteralsQty",
-                       "methodSubClassesQty",
-                       "methodTryCatchQty",
-                       "methodUniqueWordsQty",
-                       "methodVariablesQty",
-                       "methodWmc",
-                       #"shortMethodName", ToDo: decide if and how to include string objects
-                       "startLine"]
-variableMetricsFields = ["variableAppearances",
-                         #"variableName" ToDo: decide if and how to include string objects
-                         ]
-fieldMetricsFields = ["fieldAppearances",
-                      #"fieldName" ToDo: decide if and how to include string objects
-                      ]
-processMetricsFields = ["authorOwnership",
-                        "bugFixCount",
-                        "qtyMajorAuthors",
-                        "qtyMinorAuthors",
-                        "qtyOfAuthors",
-                        "qtyOfCommits",
-                        "refactoringsInvolved"]
-commitMetaDataFields = ["commitDate",
-                        "commitId",
-                        "commitMessage",
-                        "commitUrl",
-                        "parentCommitId"]
-projectFields = ["commitCountThresholds",
-                 "commits",
-                 "datasetName",
-                 "dateOfProcessing",
-                 "exceptionsCount",
-                 "finishedDate",
-                 "gitUrl",
-                 "isLocal",
-                 "javaLoc",
-                 "lastCommitHash",
-                 "numberOfProductionFiles",
-                 "numberOfTestFiles",
-                 "productionLoc",
-                 "projectName",
-                 "projectSizeInBytes",
-                 "testLoc"]
-refactoringCommitFields = ["className",
-                           "filePath",
-                           "isTest",
-                           "level",
-                           # "refactoring", this two fields are not used for the training
-                           # "refactoringSummary"
-                           ]
-stableCommitFields = ["className",
-                      "filePath",
-                      "isTest",
-                      "level"]
-
 # all tables referenced from the instance base class for refactoring commit and stable commit
 instanceReferences = ["classMetrics_id",
                       "commitMetaData_id",
@@ -132,15 +24,15 @@ instanceReferences = ["classMetrics_id",
                       "variableMetrics_id"]
 
 # maps table names onto their instance keys and their fields
-tableMap = {commitMetaData: (commitMetaData + "_id", commitMetaDataFields),
-            methodMetrics: (methodMetrics + "s_id", methodMetricsFields),
-            fieldMetrics: (fieldMetrics + "s_id", fieldMetricsFields),
-            variableMetrics: (variableMetrics + "s_id", variableMetricsFields),
-            processMetrics: (processMetrics + "_id", processMetricsFields),
-            classMetrics: (classMetrics + "s_id", classMetricsFields),
-            project: (project + "_id", projectFields),
-            refactoringCommits: ("id", refactoringCommitFields),
-            stableCommits: ("id", stableCommitFields)}
+tableMap = {commitMetaData: (commitMetaData + "_id", COMMIT_METADATA_FIELDS),
+            methodMetrics: (methodMetrics + "s_id", METHOD_METRICS_FIELDS),
+            fieldMetrics: (fieldMetrics + "s_id", FIELD_METRICS_FIELDS),
+            variableMetrics: (variableMetrics + "s_id", VARIABLE_METRICS_FIELDS),
+            processMetrics: (processMetrics + "_id", PROCESS_METRICS_FIELDS),
+            classMetrics: (classMetrics + "s_id", CLASS_METRICS_Fields),
+            project: (project + "_id", PROJECT_FIELDS),
+            refactoringCommits: ("id", REFACTORING_COMMIT_FIELDS),
+            stableCommits: ("id", STABLE_COMMIT_FIELDS)}
 # endregion
 
 
@@ -156,21 +48,21 @@ def join_table(instance_name: str, table_name: str) -> str:
 
     return " INNER JOIN " + table_name + \
            " ON " + instance_name + "." + \
-        join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
+           join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
 
 
 # returns a list of all metrics for the given level
 # e.g. classMetricsFields, methodMetricsFields and processMetricsFields for level 2 method level
 def get_metrics_level(level: int):
     if level <= 3:
-        return [(classMetrics, classMetricsFields), (methodMetrics, methodMetricsFields),
-                (variableMetrics, variableMetricsFields)][:level] + \
-            [(processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (methodMetrics, METHOD_METRICS_FIELDS),
+                (variableMetrics, VARIABLE_METRICS_FIELDS)][:level] + \
+               [(processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 4:
-        return [(classMetrics, classMetricsFields), (fieldMetrics, fieldMetricsFields),
-                (processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics, FIELD_METRICS_FIELDS),
+                (processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 5:
-        return [(classMetrics, classMetricsFields), (processMetrics, processMetricsFields)]
+        return [(classMetrics, CLASS_METRICS_Fields), (processMetrics, PROCESS_METRICS_FIELDS)]
 
 
 # Create a sql select statement for the given instance and requested fields
@@ -217,28 +109,27 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
 def get_refactoring_levels(dataset="") -> str:
     return "SELECT refactoring, count(*) total from RefactoringCommit where " + project_filter("RefactoringCommit",
                                                                                                dataset) \
-        + valid_refactorings_filter(refactoringCommits) \
-        + " group by refactoring order by count(*) desc"
+           + valid_refactorings_filter(refactoringCommits) \
+           + " group by refactoring order by count(*) desc"
 
 
-def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "") -> str:
+def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "", conditions: str = "") -> str:
     # only select valid refactorings from the database, if refactorings are selected
-    refactoring_condition: str = instance_name + ".level = " + \
-        str(level) + valid_refactorings_filter(instance_name)
+    refactoring_condition: str = f"{instance_name}.level = {str(level)}" + valid_refactorings_filter(instance_name) + file_type_filter(instance_name)
 
     # only select the specified refactoring type from the database
     if m_refactoring != "":
-        refactoring_condition += " AND " + refactoringCommits + ".refactoring = \"" + m_refactoring + "\""\
-                                 + file_type_filter()
-
+        refactoring_condition += f" AND {refactoringCommits}.refactoring = \"{m_refactoring}\""
+    if len(conditions) > 0:
+        refactoring_condition += f" AND {conditions}"
     return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
                                refactoring_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
 
 
 # Add restriction whether to use only production, test or both files
-def file_type_filter() -> str:
+def file_type_filter(instance_name: str) -> str:
     if FILE_TYPE != FileType.test_and_production.value:
-        return " AND " + refactoringCommits + ".isTest = " + str(FILE_TYPE)
+        return f" AND {instance_name}.isTest = " + str(FILE_TYPE)
     else:
         return ""
 
@@ -271,8 +162,8 @@ def get_all_level_refactorings(level: int, dataset: str = "") -> str:
 
 
 # get all stable instances with the given level and the corresponding metrics
-def get_all_level_stable(level: int, dataset: str = "") -> str:
-    return __get_level(stableCommits, level, "", dataset)
+def get_all_level_stable(level: int, commit_threshold: int, dataset: str = "") -> str:
+    return __get_level(stableCommits, level, "", dataset, conditions=f"{stableCommits}.commitThreshold = {commit_threshold}")
 
 
 # get all unique refactoring types as a list
