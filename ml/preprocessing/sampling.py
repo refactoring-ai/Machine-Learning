@@ -1,7 +1,7 @@
 import pandas as pd
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
-from configs import BALANCE_DATASET_STRATEGY
+from configs import BALANCE_DATASET_STRATEGY, CORE_COUNT
 from utils.log import log
 
 
@@ -38,9 +38,9 @@ def perform_balancing(x, y, strategy=None):
     elif strategy == 'oversampling':
         rus = RandomOverSampler(random_state=42)
     elif strategy == 'cluster_centroids':
-        rus = ClusterCentroids(random_state=42)
+        rus = ClusterCentroids(random_state=42, n_jobs=CORE_COUNT)
     elif strategy == 'nearmiss':
-        rus = NearMiss(version=1)
+        rus = NearMiss(version=1, n_jobs=CORE_COUNT)
     else:
         raise Exception("algorithm not found")
 

@@ -13,6 +13,12 @@ TEST = False
 FILE_TYPE = 0
 # endregion
 
+# region Multi-Core
+# The number of cores to use for tasks, e.g. classifier training or feature selection
+# -1 denotes to use all available cores
+CORE_COUNT = -1
+# endregion
+
 # region Database related
 # do we use the cached results? True=yes, False=no, go always to the db
 USE_CACHE = True

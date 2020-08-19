@@ -2,6 +2,7 @@ from random import uniform
 
 from sklearn.linear_model import LogisticRegression
 
+from configs import CORE_COUNT
 from ml.models.base import SupervisedMLRefactoringModel
 
 
@@ -13,7 +14,7 @@ class LogisticRegressionRefactoringModel(SupervisedMLRefactoringModel):
 
     def model(self, best_params=None):
         if best_params is not None:
-            return LogisticRegression(solver='lbfgs', max_iter=best_params["max_iter"], C=best_params["C"])
+            return LogisticRegression(solver='lbfgs', max_iter=best_params["max_iter"], C=best_params["C"], n_jobs=CORE_COUNT)
 
         return LogisticRegression(solver='lbfgs')
 

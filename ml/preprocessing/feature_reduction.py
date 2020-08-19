@@ -1,6 +1,6 @@
 from sklearn.feature_selection import RFECV
 from sklearn.svm import SVR
-from configs import N_CV_FEATURE_REDUCTION
+from configs import N_CV_FEATURE_REDUCTION, CORE_COUNT
 from utils.log import log
 
 
@@ -14,7 +14,7 @@ def feature_selection_rfecv(estimator, X, y):
 
     :return: x, where x only contains the relevant features.
     """
-    selector = RFECV(estimator, step=1, cv=N_CV_FEATURE_REDUCTION)
+    selector = RFECV(estimator, step=1, cv=N_CV_FEATURE_REDUCTION, n_jobs=CORE_COUNT)
 
     selector.fit(X, y)
     log(f"Feature ranking: {', '.join(str(e) for e in selector.ranking_)}", False)
