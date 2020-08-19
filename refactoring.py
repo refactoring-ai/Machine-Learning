@@ -1,4 +1,4 @@
-from configs import Level, LEVEL_MAP
+from configs import Level, LEVEL_MAP, LEVEL_Stable_Thresholds_MAP
 from db.QueryBuilder import get_level_refactorings, get_all_level_stable
 from db.DBConnector import execute_query
 from utils.log import log
@@ -16,7 +16,7 @@ class LowLevelRefactoring:
         return execute_query(get_level_refactorings(int(self._level), self._name, dataset))
 
     def get_non_refactored_instances(self, dataset):
-        return execute_query(get_all_level_stable(int(self._level), dataset))
+        return execute_query(get_all_level_stable(int(self._level), LEVEL_Stable_Thresholds_MAP[self._level], dataset))
 
     def refactoring_level(self) -> str:
         return str(self._level)
