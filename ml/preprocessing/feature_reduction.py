@@ -14,7 +14,7 @@ def feature_selection_rfecv(estimator, X, y):
 
     :return: x, where x only contains the relevant features.
     """
-    selector = RFECV(estimator, step=1, cv=N_CV_FEATURE_REDUCTION)
+    selector = RFECV(estimator, step=1, cv=N_CV_FEATURE_REDUCTION, n_jobs=-1)
 
     selector.fit(X, y)
     log(f"Feature ranking: {', '.join(str(e) for e in selector.ranking_)}", False)
