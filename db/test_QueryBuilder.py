@@ -2,7 +2,7 @@ import unittest
 
 from configs import LEVEL_Stable_Thresholds_MAP, Level
 from db.QueryBuilder import project_filter, join_table, get_metrics_level, get_instance_fields, \
-    get_refactoring_levels, get_level_refactorings_count, get_all_level_refactorings, get_all_level_stable, \
+    get_refactoring_levels_counts, get_level_refactorings_count, get_all_level_refactorings, get_level_stable, \
     get_level_refactorings, get_refactoring_types
 
 
@@ -64,10 +64,8 @@ class QueryBuilderUnitTest(unittest.TestCase):
         self.assertEqual(sqlExpected, sqlBuilt)
 
     def test_get_refactoring_levels(self):
-        sqlExpected: str = "SELECT refactoring, count(*) total from RefactoringCommit where " \
-                           "RefactoringCommit.project_id in (select id from project where datasetName = \"github\") AND RefactoringCommit.isValid = TRUE " \
-                           "group by refactoring order by count(*) desc"
-        sqlBuilt: str = get_refactoring_levels("github")
+        sqlExpected: str = "SELECT refactoring, count(*) total from RefactoringCommit where RefactoringCommit.isTest = 0 AND RefactoringCommit.project_id in (select id from project where datasetName = \"github\") AND RefactoringCommit.isValid = TRUE group by `level`, refactoring order by count(*) desc"
+        sqlBuilt: str = get_refactoring_levels_counts("github")
         self.assertEqual(sqlExpected, sqlBuilt)
 
     def test_get_level_refactorings(self):
@@ -81,17 +79,17 @@ class QueryBuilderUnitTest(unittest.TestCase):
         self.assertEqual(sqlExpected, sqlBuilt)
 
     def test_get_all_level_stable(self):
-        sqlExpected: str = "SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS db_id, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id WHERE StableCommit.level = 1 AND StableCommit.isTest = 0 AND StableCommit.commitThreshold = 15 AND StableCommit.project_id in (select id from project where datasetName = \"github\") order by CommitMetaData.commitDate"
-        sqlBuilt: str = get_all_level_stable(int(Level.Class), LEVEL_Stable_Thresholds_MAP[Level.Class], "github")
+        sqlExpected: str = "SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS db_id, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id WHERE StableCommit.commitThreshold = 15 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND StableCommit.project_id in (select id from project where datasetName = \"github\") order by CommitMetaData.commitDate"
+        sqlBuilt: str = get_level_stable(int(Level.Class), LEVEL_Stable_Thresholds_MAP[Level.Class], "github")
         self.assertEqual(sqlExpected, sqlBuilt)
 
     def test_get_level_refactorings_count(self):
-        sqlExpected: str = "SELECT refactoring, count(*) FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.level = 2 AND RefactoringCommit.project_id in (select id from project where datasetName = \"github\") AND RefactoringCommit.isValid = TRUE) t group by refactoring order by count(*) desc"
+        sqlExpected: str = "SELECT refactoring, count(*) FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.level = 2 AND RefactoringCommit.project_id in (select id from project where datasetName = \"github\") AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0) t group by refactoring order by count(*) desc"
         sqlBuilt: str = get_level_refactorings_count(int(Level.Method), "github")
         self.assertEqual(sqlExpected, sqlBuilt)
 
     def test_get_refactoring_types(self):
-        sqlExpected: str = "SELECT DISTINCT refactoring FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.project_id in (select id from project where datasetName = \"github\")) t"
+        sqlExpected: str = "SELECT DISTINCT refactoring FROM (SELECT RefactoringCommit.refactoring FROM RefactoringCommit WHERE RefactoringCommit.isTest = 0 AND RefactoringCommit.project_id in (select id from project where datasetName = \"github\")) t"
         sqlBuilt: str = get_refactoring_types("github")
         self.assertEqual(sqlExpected, sqlBuilt)
 
