@@ -2,7 +2,8 @@ import traceback
 import pandas as pd
 from sklearn.inspection import permutation_importance
 
-from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT
+from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
+    FEATURE_REDUCTION
 from ml.preprocessing.feature_reduction import perform_feature_reduction
 from ml.utils.output import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
@@ -183,9 +184,10 @@ class BinaryClassificationPipeline(MLPipeline):
         param_dist = model_def.params_to_tune()
         search = None
 
-        features, x_train = perform_feature_reduction(model, x_train, y_train)
-        x_val_list = [X for _, X in [
-            perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
+        if FEATURE_REDUCTION:
+            features, x_train = perform_feature_reduction(model, x_train, y_train)
+            x_val_list = [X for _, X in [
+                perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
 
         # choose which search to apply
         if SEARCH == 'randomized':
@@ -197,7 +199,8 @@ class BinaryClassificationPipeline(MLPipeline):
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
 
         # reduce the features for the supermodel:
-        features, X = perform_feature_reduction(model, X, y, features)
+        if FEATURE_REDUCTION:
+            features, X = perform_feature_reduction(model, X, y, features)
         # Run cross validation on whole dataset and safe production ready model
         super_model = _build_production_model(model_def, search.best_params_, X, y)
 
