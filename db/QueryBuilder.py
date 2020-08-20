@@ -37,11 +37,6 @@ tableMap = {commitMetaData: (commitMetaData + "_id", COMMIT_METADATA_FIELDS),
 
 
 # region tables utils
-# returns a sql condition as a string to filter instances based on the given project name
-def project_filter(instance_name: str, project_name: str) -> str:
-    return f"{instance_name}.project_id in (select id from project where datasetName = \"{project_name}\")"
-
-
 # returns a sql condition to join instances with the given table
 def join_table(instance_name: str, table_name: str) -> str:
     join_collumn = tableMap[table_name][0]
@@ -89,6 +84,17 @@ def __stable_level_filter(level: int):
 # Optional dataset: filter the instances based on their project name, e.g. toyproject-1
 # Optional order: order by command, e.g. order by CommitMetaData.commitDate
 def get_instance_fields(instance_name: str, fields, conditions: str = "", dataset: str = "", order: str = "", get_instance_id: bool = False) -> str:
+    """
+    Create a sql select statement for the given instance and requested fields.
+
+    Parameter:
+        instance name (str): name of the instance table you are querying, e.g. RefactoringCommit or stablecommit, this is also given in the fields
+        fields (list): a list containing the table name as string and all required fields from the table as a list of strings e.g [CommitMetaData, commitMetaDataFields], an instance has to be part of fields together with at least one field, either refactoring commit or stablecommit
+        conditions (str) (optional): a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
+        dataset (str) (optional): filter the instances based on their project name, e.g. toyproject-1
+        order (str) (optional): order by command, e.g. order by CommitMetaData.commitDate
+        get_instance_id (bool) (optional): do you want the original instance id, e.g. StableCommit.2541?
+    """
     # combine the required fields with their table names
     required_fields: str = ""
     required_tables: str = ""
@@ -98,8 +104,11 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
         # don't join the instance with itself
         if (instance_name != table_name):
             required_tables += join_table(instance_name, table_name)
+
         for field_name in field_names:
             required_fields += table_name + "." + field_name + ", "
+    if len(dataset) > 0 and f"{project}" not in required_tables:
+        required_tables += join_table(instance_name, project)
     # remove the last chars because it is either a ", " or an " AND "
     required_fields = required_fields[:-2]
 
@@ -111,7 +120,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     if len(dataset) > 0:
         if not sql.endswith(' WHERE '):
             sql += " AND "
-        sql += project_filter(instance_name, dataset)
+        sql += f"datasetName = \"{dataset}\""
     if sql.endswith(' WHERE '):
         sql = sql[:-7]
     if len(order) > 8:
@@ -129,7 +138,7 @@ def get_refactoring_levels_counts(dataset="") -> str:
     Parameters:
         dataset (str) (optional):       filter the project dataset for this
     """
-    return f"SELECT refactoring, count(*) total from RefactoringCommit where {file_type_filter(refactoringCommits)} AND {project_filter(refactoringCommits, dataset)} AND {valid_refactorings_filter(refactoringCommits)}" \
+    return f"SELECT refactoring, count(*) total from {refactoringCommits}{join_table(refactoringCommits, project)} where {file_type_filter(refactoringCommits)} AND datasetName LIKE \"{dataset}\" AND {valid_refactorings_filter(refactoringCommits)}" \
            + " group by `level`, refactoring order by count(*) desc"
 
 
