@@ -37,11 +37,6 @@ tableMap = {commitMetaData: (commitMetaData + "_id", COMMIT_METADATA_FIELDS),
 
 
 # region tables utils
-# returns a sql condition as a string to filter instances based on the given project name
-def project_filter(instance_name: str, project_name: str) -> str:
-    return instance_name + ".project_id in (select id from project where datasetName = \"" + project_name + "\")"
-
-
 # returns a sql condition to join instances with the given table
 def join_table(instance_name: str, table_name: str) -> str:
     join_collumn = tableMap[table_name][0]
@@ -51,9 +46,13 @@ def join_table(instance_name: str, table_name: str) -> str:
            join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
 
 
-# returns a list of all metrics for the given level
-# e.g. classMetricsFields, methodMetricsFields and processMetricsFields for level 2 method level
 def get_metrics_level(level: int):
+    """
+    Get a list of all metrics for the given level, e.g. classMetricsFields, methodMetricsFields and processMetricsFields for level 2 method level
+
+    Parameters:
+        level (int):   get the metrics for this level
+    """
     if level <= 3:
         return [(classMetrics, CLASS_METRICS_Fields), (methodMetrics, METHOD_METRICS_FIELDS),
                 (variableMetrics, VARIABLE_METRICS_FIELDS)][:level] + \
@@ -65,6 +64,18 @@ def get_metrics_level(level: int):
         return [(classMetrics, CLASS_METRICS_Fields), (processMetrics, PROCESS_METRICS_FIELDS)]
 
 
+def __stable_level_filter(level: int):
+    """
+    Get a filter to select distinct stable instances for the given level, e.g. for level 2 get stable instances with level 2 and 3
+
+    Parameters:
+        level (int):   get the instances for this level
+    """
+    if level == 1 or level == 5:
+        return f"{stableCommits}.`level` = 1"
+    else:
+        return f"{stableCommits}.`level` = {level}"
+
 # Create a sql select statement for the given instance and requested fields
 # instance name: name of the instance table you are querying, e.g. RefactoringCommit or stablecommit, this is also given in the fields
 # fields: a list containing the table name as string and all required fields from the table as a list of strings e.g [CommitMetaData, commitMetaDataFields]
@@ -73,6 +84,17 @@ def get_metrics_level(level: int):
 # Optional dataset: filter the instances based on their project name, e.g. toyproject-1
 # Optional order: order by command, e.g. order by CommitMetaData.commitDate
 def get_instance_fields(instance_name: str, fields, conditions: str = "", dataset: str = "", order: str = "", get_instance_id: bool = False) -> str:
+    """
+    Create a sql select statement for the given instance and requested fields.
+
+    Parameter:
+        instance name (str): name of the instance table you are querying, e.g. RefactoringCommit or stablecommit, this is also given in the fields
+        fields (list): a list containing the table name as string and all required fields from the table as a list of strings e.g [CommitMetaData, commitMetaDataFields], an instance has to be part of fields together with at least one field, either refactoring commit or stablecommit
+        conditions (str) (optional): a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
+        dataset (str) (optional): filter the instances based on their project name, e.g. toyproject-1
+        order (str) (optional): order by command, e.g. order by CommitMetaData.commitDate
+        get_instance_id (bool) (optional): do you want the original instance id, e.g. StableCommit.2541?
+    """
     # combine the required fields with their table names
     required_fields: str = ""
     required_tables: str = ""
@@ -82,8 +104,11 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
         # don't join the instance with itself
         if (instance_name != table_name):
             required_tables += join_table(instance_name, table_name)
+
         for field_name in field_names:
             required_fields += table_name + "." + field_name + ", "
+    if len(dataset) > 0 and f"{project}" not in required_tables:
+        required_tables += join_table(instance_name, project)
     # remove the last chars because it is either a ", " or an " AND "
     required_fields = required_fields[:-2]
 
@@ -95,7 +120,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     if len(dataset) > 0:
         if not sql.endswith(' WHERE '):
             sql += " AND "
-        sql += project_filter(instance_name, dataset)
+        sql += f"datasetName = \"{dataset}\""
     if sql.endswith(' WHERE '):
         sql = sql[:-7]
     if len(order) > 8:
@@ -105,71 +130,114 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
 
 
 # region Public interaction
-# get the count of all refactoring levels
-def get_refactoring_levels(dataset="") -> str:
-    return "SELECT refactoring, count(*) total from RefactoringCommit where " + project_filter("RefactoringCommit",
-                                                                                               dataset) \
-           + valid_refactorings_filter(refactoringCommits) \
-           + " group by refactoring order by count(*) desc"
+#
+def get_refactoring_levels_counts(dataset="") -> str:
+    """
+    Get the counts of all refactorings for all levels.
+
+    Parameters:
+        dataset (str) (optional):       filter the project dataset for this
+    """
+    return f"SELECT refactoring, count(*) total from {refactoringCommits}{join_table(refactoringCommits, project)} where {file_type_filter(refactoringCommits)} AND datasetName LIKE \"{dataset}\" AND {valid_refactorings_filter(refactoringCommits)}" \
+           + " group by `level`, refactoring order by count(*) desc"
 
 
-def __get_level(instance_name: str, level: int, m_refactoring: str, dataset: str = "", conditions: str = "") -> str:
+def get_level_refactorings(level: int, m_refactoring: str, dataset: str = "") -> str:
+    """
+    Get all refactoring instances with the given refactoring type and metrics in regard to the level
+
+    Parameters:
+        level (int):                    the refactoring instances are filtered for this level
+        m_refactoring (str) (optional): filter for a specific refactoring type, e.g. "Push Down Attribute"
+        dataset (str) (optional):       filter the project dataset for this
+    """
     # only select valid refactorings from the database, if refactorings are selected
-    refactoring_condition: str = f"{instance_name}.level = {str(level)}" + valid_refactorings_filter(instance_name) + file_type_filter(instance_name)
+    refactoring_condition: str = f"{refactoringCommits}.level = {str(level)} AND {valid_refactorings_filter(refactoringCommits)} AND {file_type_filter(refactoringCommits)}"
 
     # only select the specified refactoring type from the database
     if m_refactoring != "":
         refactoring_condition += f" AND {refactoringCommits}.refactoring = \"{m_refactoring}\""
-    if len(conditions) > 0:
-        refactoring_condition += f" AND {conditions}"
-    return get_instance_fields(instance_name, [(instance_name, []), (commitMetaData, [])] + get_metrics_level(level),
+    return get_instance_fields(refactoringCommits, [(refactoringCommits, []), (commitMetaData, [])] + get_metrics_level(level),
                                refactoring_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
 
 
-# Add restriction whether to use only production, test or both files
+def get_level_stable(level: int, commit_threshold: int, dataset: str = "", conditions: str = "") -> str:
+    """
+    Get all stable instances with the given level and the corresponding metrics
+
+    Parameters:
+        level (int):                    get the stable instances for this level
+        commit_threshold (int):    filter for this specific commit threshold, specifying the 'stability' of the instance
+        dataset (str) (optional):       filter the project dataset for this
+        conditions (str) (optional):    additional sql conditions for this refactoring, e.g. (commitDate BETWEEN A and B).
+                                        DON'T add filter for the level or test; this is already done.
+    """
+    # only select valid refactorings from the database, if refactorings are selected
+    stable_condition: str = f"{stableCommits}.commitThreshold = {commit_threshold} AND {__stable_level_filter(level)} AND {file_type_filter(stableCommits)}"
+
+    if len(conditions) > 0:
+        stable_condition += f" AND {conditions}"
+    return get_instance_fields(stableCommits, [(stableCommits, []), (commitMetaData, [])] + get_metrics_level(level),
+                               stable_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
+
+
 def file_type_filter(instance_name: str) -> str:
+    """
+    Add restriction whether to use only production, test or both files
+
+    Parameter:
+        (instance_name): name of the instance table to filter, either RefactoringCommit or StableCommit
+    """
     if FILE_TYPE != FileType.test_and_production.value:
-        return f" AND {instance_name}.isTest = " + str(FILE_TYPE)
+        return f"{instance_name}.isTest = " + str(FILE_TYPE)
     else:
         return ""
 
 
-# only select valid refactorings from the database
 def valid_refactorings_filter(instance_name: str) -> str:
+    """
+    Only select valid refactorings from the database
+
+    Parameter:
+        (instance_name): name of the instance table to filter, either RefactoringCommit or StableCommit
+    """
     if instance_name == refactoringCommits:
-        return " AND " + instance_name + ".isValid = TRUE"
+        return f"{instance_name}.isValid = TRUE"
     else:
         return ""
 
 
-# get the count of all refactorings for the given level
 def get_level_refactorings_count(level: int, dataset: str = "") -> str:
-    return "SELECT refactoring, count(*) FROM (" + \
+    """
+    Get the count of all refactorings for the given level
+
+    Parameter:
+        level (int):               get the refactoring instances for this level
+        dataset (str) (optional):  filter for these specific projects
+    """
+    return f"SELECT refactoring, count(*) FROM (" + \
            get_instance_fields(refactoringCommits, [(refactoringCommits, ["refactoring"])],
-                               refactoringCommits + ".level = " + str(level), dataset) + \
-           valid_refactorings_filter(
-               refactoringCommits) + ") t group by refactoring order by count(*) desc"
+                               f"{refactoringCommits}.level = {str(level)}", dataset) + \
+           f" AND {valid_refactorings_filter(refactoringCommits)} AND {file_type_filter(refactoringCommits)}) t group by refactoring order by count(*) desc"
 
 
-# get all refactoring instances with the given refactoring type and metrics in regard to the level
-def get_level_refactorings(level: int, m_refactoring: str, dataset: str = "") -> str:
-    return __get_level(refactoringCommits, level, m_refactoring, dataset)
-
-
-# get all refactoring instances with the given level and the corresponding metrics
 def get_all_level_refactorings(level: int, dataset: str = "") -> str:
-    return __get_level(refactoringCommits, level, "", dataset)
+    """
+    Get all refactoring instances with the given level and the corresponding metrics
+
+    Parameter:
+        level (int):               get the refactoring instances for this level
+        dataset (str) (optional):  filter for these specific projects
+    """
+    return get_level_refactorings(level, "", dataset)
 
 
-# get all stable instances with the given level and the corresponding metrics
-def get_all_level_stable(level: int, commit_threshold: int, dataset: str = "") -> str:
-    return __get_level(stableCommits, level, "", dataset, conditions=f"{stableCommits}.commitThreshold = {commit_threshold}")
-
-
-# get all unique refactoring types as a list
-# Optional dataset: filter to this specific project
 def get_refactoring_types(dataset: str = "") -> str:
-    return "SELECT DISTINCT refactoring FROM " \
-           "(" + get_instance_fields(refactoringCommits,
-                                     [(refactoringCommits, ["refactoring"])], "", dataset) + ") t"
+    """
+    Get all unique refactoring types as a list
+
+    Parameter:
+        dataset (str) (optional):  filter for these specific projects
+    """
+    return f"SELECT DISTINCT refactoring FROM ({get_instance_fields(refactoringCommits, [(refactoringCommits, ['refactoring'])], file_type_filter(refactoringCommits), dataset)}) t"
 # endregion
