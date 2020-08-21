@@ -1,15 +1,19 @@
 # region Testing
 # is it a test run?
 # test runs reduce the dataset to 100 instances only
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 # is this a test run?
 TEST = False
 # endregion
 
 # region FileTypes
+class FileType(Enum):
+    only_production = 0
+    only_test = 1
+    test_and_production = 2
+
 # Do we only look at production or test files or both?
-# 0 = only_production, 1 = only_test, 2 = production_and_test
 FILE_TYPE = 0
 # endregion
 
