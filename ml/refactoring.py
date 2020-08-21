@@ -1,5 +1,5 @@
 from configs import LEVEL_MAP, LEVEL_Stable_Thresholds_MAP, Level
-from db.QueryBuilder import get_level_refactorings, get_all_level_stable
+from db.QueryBuilder import get_level_refactorings, get_level_stable
 from db.DBConnector import execute_query
 from utils.log import log
 
@@ -28,7 +28,7 @@ class LowLevelRefactoring:
         Parameter:
             dataset (str) (optional): filter the non-refactored for this dataset. If no dataset is specified, no filter is applied.
         """
-        return execute_query(get_all_level_stable(int(self._level), LEVEL_Stable_Thresholds_MAP[self._level], dataset))
+        return execute_query(get_level_stable(int(self._level), LEVEL_Stable_Thresholds_MAP[self._level], dataset))
 
     def level(self) -> str:
         """

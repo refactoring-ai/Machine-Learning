@@ -1,5 +1,5 @@
 from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP
-from db.QueryBuilder import get_all_level_stable, get_level_refactorings_count, get_level_refactorings
+from db.QueryBuilder import get_level_stable, get_level_refactorings_count, get_level_refactorings
 from db.DBConnector import execute_query, close_connection
 from utils.log import log_init, log_close, log
 import time
@@ -22,7 +22,7 @@ for dataset in (DATASETS + VALIDATION_DATASETS):
     log("\n**** dataset: " + dataset)
     for level in Level:
         log("-- non refactored instances for " + str(level))
-        non_refactored = execute_query(get_all_level_stable(int(level), LEVEL_Stable_Thresholds_MAP[level], dataset))
+        non_refactored = execute_query(get_level_stable(int(level), LEVEL_Stable_Thresholds_MAP[level], dataset))
         log(str(len(non_refactored)) + " non-refactored instances were found for level: " + str(level))
 
         log("-- " + str(level) + " refactoring types with count")

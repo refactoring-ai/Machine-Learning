@@ -56,11 +56,10 @@ def execute_query(sql_query):
     query_hash = hashlib.sha1(sql_query.encode()).hexdigest()
 
     # Create the filepath
-    file_path = os.path.join("_cache","{}.csv".format(query_hash))
+    file_path = os.path.join("_cache", "{}.csv".format(query_hash))
 
     # Read the file or execute query
     if USE_CACHE and os.path.exists(file_path):
-        # log("DEBUG: query is cached")
         df_raw = pd.read_csv(file_path)
         return df_raw
     else:
@@ -78,7 +77,10 @@ def execute_query(sql_query):
 
 
 def close_connection():
-    if tunnel is not None:
-        tunnel.close()
+    """
+    Close the connections with the database and tunnel, if necessary.
+    """
     if mydb is not None:
         mydb.close()
+    if tunnel is not None:
+        tunnel.close()
