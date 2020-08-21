@@ -1,5 +1,5 @@
 import datetime
-from ml.utils.output import store_json, store_joblib, store_collection
+from utils.classifier_utils import store_json, store_joblib, store_collection
 
 
 class MLModel(object):

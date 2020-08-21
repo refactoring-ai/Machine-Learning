@@ -5,12 +5,12 @@ from sklearn.inspection import permutation_importance
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
     FEATURE_REDUCTION
 from ml.preprocessing.feature_reduction import perform_feature_reduction
-from ml.utils.output import format_results_single_run
+from utils.classifier_utils import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
 from ml.pipelines.pipelines import MLPipeline
 from ml.preprocessing.preprocessing import retrieve_labelled_instances
-from ml.utils.output import format_best_parameters
+from utils.classifier_utils import format_best_parameters
 from utils.date_utils import now
 from utils.log import log
 
