@@ -31,7 +31,7 @@ Finally, configure the training in the `configs.py`. There, you can define which
 ### Training and testing models
 
 The main Python script that generates all the models and results is the
-`main_binary_classification.py`. You run it by simply calling `python3 main_binary_classification.py`.
+`binary_classification.py`. You run it by simply calling `python3 binary_classification.py`.
 
 The results will be stored in a `results/` folder.
 
@@ -47,19 +47,6 @@ python3 warm_cache.py
 ```
 
 If you need to clean up the cache, simply delete the `_cache` directory.
-
-
-### Cross-domain validation
-
-The `main_cross_models_evaluation.py` performs pairwise comparisons between
-two different datasets. In other words, it tests all models that were trained using a given dataset A in the data of a given dataset B. For example, it tests how Apache models behave in F-Droid models.
-
-For this script to run, you need to create a `results/` folder. The final CSV will be stored there. The header of the CSV is clear.
-
-
-### Other scripts
-
-The `main_parse_*` scripts help you in parsing the resulting text file, and extract the best hyper parameters, the feature importance, and the individual k-fold results. (These are always in maintenance, as they are highly sensitive to the format that the main tool generates logs.)
 
 ## Authors
 
