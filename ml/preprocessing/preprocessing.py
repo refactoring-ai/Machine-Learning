@@ -5,7 +5,7 @@ from configs import SCALE_DATASET, BALANCE_DATASET, DROP_METRICS, \
     TRAINING_SAMPLE_FRACTION, EVALUATION_SAMPLE_FRACTION
 from ml.preprocessing.sampling import perform_balancing, sample_reduction
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
-from refactoring import LowLevelRefactoring
+from ml.refactoring import LowLevelRefactoring
 from utils.log import log
 from sklearn.utils import shuffle
 
@@ -58,7 +58,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
     log("non-refactoring instances (after dropping NA)s: {}".format(non_refactored_instances.shape[0]), False)
 
-    assert non_refactored_instances.shape[0] > 0, "Found no non-refactoring instances for level: " + refactoring.refactoring_level()
+    assert non_refactored_instances.shape[0] > 0, "Found no non-refactoring instances for level: " + refactoring.level()
 
     # set the prediction variable as true and false in the datasets
     refactored_instances["prediction"] = 1
