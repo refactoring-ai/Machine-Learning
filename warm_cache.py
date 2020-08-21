@@ -5,6 +5,14 @@ from utils.log import log_init, log_close, log
 import time
 import datetime
 
+"""
+The amount of samples for refactorings and non-refactorings in the database is enormous, thus caching the relevant data on your local machine can speed up the machine learning process.
+
+This class fetches the training data for refactoring instances and non-refactoring instances, as configured, from the database and stores the results of the queries in cache files. 
+
+Note:
+    In order to use this feature, ensure in the USE_CACHE is enabled in the config.
+"""
 
 log_init(f"results/warm-up_cache_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt")
 log('Begin cache warm-up')

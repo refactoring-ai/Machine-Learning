@@ -6,6 +6,16 @@ from ml.refactoring import build_refactorings
 from utils.log import log_init, log_close, log
 import datetime
 
+"""
+The main entrypoint for the binary classification procedure.
+
+This procedure will:
+    1. Fetch the data for all specified refactorings and levels, see Level and Refactorings in config.
+    2. Setup the models specified models, see models/ for the model configuration and MODELS in config.
+    3. Push the data through the pre-processing pipeline, initialize the classifier training, evaluate the models and store them with relevant describing data.
+       See ml/pipelines/binary for more details. 
+"""
+
 log_init(f"results/classifier_training_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt")
 log("ML4Refactoring: Binary classification")
 
