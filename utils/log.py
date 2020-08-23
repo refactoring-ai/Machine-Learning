@@ -26,8 +26,9 @@ def log_init(log_name: str = ""):
         Path(path.dirname(log_name)).mkdir(parents=True, exist_ok=True)
         _f = open(log_name, "w+")
     else:
-        Path("results/").mkdir(parents=True, exist_ok=True)
-        _f = open("results/{}-result.txt".format(random.randint(1, 999999)), "w+")
+        dir_path = path.join(configs.RESULTS_DIR_PATH, "results")
+        Path(dir_path).mkdir(parents=True, exist_ok=True)
+        _f = open(path.join(dir_path, f"{random.randint(1, 999999)}-result.txt"), "w+")
 
     log(r"  __  __ _      _ _    ___      __         _           _           ")
     log(r" |  \/  | |    | | |  | _ \___ / _|__ _ __| |_ ___ _ _(_)_ _  __ _ ")

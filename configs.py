@@ -17,6 +17,14 @@ class FileType(Enum):
 FILE_TYPE = 0
 # endregion
 
+# region output
+# save the results directory in this path, if empty use the local path of the executed python script
+RESULTS_DIR_PATH = ""
+
+# store the cache in this path, if empty use the local path of the executed python script
+CACHE_DIR_PATH = ""
+# endregion
+
 # region Multi-Core
 # The number of cores to use for tasks, e.g. classifier training or feature selection
 # -1 denotes to use all available cores

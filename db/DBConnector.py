@@ -3,7 +3,7 @@ import pandas as pd
 import hashlib
 import os.path
 import configparser
-from configs import USE_CACHE, DB_AVAILABLE
+from configs import USE_CACHE, DB_AVAILABLE, CACHE_DIR_PATH
 from utils.log import log
 import sshtunnel
 
@@ -56,7 +56,8 @@ def execute_query(sql_query):
     query_hash = hashlib.sha1(sql_query.encode()).hexdigest()
 
     # Create the filepath
-    file_path = os.path.join("_cache", "{}.csv".format(query_hash))
+    cache_dir = os.path.join(CACHE_DIR_PATH, "_cache")
+    file_path = os.path.join(cache_dir, f"{query_hash}.csv")
 
     # Read the file or execute query
     if USE_CACHE and os.path.exists(file_path):
@@ -68,8 +69,9 @@ def execute_query(sql_query):
                 df_raw = pd.read_sql(sql_query, con=mydb)
             except (KeyboardInterrupt, SystemExit):
                 close_connection()
-            if not os.path.isdir("_cache"):
-                os.makedirs("_cache")
+                exit()
+            if not os.path.isdir(cache_dir):
+                os.makedirs(cache_dir)
             df_raw.to_csv(file_path, index=False)
             return df_raw
         else:

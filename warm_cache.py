@@ -1,9 +1,11 @@
-from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP
+from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP, CACHE_DIR_PATH
 from db.QueryBuilder import get_level_stable, get_level_refactorings_count, get_level_refactorings
 from db.DBConnector import execute_query, close_connection
 from utils.log import log_init, log_close, log
 import time
 import datetime
+from os import path
+
 
 """
 The amount of samples for refactorings and non-refactorings in the database is enormous, thus caching the relevant data on your local machine can speed up the machine learning process.
@@ -14,7 +16,7 @@ Note:
     In order to use this feature, ensure in the USE_CACHE is enabled in the config.
 """
 
-log_init(f"results/warm-up_cache_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt")
+log_init(path.join(CACHE_DIR_PATH, "results", f"warm-up_cache_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"))
 log('Begin cache warm-up')
 start_time = time.time()
 
