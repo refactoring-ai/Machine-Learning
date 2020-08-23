@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import joblib
 from utils.log import log
+import statistics
 
 
 def format_results_single_run(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores,
@@ -31,11 +32,11 @@ def format_results_single_run(dataset, refactoring_name, validation_names, model
                        "training_set": dataset,
                        "validation_sets": str(validation_names),
                        "precision_scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
-                       "mean_precision": f"{mean(precision_scores):.2f}",
+                       "mean_precision": f"{statistics.mean(precision_scores):.2f}",
                        "recall_scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
-                       "mean_recall": f"{mean(recall_scores):.2f}",
+                       "mean_recall": f"{statistics.mean(recall_scores):.2f}",
                        "accuracy_scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
-                       "mean_accuracy": f"{mean(accuracy_scores):.2f}",
+                       "mean_accuracy": f"{statistics.mean(accuracy_scores):.2f}",
                        "confusion_matrix": confusion_matrix,
                        "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=True),
                        "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=True),
