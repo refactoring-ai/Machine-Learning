@@ -188,6 +188,8 @@ class BinaryClassificationPipeline(MLPipeline):
             features, x_train = perform_feature_reduction(model, x_train, y_train)
             x_val_list = [X for _, X in [
                 perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
+        else:
+            features = X.columns.values
 
         # choose which search to apply
         if SEARCH == 'randomized':
