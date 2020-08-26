@@ -7,17 +7,16 @@ import configs
 _f = None
 
 
-def print_config():
+def log_config():
     global _f
 
-    log("--------------")
-    log("Configuration:")
     # create a dict of the entire config class, to capture all fields
     config_dict = configs.__dict__
     # filter to get only the public fields that we created
     config_dict = {k: v for k, v in config_dict.items() if k.isupper()}
-    log(json.dumps(config_dict, indent=2, sort_keys=True))
-    log("--------------")
+    # log the config with some nice json formatting, but hide it from the terminal
+    log_msg = json.dumps(config_dict, indent=2, sort_keys=True), False
+    log(f"--------------\nConfiguration:\n{log_msg}\n--------------", False)
 
 
 def log_init(log_name: str = ""):
@@ -37,7 +36,7 @@ def log_init(log_name: str = ""):
     log(r"                                                             |___/ ")
     log("")
 
-    print_config()
+    log_config()
 
 
 def log_close():
