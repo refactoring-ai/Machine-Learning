@@ -6,7 +6,7 @@ from ml.models.base import SupervisedMLRefactoringModel
 class DecisionTreeRefactoringModel(SupervisedMLRefactoringModel):
     def params_to_tune(self):
         return {"max_depth": [3, 6, 12, 24, None],
-                  "max_features": ["auto", "sqrt", "log2", None],
+                  "max_features": ["auto", "log2", None],
                   "min_samples_split": [2, 3, 5, 10, 11],
                   "splitter": ["best", "random"],
                   "criterion": ["gini", "entropy"]}
