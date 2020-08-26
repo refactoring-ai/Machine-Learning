@@ -1,7 +1,6 @@
 import traceback
 import pandas as pd
 from sklearn.inspection import permutation_importance
-
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
     FEATURE_REDUCTION
 from ml.preprocessing.feature_reduction import perform_feature_reduction
@@ -42,7 +41,7 @@ def _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids_val
     """
     log("val search started at %s\n" % now(), False)
     search.fit(x_train, y_train)
-    log(format_best_parameters(search), False)
+    log(format_best_parameters(search))
     best_estimator = search.best_estimator_
 
     val_results = []

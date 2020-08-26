@@ -7,8 +7,8 @@ from ml.models.base import SupervisedMLRefactoringModel
 class ExtraTreeRefactoringModel(SupervisedMLRefactoringModel):
     def params_to_tune(self):
         return {"max_depth": [3, 6, 12, 24],
-                  "max_leaf_nodes": [2, 3, 5, 6, 10, None],
-                  "max_features": ["sqrt", "log2", None],
+                  "max_leaf_nodes": [2, 3, 5, 6, 10],
+                  "max_features": ["auto", "log2", None],
                   "min_samples_split": [2, 3, 4, 5, 10],
                   "min_samples_leaf": [1, 2, 3, 4, 5, 10],
                   "bootstrap": [True, False],

@@ -35,8 +35,8 @@ class RandomForestFastRefactoringModel(SupervisedMLRefactoringModel):
                 "max_features": ["auto", "log2"],
                 "min_samples_split": [2, 5, 10],
                 "bootstrap": [True, False],
-                "criterion": ["gini"],
-                "n_estimators": [10, 100, 200]}
+                "criterion": ["gini", "entropy"],
+                "n_estimators": [10, 100, 150, 200]}
 
 
     def model(self, best_params=None):
