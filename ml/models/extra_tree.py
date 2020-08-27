@@ -5,6 +5,9 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 
 class ExtraTreeRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return True
+
     def params_to_tune(self):
         return {"max_depth": [3, 6, 12, 24],
                   "max_leaf_nodes": [2, 3, 5, 6, 10],

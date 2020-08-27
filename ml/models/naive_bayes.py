@@ -4,6 +4,9 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 
 class GaussianNaiveBayesRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"var_smoothing": [1e-10, 1e-09, 1e-08, 1e-07, 1e-06, 1e-05]}
 

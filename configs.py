@@ -79,9 +79,6 @@ PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAut
 # Drop these metrics as well
 DROP_METRICS = []
 
-# perform feature reduction?
-FEATURE_REDUCTION = False
-
 # number of folds for feature reduction
 N_CV_FEATURE_REDUCTION = 2
 # endregion
@@ -113,9 +110,9 @@ N_CV_DNN = 10
 # endregion
 
 # region Models and datasets
-# models and datasets we have available
-MODELS = ['svm', 'svm-non-linear', 'decision-tree', 'random-forest', 'logistic-regression', 'naive-bayes',
-          'extra-trees']
+# models and datasets we have configured, see ml/models for all available models and their configurations.
+# For many models hyper tuning of their parameters is performed.
+MODELS = ['logistic-regression', 'random-forest-fast']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]

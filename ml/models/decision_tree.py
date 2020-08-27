@@ -4,6 +4,9 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 
 class DecisionTreeRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"max_depth": [3, 6, 12, 24, None],
                   "max_features": ["auto", "log2", None],

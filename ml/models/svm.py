@@ -6,6 +6,9 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 
 class LinearSVMRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"C": [uniform(0.01, 10) for i in range(0, 10)],
                   "kernel": ["linear"],
@@ -21,6 +24,9 @@ class LinearSVMRefactoringModel(SupervisedMLRefactoringModel):
 
 
 class NonLinearSVMRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"C": [uniform(0.01, 10) for i in range(0, 10)],
                   "kernel": ["poly", "rbf", "sigmoid"],

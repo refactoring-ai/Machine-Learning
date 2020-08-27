@@ -5,6 +5,9 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 
 class RandomForestRefactoringModel(SupervisedMLRefactoringModel):
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"max_depth": [3, 6, 12, 24, None],
                   "max_features": ["auto", "log2", None],
@@ -30,6 +33,9 @@ class RandomForestFastRefactoringModel(SupervisedMLRefactoringModel):
     """
     A faster simpler configuration of the random forest classifier. This will return quick results, with (hopefully) slightly reduced accuracy.
     """
+    def feature_reduction(self) -> bool:
+        return False
+
     def params_to_tune(self):
         return {"max_depth": [3, 12, 24],
                 "max_features": ["auto", "log2"],
