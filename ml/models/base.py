@@ -16,7 +16,7 @@ class MLModel(object):
         pass
 
     def _save_scaler(self, dataset, refactoring_name, scaler_obj):
-        file_name = path.join(RESULTS_DIR_PATH, "results", "scaler", "f/scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
+        file_name = path.join(RESULTS_DIR_PATH, "results", "scaler", f"/scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
         store_joblib(scaler_obj, file_name)
 
     def _save_features(self, dataset, refactoring_name, features):
@@ -25,7 +25,7 @@ class MLModel(object):
 
     def _save_validation_resultss(self, dataset, test_results, test_names, formatted_results):
         for index, test_result in enumerate(test_results):
-            results_path = path.join(RESULTS_DIR_PATH, "results", "predictions", "f{self.name()}_{dataset}_{test_names[index]}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json")
+            results_path = path.join(RESULTS_DIR_PATH, "results", "predictions", f"{self.name()}_{dataset}_{test_names[index]}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json")
             data = {
                 'test_scores': formatted_results,
                 'test_results': test_result.to_json()
