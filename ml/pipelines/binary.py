@@ -1,16 +1,14 @@
 import traceback
 import pandas as pd
 from sklearn.inspection import permutation_importance
-
-from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
-    FEATURE_REDUCTION
+from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT
 from ml.preprocessing.feature_reduction import perform_feature_reduction
-from ml.utils.output import format_results_single_run
+from utils.classifier_utils import format_results_single_run
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
 from ml.pipelines.pipelines import MLPipeline
 from ml.preprocessing.preprocessing import retrieve_labelled_instances
-from ml.utils.output import format_best_parameters
+from utils.classifier_utils import format_best_parameters
 from utils.date_utils import now
 from utils.log import log
 
@@ -42,7 +40,7 @@ def _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids_val
     """
     log("val search started at %s\n" % now(), False)
     search.fit(x_train, y_train)
-    log(format_best_parameters(search), False)
+    log(format_best_parameters(search))
     best_estimator = search.best_estimator_
 
     val_results = []
@@ -184,10 +182,12 @@ class BinaryClassificationPipeline(MLPipeline):
         param_dist = model_def.params_to_tune()
         search = None
 
-        if FEATURE_REDUCTION:
+        if model_def.feature_reduction():
             features, x_train = perform_feature_reduction(model, x_train, y_train)
             x_val_list = [X for _, X in [
                 perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
+        else:
+            features = X.columns.values
 
         # choose which search to apply
         if SEARCH == 'randomized':
@@ -199,7 +199,7 @@ class BinaryClassificationPipeline(MLPipeline):
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
 
         # reduce the features for the supermodel:
-        if FEATURE_REDUCTION:
+        if model_def.feature_reduction():
             features, X = perform_feature_reduction(model, X, y, features)
         # Run cross validation on whole dataset and safe production ready model
         super_model = _build_production_model(model_def, search.best_params_, X, y)

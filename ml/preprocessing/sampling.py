@@ -5,20 +5,21 @@ from configs import BALANCE_DATASET_STRATEGY, CORE_COUNT
 from utils.log import log
 
 
-def sample_reduction(dataset, fraction):
+def sample_reduction(data, fraction: float, min_samples: int):
     """
     Reduce the number of samples in the dataset to the given fraction.
 
     Parameter:
-    dataset
-        The data frame to reduce
-    fraction
-        Fraction of the initial samples [0 - 1]
+        data:                 The data frame to reduce
+        fraction (float):     Fraction of the initial samples [0 - 1]
+        min_samples (int):    Minimum number of samples, this is the lower boundary for the fraction
     """
-    initial_count = len(dataset.index)
-    dataset = dataset.sample(frac=fraction)
-    log(f"Reduced number of samples from {initial_count} to {len(dataset.index)} ({fraction})", False)
-    return dataset
+    initial_count = len(data.index)
+    # apply the lower boundary to the fraction, ensure the fraction is still in range 0 - 1
+    fraction = min(max(min_samples / initial_count, fraction), 1.0)
+    data = data.sample(frac=fraction)
+    log(f"Reduced number of samples from {initial_count} to {len(data.index)} ({fraction})", False)
+    return data
 
 
 def perform_balancing(x, y, strategy=None):

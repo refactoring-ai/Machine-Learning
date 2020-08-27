@@ -1,16 +1,28 @@
 # region Testing
 # is it a test run?
 # test runs reduce the dataset to 100 instances only
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 # is this a test run?
 TEST = False
 # endregion
 
 # region FileTypes
+class FileType(Enum):
+    only_production = 0
+    only_test = 1
+    test_and_production = 2
+
 # Do we only look at production or test files or both?
-# 0 = only_production, 1 = only_test, 2 = production_and_test
 FILE_TYPE = 0
+# endregion
+
+# region output
+# save the results directory in this path, if empty use the local path of the executed python script
+RESULTS_DIR_PATH = ""
+
+# store the cache in this path, if empty use the local path of the executed python script
+CACHE_DIR_PATH = ""
 # endregion
 
 # region Multi-Core
@@ -42,11 +54,18 @@ SCALE_DATASET = True
 
 # region Sample size
 # fraction of the samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION = 1.0
+TRAINING_SAMPLE_FRACTION = 0.0
+
+#Min number of training samples for each positive and negative samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION
+MIN_TRAINING_SAMPLE_COUNT = 100000
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
-EVALUATION_SAMPLE_FRACTION = 1.0
+EVALUATION_SAMPLE_FRACTION = 0.5
+
+#Min number of training samples for each positive and negative samples, this is the lower boundary for EVALUATION_SAMPLE_FRACTION
+MIN_EVALUATION_SAMPLE_COUNT = 5000
+
 # endregion
 
 # region Feature reduction
@@ -59,9 +78,6 @@ PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAut
 
 # Drop these metrics as well
 DROP_METRICS = []
-
-# perform feature reduction?
-FEATURE_REDUCTION = False
 
 # number of folds for feature reduction
 N_CV_FEATURE_REDUCTION = 2
@@ -94,9 +110,9 @@ N_CV_DNN = 10
 # endregion
 
 # region Models and datasets
-# models and datasets we have available
-MODELS = ['svm', 'svm-non-linear', 'decision-tree', 'random-forest', 'logistic-regression', 'naive-bayes',
-          'extra-trees']
+# models and datasets we have configured, see ml/models for all available models and their configurations.
+# For many models hyper tuning of their parameters is performed.
+MODELS = ['logistic-regression', 'random-forest-fast']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -309,4 +325,7 @@ if TEST:
     CV_FEATURE_REDUCTION = 2
 
     TRAINING_SAMPLE_FRACTION = 0.1
+    MIN_TRAINING_SAMPLE_COUNT = 1000
     EVALUATION_SAMPLE_FRACTION = 0.1
+    MIN_EVALUATION_SAMPLE_COUNT = 100
+
