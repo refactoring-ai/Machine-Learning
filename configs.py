@@ -40,7 +40,7 @@ DB_AVAILABLE = True
 # endregion
 
 # region Dataset balancing
-BALANCE_DATASET = True
+BALANCE_DATASET = False
 
 # how to balance the dataset
 # options = [random, cluster_centroids, nearmiss]
@@ -53,17 +53,24 @@ SCALE_DATASET = True
 # endregion
 
 # region Sample size
-# fraction of the samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION = 0.0
+# fraction of the positive samples (both true and false) to use for training, [0 - 1]
+TRAINING_SAMPLE_FRACTION_POSITIVE = 0.0
 
-#Min number of training samples for each positive and negative samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION
-MIN_TRAINING_SAMPLE_COUNT = 100000
+# Min number of positive training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_POSITIVE
+MIN_TRAINING_SAMPLE_COUNT_POSITIVE = 250000
+
+# fraction of the negative samples (both true and false) to use for training, [0 - 1]
+TRAINING_SAMPLE_FRACTION_NEGATIVE = 0.0
+
+# Min number of negative training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_NEGATIVE
+# if the samples counts don't align make sure to turn of dataset balancing
+MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 500000
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
-EVALUATION_SAMPLE_FRACTION = 0.5
+EVALUATION_SAMPLE_FRACTION = 1.0
 
-#Min number of training samples for each positive and negative samples, this is the lower boundary for EVALUATION_SAMPLE_FRACTION
+# Min number of training samples for each positive and negative samples, this is the lower boundary for EVALUATION_SAMPLE_FRACTION
 MIN_EVALUATION_SAMPLE_COUNT = 5000
 
 # endregion
