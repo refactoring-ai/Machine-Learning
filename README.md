@@ -16,6 +16,7 @@ This project contains all the Python scripts that are responsible
 for the ML pipeline.
 
 ### Installing and configuring the database.
+This project requires ```python 3.6``` or higher.
 
 First, install all the dependencies:
 

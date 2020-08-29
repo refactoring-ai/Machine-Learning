@@ -191,9 +191,9 @@ class BinaryClassificationPipeline(MLPipeline):
 
         # choose which search to apply
         if SEARCH == 'randomized':
-            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), iid=False, n_jobs=CORE_COUNT)
+            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), n_jobs=CORE_COUNT)
         elif SEARCH == 'grid':
-            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), iid=False, n_jobs=CORE_COUNT)
+            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), n_jobs=CORE_COUNT)
 
         # Train and val the model
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)

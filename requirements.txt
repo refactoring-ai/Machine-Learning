@@ -1,10 +1,10 @@
 mysql-connector-python
-pandas
-sklearn
-numpy
-imblearn
+pandas>=1.1
+scikit-learn>=0.23
+numpy>=1.19.1
+imbalanced-learn>=0.7.0
 configparser
 joblib
-matplotlib
-scipy
-sshtunnel
+matplotlib>=2.1.1
+scipy>=1.5.2
+sshtunnel>=0.1.5
