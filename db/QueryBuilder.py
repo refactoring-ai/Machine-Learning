@@ -158,7 +158,7 @@ def get_level_refactorings(level: int, m_refactoring: str, dataset: str = "") ->
     if m_refactoring != "":
         refactoring_condition += f" AND {refactoringCommits}.refactoring = \"{m_refactoring}\""
     return get_instance_fields(refactoringCommits, [(refactoringCommits, []), (commitMetaData, [])] + get_metrics_level(level),
-                               refactoring_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
+                               refactoring_condition, dataset, "", get_instance_id=True)
 
 
 def get_level_stable(level: int, commit_threshold: int, dataset: str = "", conditions: str = "") -> str:
@@ -178,7 +178,7 @@ def get_level_stable(level: int, commit_threshold: int, dataset: str = "", condi
     if len(conditions) > 0:
         stable_condition += f" AND {conditions}"
     return get_instance_fields(stableCommits, [(stableCommits, []), (commitMetaData, [])] + get_metrics_level(level),
-                               stable_condition, dataset, f"order by {commitMetaData}.commitDate", get_instance_id=True)
+                               stable_condition, dataset, "", get_instance_id=True)
 
 
 def file_type_filter(instance_name: str) -> str:
