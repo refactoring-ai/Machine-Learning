@@ -6,7 +6,7 @@ from utils.log import log
 import statistics
 
 
-def format_results_single_run(dataset, refactoring_name, validation_names, model_name, precision_scores, recall_scores,
+def format_results_single_run(dataset, refactoring_name, validation_names, model_name, f1_scores, precision_scores, recall_scores,
                               accuracy_scores, tn, fp, fn, tp, permutation_importances, best_model, features):
     """
     Format all specified scores and other relevant data  of the validation in a json format.
@@ -31,6 +31,8 @@ def format_results_single_run(dataset, refactoring_name, validation_names, model
                        "refactoring type": refactoring_name,
                        "training_set": dataset,
                        "validation_sets": str(validation_names),
+                       "f1_scores": ', '.join(list([f"{e:.2f}" for e in f1_scores])),
+                       "mean_f1_score": f"{statistics.mean(f1_scores):.2f}",
                        "precision_scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
                        "mean_precision": f"{statistics.mean(precision_scores):.2f}",
                        "recall_scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
@@ -38,10 +40,10 @@ def format_results_single_run(dataset, refactoring_name, validation_names, model
                        "accuracy_scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
                        "mean_accuracy": f"{statistics.mean(accuracy_scores):.2f}",
                        "confusion_matrix": confusion_matrix,
-                       "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=True),
-                       "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=True),
-                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=True)
-                       }, indent=2, sort_keys=True)
+                       "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=False),
+                       "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=False),
+                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=False)
+                       }, indent=2, sort_keys=False)
 
 
 def format_best_parameters(tuned_model):

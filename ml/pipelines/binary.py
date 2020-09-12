@@ -1,10 +1,11 @@
 import traceback
 import pandas as pd
 from sklearn.inspection import permutation_importance
-from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT
+from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
+    SCORING
 from ml.preprocessing.feature_reduction import perform_feature_reduction
 from utils.classifier_utils import format_results_single_run
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
 from ml.pipelines.pipelines import MLPipeline
 from ml.preprocessing.preprocessing import retrieve_labelled_instances
@@ -44,13 +45,14 @@ def _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids_val
     best_estimator = search.best_estimator_
 
     val_results = []
-    val_scores = {'accuracy': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
+    val_scores = {'accuracy': [], 'f1_score': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
     # Predict unseen results for all validation sets
     for index, x_val in enumerate(x_val_list):
         y_pred = best_estimator.predict(x_val)
         y_val = y_val_list[index]
         db_ids = db_ids_val_list[index]
         val_scores["accuracy"] += [accuracy_score(y_val, y_pred)]
+        val_scores["f1_score"] += [f1_score(y_val, y_pred)]
         val_scores["precision"] += [precision_score(y_val, y_pred)]
         val_scores["recall"] += [recall_score(y_val, y_pred)]
         val_scores["tn"] += [confusion_matrix(y_val, y_pred).ravel()[0]]
@@ -158,7 +160,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 features, val_scores, val_results, model_to_save = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
 
                 # log val scores
-                formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["precision"],
+                formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["f1_score"], val_scores["precision"],
                                                               val_scores["recall"], val_scores['accuracy'], val_scores['tn'],
                                                               val_scores['fp'], val_scores['fn'], val_scores['tp'], val_scores["permutation_importance"],
                                                               model_to_save, features)
@@ -191,9 +193,9 @@ class BinaryClassificationPipeline(MLPipeline):
 
         # choose which search to apply
         if SEARCH == 'randomized':
-            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), n_jobs=CORE_COUNT)
+            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
         elif SEARCH == 'grid':
-            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), n_jobs=CORE_COUNT)
+            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
 
         # Train and val the model
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
