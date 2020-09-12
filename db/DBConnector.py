@@ -35,6 +35,7 @@ elif DB_AVAILABLE:
         database=config['db']["database"]
     )
 
+
 # this method executes the query and stores the result in a local cache.
 # we do not want to re-execute large queries.
 # derived from https://medium.com/gousto-engineering-techbrunch/hash-caching-query-results-in-python-2d00f8058252
@@ -60,22 +61,32 @@ def execute_query(sql_query):
     file_path = os.path.join(cache_dir, f"{query_hash}.csv")
 
     # Read the file or execute query
-    if USE_CACHE and os.path.exists(file_path):
-        df_raw = pd.read_csv(file_path)
-        return df_raw
-    else:
-        if DB_AVAILABLE:
-            try:
-                df_raw = pd.read_sql(sql_query, con=mydb)
-            except (KeyboardInterrupt, SystemExit):
-                close_connection()
-                exit()
+    if DB_AVAILABLE and not os.path.exists(file_path):
+        try:
             if not os.path.isdir(cache_dir):
                 os.makedirs(cache_dir)
-            df_raw.to_csv(file_path, index=False)
-            return df_raw
-        else:
-            raise Exception("Cache not found, and db connection is not available")
+            # split large tables into smaller chunks, to avoid MemoryErrors on small machines
+            chunks = pd.read_sql_query(sql_query, mydb, chunksize=10**5)
+            if USE_CACHE:
+                for df in chunks:
+                    store_header = not os.path.exists(file_path)
+                    df.to_csv(file_path, mode="a", index=False, header=store_header)
+                # return pd.read_csv(file_path, dtype=object)
+            else:
+                data = pd.DataFrame()
+                for df in chunks:
+                    data = data.append(df)
+                # return data
+        except (KeyboardInterrupt, SystemExit):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            close_connection()
+            exit()
+
+    if USE_CACHE and os.path.exists(file_path):
+        return pd.read_csv(file_path, dtype=object)
+    else:
+        raise Exception("Cache not found, and db connection is not available")
 
 
 def close_connection():

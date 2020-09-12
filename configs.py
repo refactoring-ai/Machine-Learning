@@ -95,6 +95,8 @@ N_CV_FEATURE_REDUCTION = 2
 # options = [randomized, grid]
 SEARCH = "grid"
 
+SCORING = "f1"
+
 # number of iterations (if Randomized strategy is chosen)
 N_ITER_RANDOM_SEARCH = 100
 
@@ -119,7 +121,7 @@ N_CV_DNN = 10
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['logistic-regression', 'random-forest-fast']
+MODELS = ['random-forest']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -144,7 +146,8 @@ CLASS_LEVEL_REFACTORINGS = ["Extract Class",
                             "Move Class",
                             "Rename Class",
                             "Introduce Polymorphism",
-                            "Convert Anonymous Class To Type"]
+                            "Convert Anonymous Class To Type"
+                            ]
 
 METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
                              "Extract Method",
@@ -169,7 +172,8 @@ VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
                                "Replace Variable With Attribute",
                                "Change Variable Type",
                                "Split Variable",
-                               "Merge Variable"]
+                               "Merge Variable"
+                               ]
 
 FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
                             "Pull Up Attribute",
@@ -178,10 +182,13 @@ FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
                             "Replace Attribute",
                             "Rename Attribute",
                             "Extract Attribute",
-                            "Change Attribute Type"]
+                            "Change Attribute Type"
+                            ]
 
-OTHER_LEVEL_REFACTORINGS = ["Move Source Folder",
-                            "Change Package"]
+OTHER_LEVEL_REFACTORINGS = [
+    #"Move Source Folder",
+    # "Change Package"
+    ]
 
 # Maps each level onto its refactorings
 LEVEL_MAP = {Level.NONE: [],
@@ -308,10 +315,10 @@ STABLE_COMMIT_FIELDS = ["className",
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {Level.NONE: -1,
-                               Level.Class: 15,
-                               Level.Method: 30,
-                               Level.Variable: 40,
-                               Level.Field: 30,
+                               Level.Class: 20,
+                               Level.Method: 20,
+                               Level.Variable: 20,
+                               Level.Field: 20,
                                Level.Other: -1}
 # endregion
 

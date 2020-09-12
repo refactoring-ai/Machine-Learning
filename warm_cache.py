@@ -1,4 +1,4 @@
-from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP, CACHE_DIR_PATH
+from configs import DATASETS, Level, VALIDATION_DATASETS, LEVEL_Stable_Thresholds_MAP, CACHE_DIR_PATH, LEVEL_MAP
 from db.QueryBuilder import get_level_stable, get_level_refactorings_count, get_level_refactorings
 from db.DBConnector import execute_query, close_connection
 from utils.log import log_init, log_close, log
@@ -22,7 +22,7 @@ start_time = time.time()
 
 for dataset in (DATASETS + VALIDATION_DATASETS):
     log("\n**** dataset: " + dataset)
-    for level in Level:
+    for level in [Level.Class, Level.Method, Level.Variable, Level.Field]:
         log("-- non refactored instances for " + str(level))
         non_refactored = execute_query(get_level_stable(int(level), LEVEL_Stable_Thresholds_MAP[level], dataset))
         log(str(len(non_refactored)) + " non-refactored instances were found for level: " + str(level))
@@ -31,7 +31,7 @@ for dataset in (DATASETS + VALIDATION_DATASETS):
         refactorings = execute_query(get_level_refactorings_count(int(level), dataset))
         log(refactorings.to_string())
         for refactoring_name in refactorings['refactoring']:
-            refactoring_instances = execute_query(get_level_refactorings(int(level), refactoring_name, dataset))
+            execute_query(get_level_refactorings(int(level), refactoring_name, dataset))
 
 log('Cache warm-up took %s seconds.' % (time.time() - start_time))
 log_close()
