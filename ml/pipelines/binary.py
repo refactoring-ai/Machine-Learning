@@ -184,25 +184,24 @@ class BinaryClassificationPipeline(MLPipeline):
         param_dist = model_def.params_to_tune()
         search = None
 
-        if model_def.feature_reduction():
-            features, x_train = perform_feature_reduction(model, x_train, y_train)
-            x_val_list = [X for _, X in [
-                perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
-        else:
-            features = X.columns.values
-
         # choose which search to apply
         if SEARCH == 'randomized':
             search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
         elif SEARCH == 'grid':
             search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
 
+        if model_def.feature_reduction():
+            features, x_train = perform_feature_reduction(search, x_train, y_train)
+            x_val_list = [X for _, X in [perform_feature_reduction(search, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
+        else:
+            features = X.columns.values
+
         # Train and val the model
         val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
 
         # reduce the features for the supermodel:
         if model_def.feature_reduction():
-            features, X = perform_feature_reduction(model, X, y, features)
+            features, X = perform_feature_reduction(search, X, y, features)
         # Run cross validation on whole dataset and safe production ready model
         super_model = _build_production_model(model_def, search.best_params_, X, y)
 
