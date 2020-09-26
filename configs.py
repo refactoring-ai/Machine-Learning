@@ -36,7 +36,7 @@ CORE_COUNT = -1
 USE_CACHE = True
 
 # is the db available? sometimes it's not, but you have all the cache
-DB_AVAILABLE = True
+DB_AVAILABLE = False
 # endregion
 
 # region Dataset balancing
@@ -93,12 +93,12 @@ N_CV_FEATURE_REDUCTION = 2
 # region Hyperparameter search
 # what type of search for the best hyper params?
 # options = [randomized, grid]
-SEARCH = "grid"
+SEARCH = "randomized"
 
 SCORING = "f1"
 
 # number of iterations (if Randomized strategy is chosen)
-N_ITER_RANDOM_SEARCH = 100
+N_ITER_RANDOM_SEARCH = 1
 
 # number of folds in the search for best parameters
 N_CV_SEARCH = 5
@@ -109,7 +109,7 @@ N_CV_SEARCH = 5
 VAL_SPLIT_SIZE = -1
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
-VALIDATION_DATASETS = ["test set github", "validation set github"]
+VALIDATION_DATASETS = ["test set github"]
 
 # number of folds for the final evaluation
 N_CV = 10
@@ -121,7 +121,7 @@ N_CV_DNN = 10
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['random-forest']
+MODELS = ['logistic-regression']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -145,8 +145,8 @@ CLASS_LEVEL_REFACTORINGS = ["Extract Class",
                             "Move And Rename Class",
                             "Move Class",
                             "Rename Class",
-                            "Introduce Polymorphism",
-                            "Convert Anonymous Class To Type"
+                            #"Introduce Polymorphism",
+                            #"Convert Anonymous Class To Type"
                             ]
 
 METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
@@ -186,8 +186,8 @@ FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
                             ]
 
 OTHER_LEVEL_REFACTORINGS = [
-    #"Move Source Folder",
-    # "Change Package"
+    "Move Source Folder",
+    "Change Package"
     ]
 
 # Maps each level onto its refactorings
@@ -344,4 +344,3 @@ if TEST:
     MIN_TRAINING_SAMPLE_COUNT = 1000
     EVALUATION_SAMPLE_FRACTION = 0.1
     MIN_EVALUATION_SAMPLE_COUNT = 100
-

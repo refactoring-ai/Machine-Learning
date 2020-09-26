@@ -71,12 +71,12 @@ def execute_query(sql_query):
                 for df in chunks:
                     store_header = not os.path.exists(file_path)
                     df.to_csv(file_path, mode="a", index=False, header=store_header)
-                # return pd.read_csv(file_path, dtype=object)
+                return pd.read_csv(file_path)
             else:
                 data = pd.DataFrame()
                 for df in chunks:
                     data = data.append(df)
-                # return data
+                return data
         except (KeyboardInterrupt, SystemExit):
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -84,7 +84,7 @@ def execute_query(sql_query):
             exit()
 
     if USE_CACHE and os.path.exists(file_path):
-        return pd.read_csv(file_path, dtype=object)
+        return pd.read_csv(file_path)
     else:
         raise Exception("Cache not found, and db connection is not available")
 
