@@ -36,11 +36,11 @@ CORE_COUNT = -1
 USE_CACHE = True
 
 # is the db available? sometimes it's not, but you have all the cache
-DB_AVAILABLE = True
+DB_AVAILABLE = False
 # endregion
 
 # region Dataset balancing
-BALANCE_DATASET = False
+BALANCE_DATASET = True
 
 # how to balance the dataset
 # options = [random, cluster_centroids, nearmiss]
@@ -54,17 +54,17 @@ SCALE_DATASET = True
 
 # region Sample size
 # fraction of the positive samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_POSITIVE = 0.0
+TRAINING_SAMPLE_FRACTION_POSITIVE = 1.0
 
 # Min number of positive training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_POSITIVE
 MIN_TRAINING_SAMPLE_COUNT_POSITIVE = 250000
 
 # fraction of the negative samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_NEGATIVE = 0.0
+TRAINING_SAMPLE_FRACTION_NEGATIVE = 1.0
 
 # Min number of negative training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_NEGATIVE
 # if the samples counts don't align make sure to turn of dataset balancing
-MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 500000
+MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 250000
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
@@ -77,9 +77,9 @@ MIN_EVALUATION_SAMPLE_COUNT = 5000
 
 # region Feature reduction
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
-DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
-DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
+DROP_PROCESS_AND_AUTHORSHIP_METRICS = False
 # a list of all process and authorship metrics
 PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
@@ -93,23 +93,23 @@ N_CV_FEATURE_REDUCTION = 2
 # region Hyperparameter search
 # what type of search for the best hyper params?
 # options = [randomized, grid]
-SEARCH = "grid"
+SEARCH = "randomized"
 
-SCORING = "f1"
+SCORING = "accuracy"
 
 # number of iterations (if Randomized strategy is chosen)
 N_ITER_RANDOM_SEARCH = 100
 
 # number of folds in the search for best parameters
-N_CV_SEARCH = 5
+N_CV_SEARCH = 10 
 # endregion
 
 # region Evaluation: Cross-validation configuration
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-VAL_SPLIT_SIZE = -1
+VAL_SPLIT_SIZE = 0.2
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
-VALIDATION_DATASETS = ["test set github", "validation set github"]
+VALIDATION_DATASETS = ["validation set github"]
 
 # number of folds for the final evaluation
 N_CV = 10
@@ -121,7 +121,7 @@ N_CV_DNN = 10
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['random-forest']
+MODELS = ['logistic-regression', 'random-forest']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -145,8 +145,8 @@ CLASS_LEVEL_REFACTORINGS = ["Extract Class",
                             "Move And Rename Class",
                             "Move Class",
                             "Rename Class",
-                            "Introduce Polymorphism",
-                            "Convert Anonymous Class To Type"
+                            #"Introduce Polymorphism",
+                            #"Convert Anonymous Class To Type"
                             ]
 
 METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
@@ -156,13 +156,14 @@ METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
                              "Pull Up Method",
                              "Push Down Method",
                              "Rename Method",
-                             "Extract And Move Method",
-                             "Change Return Type",
-                             "Move And Inline Method",
-                             "Move And Rename Method",
-                             "Change Parameter Type",
-                             "Split Parameter",
-                             "Merge Parameter"]
+                             #"Extract And Move Method",
+                             #"Change Return Type",
+                             #"Move And Inline Method",
+                             #"Move And Rename Method",
+                             #"Change Parameter Type",
+                             #"Split Parameter",
+                             #"Merge Parameter"
+                             ]
 
 VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
                                "Inline Variable",
@@ -170,19 +171,19 @@ VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
                                "Rename Parameter",
                                "Rename Variable",
                                "Replace Variable With Attribute",
-                               "Change Variable Type",
-                               "Split Variable",
-                               "Merge Variable"
+                               #"Change Variable Type",
+                               #"Split Variable",
+                               #"Merge Variable"
                                ]
 
-FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
-                            "Pull Up Attribute",
-                            "Move And Rename Attribute",
-                            "Push Down Attribute",
-                            "Replace Attribute",
-                            "Rename Attribute",
-                            "Extract Attribute",
-                            "Change Attribute Type"
+FIELD_LEVEL_REFACTORINGS = [#"Move Attribute",
+                            #"Pull Up Attribute",
+                            #"Move And Rename Attribute",
+                            #"Push Down Attribute",
+                            #"Replace Attribute",
+                            #"Rename Attribute",
+                            #"Extract Attribute",
+                            #"Change Attribute Type"
                             ]
 
 OTHER_LEVEL_REFACTORINGS = [
@@ -315,10 +316,10 @@ STABLE_COMMIT_FIELDS = ["className",
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {Level.NONE: -1,
-                               Level.Class: 20,
-                               Level.Method: 20,
-                               Level.Variable: 20,
-                               Level.Field: 20,
+                               Level.Class: 50,
+                               Level.Method: 50,
+                               Level.Variable: 50,
+                               Level.Field: 50,
                                Level.Other: -1}
 # endregion
 

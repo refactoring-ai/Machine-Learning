@@ -181,8 +181,7 @@ class BinaryClassificationPipeline(MLPipeline):
         model = model_def.model()
 
         # perform the search for the best hyper parameters
-        param_dist = model_def.params_to_tune()
-        search = None
+        param_dist = model_def.params_to_tune()      
 
         # choose which search to apply
         if SEARCH == 'randomized':

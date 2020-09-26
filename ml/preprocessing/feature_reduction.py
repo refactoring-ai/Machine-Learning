@@ -40,12 +40,11 @@ def perform_feature_reduction(estimator, X, y, allowed_features=None):
     # let's reduce the number of features in the set
     if allowed_features is None:
         # not all estimators expose coef_ or feature_importances, thus we handle these cases with a default estimator
-        try:
-            X = feature_selection_rfecv(estimator, X, y)
-        except(RuntimeError):
-            log(f"The classifier does not expose coef_ or feature_importances_, thus we use an SVR estimator as a replacement for feature reduction.", False)
-            X = feature_selection_rfecv(SVR(kernel="linear"), X, y)
-
+        # try:
+            #X = feature_selection_rfecv(estimator, X, y)
+        #except(RuntimeError):
+            #log(f"The classifier does not expose coef_ or feature_importances_, thus we use an SVR estimator as a replacement for feature reduction.", False)
+        X = feature_selection_rfecv(SVR(kernel="linear"), X, y)
     # enforce the specified feature set
     elif allowed_features is not None:
         drop_list = [column for column in X.columns.values if column not in allowed_features]
