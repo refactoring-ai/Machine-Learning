@@ -23,7 +23,9 @@ def format_results_single_run(dataset, refactoring_name, validation_names, model
     coefficients = {}
     feature_importances = {}
     if hasattr(best_model, "coef_"):
-        coefficients = {feature: coef for feature, coef in zip(features, best_model.coef_.tolist())}
+        # flatten the list, in order to successfully zip it
+        coefs = [y for x in best_model.coef_.tolist() for y in x]
+        coefficients = {feature: coef for feature, coef in zip(features, coefs)}
     elif hasattr(best_model, "feature_importances_"):
         feature_importances = {feature: importance for feature, importance in zip(features, best_model.feature_importances_)}
 
