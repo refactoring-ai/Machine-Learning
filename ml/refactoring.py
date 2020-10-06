@@ -1,4 +1,4 @@
-from configs import LEVEL_MAP, LEVEL_Stable_Thresholds_MAP, Level
+from configs import LEVEL_MAP, Level, LEVEL_Stable_Thresholds_MAP
 from db.QueryBuilder import get_level_refactorings, get_level_stable
 from db.DBConnector import execute_query
 from utils.log import log
@@ -7,10 +7,12 @@ from utils.log import log
 class LowLevelRefactoring:
     _name = ""
     _level = Level.NONE
+    _commitThreshold = -1
 
-    def __init__(self, name, level):
+    def __init__(self, name, level, commitThreshold):
         self._name = name
         self._level = level
+        self._commitThreshold = commitThreshold
 
     def get_refactored_instances(self, dataset: str = ""):
         """
@@ -28,7 +30,7 @@ class LowLevelRefactoring:
         Parameter:
             dataset (str) (optional): filter the non-refactored for this dataset. If no dataset is specified, no filter is applied.
         """
-        return execute_query(get_level_stable(int(self._level), LEVEL_Stable_Thresholds_MAP[self._level], dataset))
+        return execute_query(get_level_stable(int(self._level), self._commitThreshold, dataset))
 
     def level(self) -> str:
         """
@@ -53,7 +55,8 @@ def build_refactorings(selected_level: Level):
     all_refactorings = []
     for level in selected_level:
         for refactoring in LEVEL_MAP[level]:
-            all_refactorings += [LowLevelRefactoring(refactoring, level)]
+            for commitThreshold in LEVEL_Stable_Thresholds_MAP[level]:
+                all_refactorings += [LowLevelRefactoring(refactoring, level, commitThreshold)]
     log(f"Built refactoring objects for {str(len(all_refactorings))} refactoring types.")
 
     return all_refactorings

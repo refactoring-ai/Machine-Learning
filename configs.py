@@ -40,7 +40,7 @@ DB_AVAILABLE = False
 # endregion
 
 # region Dataset balancing
-BALANCE_DATASET = False
+BALANCE_DATASET = True
 
 # how to balance the dataset
 # options = [random, cluster_centroids, nearmiss]
@@ -54,17 +54,17 @@ SCALE_DATASET = True
 
 # region Sample size
 # fraction of the positive samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_POSITIVE = 0.0
+TRAINING_SAMPLE_FRACTION_POSITIVE = 1.0
 
 # Min number of positive training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_POSITIVE
 MIN_TRAINING_SAMPLE_COUNT_POSITIVE = 250000
 
 # fraction of the negative samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_NEGATIVE = 0.0
+TRAINING_SAMPLE_FRACTION_NEGATIVE = 1.0
 
 # Min number of negative training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_NEGATIVE
 # if the samples counts don't align make sure to turn of dataset balancing
-MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 500000
+MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 250000
 
 # fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
 # If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
@@ -93,15 +93,15 @@ N_CV_FEATURE_REDUCTION = 2
 # region Hyperparameter search
 # what type of search for the best hyper params?
 # options = [randomized, grid]
-SEARCH = "randomized"
+SEARCH = "grid"
 
-SCORING = "f1"
+SCORING = "accuracy"
 
 # number of iterations (if Randomized strategy is chosen)
-N_ITER_RANDOM_SEARCH = 1
+N_ITER_RANDOM_SEARCH = 100
 
 # number of folds in the search for best parameters
-N_CV_SEARCH = 5
+N_CV_SEARCH = 10
 # endregion
 
 # region Evaluation: Cross-validation configuration
@@ -314,12 +314,12 @@ STABLE_COMMIT_FIELDS = ["className",
 
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
-LEVEL_Stable_Thresholds_MAP = {Level.NONE: -1,
-                               Level.Class: 20,
-                               Level.Method: 20,
-                               Level.Variable: 20,
-                               Level.Field: 20,
-                               Level.Other: -1}
+LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
+                               Level.Class: [15, 25, 35, 50],
+                               Level.Method: [15, 25, 35, 50],
+                               Level.Variable: [15, 25, 35, 50],
+                               Level.Field: [15, 25, 35, 50],
+                               Level.Other: []}
 # endregion
 
 # --------------------------------
