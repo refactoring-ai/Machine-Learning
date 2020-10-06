@@ -8,7 +8,7 @@ from ml.models.base import SupervisedMLRefactoringModel
 
 class LogisticRegressionRefactoringModel(SupervisedMLRefactoringModel):
     def feature_reduction(self) -> bool:
-        return True
+        return False
 
     def params_to_tune(self):
         return {

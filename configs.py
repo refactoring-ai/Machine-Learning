@@ -77,9 +77,9 @@ MIN_EVALUATION_SAMPLE_COUNT = 5000
 
 # region Feature reduction
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
-DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
-DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
+DROP_PROCESS_AND_AUTHORSHIP_METRICS = False 
 # a list of all process and authorship metrics
 PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
