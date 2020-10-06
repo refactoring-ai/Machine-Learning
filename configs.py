@@ -139,55 +139,55 @@ class Level(IntEnum):
 
 # Refactorings to study
 CLASS_LEVEL_REFACTORINGS = ["Extract Class",
-                            "Extract Interface",
-                            "Extract Subclass",
-                            "Extract Superclass",
-                            "Move And Rename Class",
+                            # "Extract Interface",
+                            # "Extract Subclass",
+                            # "Extract Superclass",
+                            # "Move And Rename Class",
                             "Move Class",
-                            "Rename Class",
-                            #"Introduce Polymorphism",
-                            #"Convert Anonymous Class To Type"
+                            # "Rename Class",
+                            # "Introduce Polymorphism",
+                            # "Convert Anonymous Class To Type"
                             ]
 
-METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
-                             "Extract Method",
+METHOD_LEVEL_REFACTORINGS = [# "Extract And Move Method",
+                             # "Extract Method",
                              "Inline Method",
-                             "Move Method",
+                             # "Move Method",
                              "Pull Up Method",
                              "Push Down Method",
-                             "Rename Method",
-                             "Extract And Move Method",
-                             "Change Return Type",
-                             "Move And Inline Method",
-                             "Move And Rename Method",
-                             "Change Parameter Type",
-                             "Split Parameter",
+                             # "Rename Method",
+                             # "Extract And Move Method",
+                             # "Change Return Type",
+                             # "Move And Inline Method",
+                             # "Move And Rename Method",
+                             # "Change Parameter Type",
+                             # "Split Parameter",
                              "Merge Parameter"]
 
 VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
-                               "Inline Variable",
+                               # "Inline Variable",
                                "Parameterize Variable",
-                               "Rename Parameter",
-                               "Rename Variable",
+                               # "Rename Parameter",
+                               # "Rename Variable",
                                "Replace Variable With Attribute",
-                               "Change Variable Type",
-                               "Split Variable",
-                               "Merge Variable"
+                               # "Change Variable Type",
+                               # "Split Variable",
+                               # "Merge Variable"
                                ]
 
 FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
                             "Pull Up Attribute",
-                            "Move And Rename Attribute",
-                            "Push Down Attribute",
-                            "Replace Attribute",
-                            "Rename Attribute",
+                            # "Move And Rename Attribute",
+                            # "Push Down Attribute",
+                            # "Replace Attribute",
+                            # "Rename Attribute",
                             "Extract Attribute",
-                            "Change Attribute Type"
+                            # "Change Attribute Type"
                             ]
 
 OTHER_LEVEL_REFACTORINGS = [
-    "Move Source Folder",
-    "Change Package"
+    # "Move Source Folder",
+    # "Change Package"
     ]
 
 # Maps each level onto its refactorings
@@ -315,10 +315,10 @@ STABLE_COMMIT_FIELDS = ["className",
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
-                               Level.Class: [15, 25, 35, 50],
-                               Level.Method: [15, 25, 35, 50],
-                               Level.Variable: [15, 25, 35, 50],
-                               Level.Field: [15, 25, 35, 50],
+                               Level.Class: [15],
+                               Level.Method: [15],
+                               Level.Variable: [15],
+                               Level.Field: [15],
                                Level.Other: []}
 # endregion
 
