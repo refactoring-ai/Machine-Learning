@@ -157,13 +157,13 @@ class BinaryClassificationPipeline(MLPipeline):
             try:
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
-                features, val_scores, val_results, model_to_save = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
+                features, val_scores, val_results, model_to_save, search = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
 
                 # log val scores
                 formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["f1_score"], val_scores["precision"],
                                                               val_scores["recall"], val_scores['accuracy'], val_scores['tn'],
                                                               val_scores['fp'], val_scores['fn'], val_scores['tp'], val_scores["permutation_importance"],
-                                                              model_to_save, features)
+                                                              model_to_save, features, format_best_parameters(search))
                 log(formatted_results)
 
                 # we save the best estimator we had during the search
@@ -206,4 +206,4 @@ class BinaryClassificationPipeline(MLPipeline):
         super_model = _build_production_model(model_def, search.best_params_, X, y)
 
         # return the scores and the best estimator
-        return features, val_scores, val_results, super_model
+        return features, val_scores, val_results, super_model, search

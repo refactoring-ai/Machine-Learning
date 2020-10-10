@@ -7,7 +7,7 @@ import statistics
 
 
 def format_results_single_run(dataset, refactoring_name, validation_names, model_name, f1_scores, precision_scores, recall_scores,
-                              accuracy_scores, tn, fp, fn, tp, permutation_importances, best_model, features):
+                              accuracy_scores, tn, fp, fn, tp, permutation_importances, best_model, features, formatted_parameters):
     """
     Format all specified scores and other relevant data  of the validation in a json format.
     """
@@ -44,7 +44,8 @@ def format_results_single_run(dataset, refactoring_name, validation_names, model
                        "confusion_matrix": confusion_matrix,
                        "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=False),
                        "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=False),
-                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=False)
+                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=False),
+                       "parameter_set": formatted_parameters
                        }, indent=2, sort_keys=False)
 
 
