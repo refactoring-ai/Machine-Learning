@@ -9,12 +9,12 @@ class RandomForestRefactoringModel(SupervisedMLRefactoringModel):
         return False
 
     def params_to_tune(self):
-        return {"max_depth": [3, 6, 12, 24, None],
+        return {"max_depth": [None],
                   "max_features": ["auto", "log2", None],
-                  "min_samples_split": [2, 3, 4, 5, 10],
+                  "min_samples_split": [2, 3, 4, 5],
                   "bootstrap": [True, False],
                   "criterion": ["gini", "entropy"],
-                  "n_estimators": [10, 50, 100, 150, 200]}
+                  "n_estimators": [50, 100, 150, 200]}
 
     def model(self, best_params=None):
         if best_params is not None:

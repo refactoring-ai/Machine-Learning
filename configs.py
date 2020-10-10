@@ -93,20 +93,20 @@ N_CV_FEATURE_REDUCTION = 2
 # region Hyperparameter search
 # what type of search for the best hyper params?
 # options = [randomized, grid]
-SEARCH = "grid"
+SEARCH = "randomized"
 
 SCORING = "accuracy"
 
 # number of iterations (if Randomized strategy is chosen)
-N_ITER_RANDOM_SEARCH = 100
+N_ITER_RANDOM_SEARCH = 50
 
 # number of folds in the search for best parameters
-N_CV_SEARCH = 10
+N_CV_SEARCH = 7
 # endregion
 
 # region Evaluation: Cross-validation configuration
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-VAL_SPLIT_SIZE = -1
+VAL_SPLIT_SIZE = 0.2
 # Or specify test data sets in the database
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
 VALIDATION_DATASETS = ["test set github"]
