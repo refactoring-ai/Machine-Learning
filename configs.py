@@ -77,9 +77,9 @@ MIN_EVALUATION_SAMPLE_COUNT = 5000
 
 # region Feature reduction
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
-DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
-DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
+DROP_PROCESS_AND_AUTHORSHIP_METRICS = False
 # a list of all process and authorship metrics
 PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
@@ -314,10 +314,10 @@ STABLE_COMMIT_FIELDS = ["className",
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
-                               Level.Class: [15, 25, 35, 50],
-                               Level.Method: [15, 25, 35, 50],
-                               Level.Variable: [15, 25, 35, 50],
-                               Level.Field: [15, 25, 35, 50],
+                               Level.Class: [50],
+                               Level.Method: [50],
+                               Level.Variable: [50],
+                               Level.Field: [50],
                                Level.Other: []}
 # endregion
 
