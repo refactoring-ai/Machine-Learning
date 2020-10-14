@@ -127,6 +127,6 @@ def evaluate_model(trained_model, x_val_list, y_val_list, db_ids_val_list):
         val_scores["tp"] += [confusion_matrix(y_val, y_pred).ravel()[3]]
         val_scores["permutation_importance"] += [permutation_importance(trained_model, x_val, y_val, n_repeats=30, random_state=237)]
         data = {"db_id": db_ids.values, "label": y_val.values, "prediction": y_pred}
-        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]).reset_index())
+        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]))
 
     return val_scores, val_results
