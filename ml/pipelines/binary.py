@@ -46,8 +46,7 @@ class BinaryClassificationPipeline(MLPipeline):
             log("Dataset {}".format(dataset))
 
             for refactoring in self._refactorings:
-                refactoring_name = refactoring.name()
-                log("**** Refactoring Type: %s" % refactoring_name)
+                log(f"**** Refactoring Type: refactoring.name()")
 
                 # we have two options to select a val set,
                 # 1.) Predefined in the database
@@ -76,7 +75,7 @@ class BinaryClassificationPipeline(MLPipeline):
                     # X and Y where already shuffled in the retrieve_labelled_instances function
                     x = pd.concat([x_train] + x_val_list)
                     y = pd.concat([y_train] + y_val_list)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train,
+                    self._run_all_models(refactoring, refactoring.name(), dataset, scaler, x, y, x_train,
                                          x_val_list, y_train, y_val_list, db_ids_val_list, dataset_names)
                 # 2.) random percentage train/ val split
                 else:
@@ -96,10 +95,10 @@ class BinaryClassificationPipeline(MLPipeline):
                     x_train = x_train.drop(["db_id"], axis=1)
                     db_ids_val = x_val["db_id"]
                     x_val = x_val.drop(["db_id"], axis=1)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
+                    self._run_all_models(refactoring, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
 
 
-    def _run_all_models(self, refactoring, refactoring_name, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
+    def _run_all_models(self, refactoring, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
         """
         For each model, it:
         1) Performs the hyper parameter search
@@ -116,7 +115,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 features, val_scores, val_results, model_to_save, search = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
 
                 # log val scores
-                formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["f1_score"], val_scores["precision"],
+                formatted_results = format_results_single_run(dataset, refactoring.name(), val_names, model_name, val_scores["f1_score"], val_scores["precision"],
                                                               val_scores["recall"], val_scores['accuracy'], val_scores['tn'],
                                                               val_scores['fp'], val_scores['fn'], val_scores['tp'], val_scores["permutation_importance"],
                                                               model_to_save, features, format_best_parameters(search))
@@ -124,12 +123,11 @@ class BinaryClassificationPipeline(MLPipeline):
 
                 # we save the best estimator we had during the search
                 # Also, store the predictions with labels and db_ids, to analyze them later
-                model.persist(dataset, refactoring_name, features, model_to_save, scaler,
+                model.persist(dataset, refactoring.name(), refactoring.commit_threshold(), features, model_to_save, scaler,
                               val_results, val_names, formatted_results)
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
-                log("An error occurred while working on refactoring " + refactoring_name + " model " + model.name()
-                    + " with datasets: " + str(val_names))
+                log(f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
                 log(str(e))
                 log(str(traceback.format_exc()))
 

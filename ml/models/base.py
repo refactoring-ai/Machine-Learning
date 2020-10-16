@@ -8,24 +8,24 @@ class MLModel(object):
     def name(self):
         return type(self).__name__
 
-    def persist(self, dataset, refactoring_name, features, model_obj, scaler_obj, test_results=None, test_names=None, formatted_results=None):
+    def persist(self, dataset, refactoring_name, k, features, model_obj, scaler_obj, test_results=None, test_names=None, formatted_results=None):
         """
         Persist this model with reference to its dataset, refactoring_type, features, model
         and if specified also the prediction results for the validation sets.
         """
         pass
 
-    def _save_scaler(self, dataset, refactoring_name, scaler_obj):
-        file_name = path.join(RESULTS_DIR_PATH, "results", "scaler", f"scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
+    def _save_scaler(self, dataset, refactoring_name, k, scaler_obj):
+        file_name = path.join(RESULTS_DIR_PATH, "results", "scaler", f"scaler_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_K{k}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
         store_joblib(scaler_obj, file_name)
 
-    def _save_features(self, dataset, refactoring_name, features):
-        feature_path = path.join(RESULTS_DIR_PATH, "results", "model", f"features_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv")
+    def _save_features(self, dataset, refactoring_name, k, features):
+        feature_path = path.join(RESULTS_DIR_PATH, "results", "model", f"features_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_K{k}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv")
         store_collection(features, feature_path)
 
-    def _save_validation_resultss(self, dataset, test_results, test_names, formatted_results):
+    def _save_validation_results(self, dataset, refactoring_name, k, test_results, test_names, formatted_results):
         for index, test_result in enumerate(test_results):
-            results_path = path.join(RESULTS_DIR_PATH, "results", "predictions", f"predictions_{self.name()}_{dataset}_{test_names[index]}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json")
+            results_path = path.join(RESULTS_DIR_PATH, "results", "predictions", f"predictions_{self.name()}_{dataset}_{test_names[index]}_{refactoring_name.replace(' ', '')}_K{k}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json")
             data = {
                 'test_scores': formatted_results,
                 'test_results': test_result.to_json()
@@ -54,16 +54,16 @@ class SupervisedMLRefactoringModel(MLModel):
     def model(self, best_params=None):
         pass
 
-    def persist(self, dataset, refactoring_name, features, model_obj, scaler_obj,
+    def persist(self, dataset, refactoring_name, k, features, model_obj, scaler_obj,
                 test_results=None, test_names=None, formatted_results=None):
         """
         Persist this model with reference to its dataset, refactoring_type, features, model
         and if specified also the prediction results for the validation sets.
         """
-        model_path = path.join(RESULTS_DIR_PATH, "results", "model", f"model_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
+        model_path = path.join(RESULTS_DIR_PATH, "results", "model", f"model_{self.name()}_{dataset}_{refactoring_name.replace(' ', '')}_K{k}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.joblib")
         store_joblib(model_obj, model_path)
 
-        self._save_scaler(dataset, refactoring_name, scaler_obj)
-        self._save_features(dataset, refactoring_name, features)
+        self._save_scaler(dataset, refactoring_name, k, scaler_obj)
+        self._save_features(dataset, refactoring_name, k, features)
         if test_results is not None and test_names is not None and formatted_results is not None:
-            self._save_validation_resultss(dataset, test_results, test_names, formatted_results)
+            self._save_validation_results(dataset, refactoring_name, k, test_results, test_names, formatted_results)

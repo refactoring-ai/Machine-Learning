@@ -39,8 +39,8 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     # load non-refactoring examples
     non_refactored_instances = refactoring.get_non_refactored_instances(dataset)
 
-    log("raw number of refactoring instances: {}".format(refactored_instances.shape[0]), False)
-    log("raw number of non-refactoring instances: {}".format(non_refactored_instances.shape[0]), False)
+    log(f"raw number of refactoring instances: {refactored_instances.shape[0]}", False)
+    log(f"raw number of non-refactoring with K={refactoring.commit_threshold()} instances: {non_refactored_instances.shape[0]}", False)
 
     # if there' still a row with NAs, drop it as it'll cause a failure later on.
     refactored_instances = refactored_instances.dropna()
@@ -48,11 +48,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
-        log("No refactorings found for refactoring type: " + refactoring.name())
+        log(f"No refactorings found for refactoring type: {refactoring.name()}")
         return None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
-        log("No non-refactorings found for refactoring type: " + refactoring.name())
+        log(f"No non-refactorings found for refactoring type: {refactoring.level()} and K={refactoring.commit_threshold()}")
         return None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)

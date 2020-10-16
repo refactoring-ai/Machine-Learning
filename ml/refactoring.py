@@ -44,6 +44,12 @@ class LowLevelRefactoring:
         """
         return self._name
 
+    def commit_threshold(self) -> int:
+        """
+        Get the stable commit threshold for this run, e.g. 15
+        """
+        return self._commitThreshold
+
 
 def build_refactorings(selected_level: Level):
     """
