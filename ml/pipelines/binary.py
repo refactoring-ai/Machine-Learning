@@ -1,11 +1,9 @@
 import traceback
 import pandas as pd
-from sklearn.inspection import permutation_importance
 from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
     SCORING
 from ml.preprocessing.feature_reduction import perform_feature_reduction
-from utils.classifier_utils import format_results_single_run
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+from utils.classifier_utils import format_results_single_run, evaluate_model
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
 from ml.pipelines.pipelines import MLPipeline
 from ml.preprocessing.preprocessing import retrieve_labelled_instances
@@ -21,49 +19,6 @@ def _build_production_model(model_def, best_params, x, y):
     super_model.fit(x, y)
 
     return super_model
-
-
-def _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids_val_list):
-    """
-    Evaluate the performance of a model by fitting it with the training data and then evaluating it against the val sets.
-
-    Parameter:
-        search: an untrained model with specified parameters, e.g. SVm
-        x_train: the samples of the training data set
-        x_val_list: a collection of the samples for each val data set
-        y_train: the labels for the training data set
-        y_val_list: a collection of the labels for each val data set
-        db_ids_val_list: a collection of database ids for the instances in the val sets
-
-    Return:
-        val_scores: a collection of val scores (accuracy, precision, recall, tn, fp, fn, tp) for each val set
-        val_results: a collection of val results in a dataframe(ids, label, prediction) for each val set
-    """
-    log("val search started at %s\n" % now(), False)
-    search.fit(x_train, y_train)
-    log(format_best_parameters(search))
-    best_estimator = search.best_estimator_
-
-    val_results = []
-    val_scores = {'accuracy': [], 'f1_score': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
-    # Predict unseen results for all validation sets
-    for index, x_val in enumerate(x_val_list):
-        y_pred = best_estimator.predict(x_val)
-        y_val = y_val_list[index]
-        db_ids = db_ids_val_list[index]
-        val_scores["accuracy"] += [accuracy_score(y_val, y_pred)]
-        val_scores["f1_score"] += [f1_score(y_val, y_pred)]
-        val_scores["precision"] += [precision_score(y_val, y_pred)]
-        val_scores["recall"] += [recall_score(y_val, y_pred)]
-        val_scores["tn"] += [confusion_matrix(y_val, y_pred).ravel()[0]]
-        val_scores["fp"] += [confusion_matrix(y_val, y_pred).ravel()[1]]
-        val_scores["fn"] += [confusion_matrix(y_val, y_pred).ravel()[2]]
-        val_scores["tp"] += [confusion_matrix(y_val, y_pred).ravel()[3]]
-        val_scores["permutation_importance"] += [permutation_importance(best_estimator, x_val, y_val, n_repeats=30, random_state=237)]
-        data = {"db_id": db_ids.values, "label": y_val.values, "prediction": y_pred}
-        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]).reset_index())
-
-    return val_scores, val_results
 
 
 class BinaryClassificationPipeline(MLPipeline):
@@ -91,8 +46,7 @@ class BinaryClassificationPipeline(MLPipeline):
             log("Dataset {}".format(dataset))
 
             for refactoring in self._refactorings:
-                refactoring_name = refactoring.name()
-                log("**** Refactoring Type: %s" % refactoring_name)
+                log(f"**** Refactoring Type: refactoring.name()")
 
                 # we have two options to select a val set,
                 # 1.) Predefined in the database
@@ -121,7 +75,7 @@ class BinaryClassificationPipeline(MLPipeline):
                     # X and Y where already shuffled in the retrieve_labelled_instances function
                     x = pd.concat([x_train] + x_val_list)
                     y = pd.concat([y_train] + y_val_list)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train,
+                    self._run_all_models(refactoring, refactoring.name(), dataset, scaler, x, y, x_train,
                                          x_val_list, y_train, y_val_list, db_ids_val_list, dataset_names)
                 # 2.) random percentage train/ val split
                 else:
@@ -141,9 +95,10 @@ class BinaryClassificationPipeline(MLPipeline):
                     x_train = x_train.drop(["db_id"], axis=1)
                     db_ids_val = x_val["db_id"]
                     x_val = x_val.drop(["db_id"], axis=1)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
+                    self._run_all_models(refactoring, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
 
-    def _run_all_models(self, refactoring, refactoring_name, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
+
+    def _run_all_models(self, refactoring, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
         """
         For each model, it:
         1) Performs the hyper parameter search
@@ -160,7 +115,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 features, val_scores, val_results, model_to_save, search = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
 
                 # log val scores
-                formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["f1_score"], val_scores["precision"],
+                formatted_results = format_results_single_run(dataset, refactoring.name(), val_names, model_name, val_scores["f1_score"], val_scores["precision"],
                                                               val_scores["recall"], val_scores['accuracy'], val_scores['tn'],
                                                               val_scores['fp'], val_scores['fn'], val_scores['tp'], val_scores["permutation_importance"],
                                                               model_to_save, features, format_best_parameters(search))
@@ -168,14 +123,14 @@ class BinaryClassificationPipeline(MLPipeline):
 
                 # we save the best estimator we had during the search
                 # Also, store the predictions with labels and db_ids, to analyze them later
-                model.persist(dataset, refactoring_name, features, model_to_save, scaler,
+                model.persist(dataset, refactoring.name(), refactoring.commit_threshold(), features, model_to_save, scaler,
                               val_results, val_names, formatted_results)
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
-                log("An error occurred while working on refactoring " + refactoring_name + " model " + model.name()
-                    + " with datasets: " + str(val_names))
+                log(f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
                 log(str(e))
                 log(str(traceback.format_exc()))
+
 
     def _run_single_model(self, model_def, X, y, x_train, x_val_list, y_train, y_val_list, db_ids):
         model = model_def.model()
@@ -196,8 +151,9 @@ class BinaryClassificationPipeline(MLPipeline):
         else:
             features = X.columns.values
 
-        # Train and val the model
-        val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
+        # Train and evaluate the model
+        trained_model = self.train_model(search, x_train, y_train, )
+        val_scores, val_results = evaluate_model(trained_model, x_val_list, y_val_list, db_ids)
 
         # reduce the features for the supermodel:
         if model_def.feature_reduction():
@@ -207,3 +163,10 @@ class BinaryClassificationPipeline(MLPipeline):
 
         # return the scores and the best estimator
         return features, val_scores, val_results, super_model, search
+
+
+    def train_model(self, search, x_train, y_train):
+        log("val search started at %s\n" % now(), False)
+        search.fit(x_train, y_train)
+        log(format_best_parameters(search))
+        return search.best_estimator_

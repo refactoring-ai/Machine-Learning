@@ -32,15 +32,15 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         ids: instance ids, to query the actual data from the database
         scaler: the scaler object used in the scaling process.
     """
-    log("---- Retrieve labeled instances for dataset: %s" % dataset)
+    log(f"---- Retrieve labeled instances for dataset: {dataset} and the refactoring {refactoring.name()}")
 
     # get all refactoring examples we have in our dataset
     refactored_instances = refactoring.get_refactored_instances(dataset)
     # load non-refactoring examples
     non_refactored_instances = refactoring.get_non_refactored_instances(dataset)
 
-    log("raw number of refactoring instances: {}".format(refactored_instances.shape[0]), False)
-    log("raw number of non-refactoring instances: {}".format(non_refactored_instances.shape[0]), False)
+    log(f"raw number of refactoring instances: {refactored_instances.shape[0]}", False)
+    log(f"raw number of non-refactoring with K={refactoring.commit_threshold()} instances: {non_refactored_instances.shape[0]}", False)
 
     # if there' still a row with NAs, drop it as it'll cause a failure later on.
     refactored_instances = refactored_instances.dropna()
@@ -48,11 +48,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
-        log("No refactorings found for refactoring type: " + refactoring.name())
+        log(f"No refactorings found for refactoring type: {refactoring.name()}")
         return None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
-        log("No non-refactorings found for refactoring type: " + refactoring.name())
+        log(f"No non-refactorings found for refactoring type: {refactoring.level()} and K={refactoring.commit_threshold()}")
         return None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
@@ -98,7 +98,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # balance the datasets, as we have way more 'non refactored examples' rather than refactoring examples
     # for now, we basically perform under sampling
-    if is_training_data and BALANCE_DATASET:
+    if BALANCE_DATASET:
         log("instances before balancing: {}".format(Counter(y)), False)
         x, y = perform_balancing(x, y)
         assert x.shape[0] == y.shape[0], "Balancing did not work, x and y have different shapes."

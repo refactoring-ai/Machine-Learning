@@ -1,9 +1,15 @@
+import csv
 import json
 from pathlib import Path
 import os
 import joblib
+import pandas as pd
+
+from utils.date_utils import now
 from utils.log import log
 import statistics
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.inspection import permutation_importance
 
 
 def format_results_single_run(dataset, refactoring_name, validation_names, model_name, f1_scores, precision_scores, recall_scores,
@@ -76,3 +82,51 @@ def store_collection(collection, path):
     with open(path, "w") as f:
         f.write("\n".join(str(item) for item in collection))
     log(f"Stored collection at: {path}")
+
+
+def load_joblib(path):
+    return joblib.load(path)
+
+
+def load_csv(path):
+    with open(path) as file:
+        reader = csv.reader(file)
+        data_raw = list(reader)
+        return [item for sublist in data_raw for item in sublist]
+
+
+
+def evaluate_model(trained_model, x_val_list, y_val_list, db_ids_val_list):
+    """
+    Evaluate the performance of a model by fitting it with the training data and then evaluating it against the val sets.
+
+    Parameter:
+        trained_model: a trained model with specified parameters, e.g. SVM
+        x_val_list: a collection of the samples for each val data set
+        y_val_list: a collection of the labels for each val data set
+        db_ids_val_list: a collection of database ids for the instances in the val sets
+
+    Return:
+        val_scores: a collection of val scores (accuracy, precision, recall, tn, fp, fn, tp) for each val set
+        val_results: a collection of val results in a dataframe(ids, label, prediction) for each val set
+    """
+    val_results = []
+    val_scores = {'accuracy': [], 'f1_score': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
+    # Predict unseen results for all validation sets
+    for index, x_val in enumerate(x_val_list):
+        y_pred = trained_model.predict(x_val)
+        y_val = y_val_list[index]
+        db_ids = db_ids_val_list[index]
+        val_scores["accuracy"] += [accuracy_score(y_val, y_pred)]
+        val_scores["f1_score"] += [f1_score(y_val, y_pred)]
+        val_scores["precision"] += [precision_score(y_val, y_pred)]
+        val_scores["recall"] += [recall_score(y_val, y_pred)]
+        val_scores["tn"] += [confusion_matrix(y_val, y_pred).ravel()[0]]
+        val_scores["fp"] += [confusion_matrix(y_val, y_pred).ravel()[1]]
+        val_scores["fn"] += [confusion_matrix(y_val, y_pred).ravel()[2]]
+        val_scores["tp"] += [confusion_matrix(y_val, y_pred).ravel()[3]]
+        val_scores["permutation_importance"] += [permutation_importance(trained_model, x_val, y_val, n_repeats=30, random_state=237)]
+        data = {"db_id": db_ids.values, "label": y_val.values, "prediction": y_pred}
+        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]))
+
+    return val_scores, val_results
