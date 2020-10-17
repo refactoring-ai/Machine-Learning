@@ -28,7 +28,7 @@ CACHE_DIR_PATH = ""
 # region Multi-Core
 # The number of cores to use for tasks, e.g. classifier training or feature selection
 # -1 denotes to use all available cores
-CORE_COUNT = -1
+CORE_COUNT = 2
 # endregion
 
 # region Database related
@@ -39,40 +39,21 @@ USE_CACHE = True
 DB_AVAILABLE = False
 # endregion
 
-# region Dataset balancing
-BALANCE_DATASET = True
-
-# how to balance the dataset
-# options = [random, cluster_centroids, nearmiss]
-BALANCE_DATASET_STRATEGY = "random"
-# endregion
-
 # region Dataset scaling
 # scale using MinMaxScaler?
 SCALE_DATASET = True
 # endregion
 
-# region Sample size
-# fraction of the positive samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_POSITIVE = 1.0
+# region Dataset balancing
+BALANCE_DATASET = False
 
-# Min number of positive training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_POSITIVE
-MIN_TRAINING_SAMPLE_COUNT_POSITIVE = 250000
+# how to balance the dataset
+# options = [random, cluster_centroids, nearmiss]
+BALANCE_DATASET_STRATEGY = "random"
 
-# fraction of the negative samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_NEGATIVE = 1.0
-
-# Min number of negative training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_NEGATIVE
-# if the samples counts don't align make sure to turn of dataset balancing
-MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 250000
-
-# fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
-# If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
-EVALUATION_SAMPLE_FRACTION = 1.0
-
-# Min number of training samples for each positive and negative samples, this is the lower boundary for EVALUATION_SAMPLE_FRACTION
-MIN_EVALUATION_SAMPLE_COUNT = 5000
-
+# Ratio of the positive and negative samples for the training, e.g. 0.1 -> 10/% positive samples
+# SET BALANCE_DATASET to False, otherwise this setting will be skipped
+TRAINING_SAMPLE_RATIO = 0.1
 # endregion
 
 # region Feature reduction
@@ -314,10 +295,10 @@ STABLE_COMMIT_FIELDS = ["className",
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {Level.NONE: [],
-                               Level.Class: [50],
-                               Level.Method: [50],
-                               Level.Variable: [50],
-                               Level.Field: [50],
+                               Level.Class: [15],
+                               Level.Method: [15],
+                               Level.Variable: [15],
+                               Level.Field: [15],
                                Level.Other: []}
 # endregion
 

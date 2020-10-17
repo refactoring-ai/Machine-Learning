@@ -1,8 +1,7 @@
 from collections import Counter
 import pandas as pd
 from configs import SCALE_DATASET, BALANCE_DATASET, DROP_METRICS, \
-    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, \
-    TRAINING_SAMPLE_FRACTION_POSITIVE, TRAINING_SAMPLE_FRACTION_NEGATIVE, EVALUATION_SAMPLE_FRACTION, MIN_TRAINING_SAMPLE_COUNT_POSITIVE, MIN_TRAINING_SAMPLE_COUNT_NEGATIVE, MIN_EVALUATION_SAMPLE_COUNT
+    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, TRAINING_SAMPLE_RATIO
 from ml.preprocessing.sampling import perform_balancing, sample_reduction
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from ml.refactoring import LowLevelRefactoring
@@ -65,15 +64,8 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     non_refactored_instances["prediction"] = 0
 
     # reduce the amount training samples, if specified, also keep the specified balance
-    if is_training_data and TRAINING_SAMPLE_FRACTION_NEGATIVE < 1:
-        non_refactored_instances = sample_reduction(non_refactored_instances, TRAINING_SAMPLE_FRACTION_NEGATIVE, MIN_TRAINING_SAMPLE_COUNT_NEGATIVE)
-    if is_training_data and TRAINING_SAMPLE_FRACTION_POSITIVE < 1:
-        refactored_instances = sample_reduction(refactored_instances, TRAINING_SAMPLE_FRACTION_POSITIVE, MIN_TRAINING_SAMPLE_COUNT_POSITIVE)
-    # reduce the amount evaluation samples, if specified
-    if not is_training_data and EVALUATION_SAMPLE_FRACTION < 1:
-        refactored_instances = sample_reduction(refactored_instances, EVALUATION_SAMPLE_FRACTION, MIN_EVALUATION_SAMPLE_COUNT)
-        non_refactored_instances = sample_reduction(non_refactored_instances, EVALUATION_SAMPLE_FRACTION, MIN_EVALUATION_SAMPLE_COUNT)
-
+    if is_training_data and 0 < TRAINING_SAMPLE_RATIO < 1 and not BALANCE_DATASET:
+        refactored_instances, non_refactored_instances = sample_reduction(refactored_instances, non_refactored_instances, TRAINING_SAMPLE_RATIO)
 
     # now, combine both datasets (with both TRUE and FALSE predictions)
     if non_refactored_instances.shape[1] != refactored_instances.shape[1]:
