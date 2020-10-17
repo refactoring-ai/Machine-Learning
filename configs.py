@@ -53,7 +53,7 @@ BALANCE_DATASET_STRATEGY = "random"
 
 # Ratio of the positive and negative samples for the training, e.g. 0.1 -> 10/% positive samples
 # SET BALANCE_DATASET to False, otherwise this setting will be skipped
-TRAINING_SAMPLE_RATIO = 0.1
+TRAINING_SAMPLE_RATIO = 0.2
 # endregion
 
 # region Feature reduction
