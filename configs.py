@@ -28,7 +28,7 @@ CACHE_DIR_PATH = ""
 # region Multi-Core
 # The number of cores to use for tasks, e.g. classifier training or feature selection
 # -1 denotes to use all available cores
-CORE_COUNT = 2
+CORE_COUNT = -1
 # endregion
 
 # region Database related
@@ -79,10 +79,10 @@ SEARCH = "randomized"
 SCORING = "accuracy"
 
 # number of iterations (if Randomized strategy is chosen)
-N_ITER_RANDOM_SEARCH = 50
+N_ITER_RANDOM_SEARCH = 100
 
 # number of folds in the search for best parameters
-N_CV_SEARCH = 7
+N_CV_SEARCH = 10
 # endregion
 
 # region Evaluation: Cross-validation configuration
@@ -102,7 +102,7 @@ N_CV_DNN = 10
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['logistic-regression']
+MODELS = ['logistic-regression', 'random-forest']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -120,54 +120,55 @@ class Level(IntEnum):
 
 # Refactorings to study
 CLASS_LEVEL_REFACTORINGS = ["Extract Class",
-                            "Extract Interface",
-                            "Extract Subclass",
-                            "Extract Superclass",
-                            "Move And Rename Class",
+                            # "Extract Interface",
+                            # "Extract Subclass",
+                            # "Extract Superclass",
+                            # "Move And Rename Class",
                             "Move Class",
-                            "Rename Class",
+                            # "Rename Class",
                             #"Introduce Polymorphism",
                             #"Convert Anonymous Class To Type"
                             ]
 
-METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
-                             "Extract Method",
-                             "Inline Method",
-                             "Move Method",
-                             "Pull Up Method",
-                             "Push Down Method",
-                             "Rename Method",
-                             "Change Return Type",
-                             "Move And Inline Method",
-                             "Move And Rename Method",
-                             "Change Parameter Type",
-                             "Split Parameter",
-                             "Merge Parameter"]
+METHOD_LEVEL_REFACTORINGS = [# "Extract And Move Method",
+                             # "Extract Method",
+                             # "Inline Method",
+                             # "Move Method",
+                             # "Pull Up Method",
+                             # "Push Down Method",
+                             # "Rename Method",
+                             # "Change Return Type",
+                             # "Move And Inline Method",
+                             # "Move And Rename Method",
+                             # "Change Parameter Type",
+                             # "Split Parameter",
+                             # "Merge Parameter"
+                             ]
 
-VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
-                               "Inline Variable",
-                               "Parameterize Variable",
-                               "Rename Parameter",
-                               "Rename Variable",
-                               "Replace Variable With Attribute",
-                               "Change Variable Type",
-                               "Split Variable",
-                               "Merge Variable"
+VARIABLE_LEVEL_REFACTORINGS = [# "Extract Variable",
+                               # "Inline Variable",
+                               # "Parameterize Variable",
+                               # "Rename Parameter",
+                               # "Rename Variable",
+                               # "Replace Variable With Attribute",
+                               # "Change Variable Type",
+                               # "Split Variable",
+                               # "Merge Variable"
                                ]
 
-FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
-                            "Pull Up Attribute",
-                            "Move And Rename Attribute",
-                            "Push Down Attribute",
-                            "Replace Attribute",
-                            "Rename Attribute",
-                            "Extract Attribute",
-                            "Change Attribute Type"
+FIELD_LEVEL_REFACTORINGS = [# "Move Attribute",
+                            # "Pull Up Attribute",
+                            # "Move And Rename Attribute",
+                            # "Push Down Attribute",
+                            # "Replace Attribute",
+                            # "Rename Attribute",
+                            # "Extract Attribute",
+                            # "Change Attribute Type"
                             ]
 
 OTHER_LEVEL_REFACTORINGS = [
-    "Move Source Folder",
-    "Change Package"
+    # "Move Source Folder",
+    # "Change Package"
     ]
 
 # Maps each level onto its refactorings
