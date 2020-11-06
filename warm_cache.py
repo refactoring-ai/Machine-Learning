@@ -36,5 +36,3 @@ for dataset in (DATASETS + VALIDATION_DATASETS):
 log('Cache warm-up took %s seconds.' % (time.time() - start_time))
 log_close()
 close_connection()
-
-exit()

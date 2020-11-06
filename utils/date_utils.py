@@ -1,5 +1,9 @@
-from time import strftime, gmtime
+from datetime import datetime
 
 
-def now():
-    return strftime("%Y-%m-%d %H:%M:%S", gmtime())
+def now() -> str:
+    return datetime.now().isoformat()
+
+
+def windows_path_friendly_now() -> str:
+    return now().replace(":", "-").replace(".", "-")

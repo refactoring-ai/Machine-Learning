@@ -1,5 +1,8 @@
 from utils.date_utils import now
 from utils.log import log
+from typing import Iterable
+from ml.models.base import MLModelTrainer
+from ml.refactoring import LowLevelRefactoring
 
 
 class MLPipeline:
@@ -9,7 +12,7 @@ class MLPipeline:
     The `run` method is the one that does the magic. Other methods mostly support logging.
     """
 
-    def __init__(self, models_to_run, refactorings, datasets):
+    def __init__(self, models_to_run: Iterable[MLModelTrainer], refactorings: Iterable[LowLevelRefactoring], datasets: Iterable[str]):
         self._models_to_run = models_to_run
         self._refactorings = refactorings
         self._datasets = datasets
@@ -19,7 +22,7 @@ class MLPipeline:
     def run(self):
         pass
 
-    def _finish_time(self, dataset, model, refactoring):
+    def _finish_time(self, dataset: str, model: MLModelTrainer, refactoring: LowLevelRefactoring):
         finish_hour = now()
         log("Finished at %s" % finish_hour)
         log(
@@ -35,8 +38,5 @@ class MLPipeline:
 
     def _count_execution(self):
         self._current_execution_number = self._current_execution_number+1
-        log("Execution: {}/{}".format(self._current_execution_number, self._total_number_of_executions()))
-        pass
-
-
-
+        log("Execution: {}/{}".format(self._current_execution_number,
+                                      self._total_number_of_executions()))
