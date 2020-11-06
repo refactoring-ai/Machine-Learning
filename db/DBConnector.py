@@ -14,19 +14,19 @@ config.read(os.path.join(os.getcwd(), 'dbconfig.ini'))
 mydb, tunnel = None, None
 if DB_AVAILABLE and config["db"].getboolean("use_tunnel"):
     tunnel = sshtunnel.SSHTunnelForwarder(
-            (config["ssh_tunnel"]["host"],  int(config["ssh_tunnel"]["port"])),
-            ssh_username=config["ssh_tunnel"]["user"],
-            ssh_password=config["ssh_tunnel"]["pwd"],
-            remote_bind_address=(config["db"]["host"], int(config["db"]["port"]))
+        (config["ssh_tunnel"]["host"],  int(config["ssh_tunnel"]["port"])),
+        ssh_username=config["ssh_tunnel"]["user"],
+        ssh_password=config["ssh_tunnel"]["pwd"],
+        remote_bind_address=(config["db"]["host"], int(config["db"]["port"]))
     )
     tunnel.start()
     mydb = mysql.connector.connect(
-            user=config["db"]["user"],
-            password=config["db"]["pwd"],
-            host="127.0.0.1",
-            port=tunnel.local_bind_port,
-            database=config["db"]["database"],
-        )
+        user=config["db"]["user"],
+        password=config["db"]["pwd"],
+        host="127.0.0.1",
+        port=tunnel.local_bind_port,
+        database=config["db"]["database"],
+    )
 elif DB_AVAILABLE:
     mydb = mysql.connector.connect(
         host=config['db']["host"],
@@ -66,24 +66,25 @@ def execute_query(sql_query):
             if not os.path.isdir(cache_dir):
                 os.makedirs(cache_dir)
             # split large tables into smaller chunks, to avoid MemoryErrors on small machines
-            chunks = pd.read_sql_query(sql_query, mydb, chunksize=10**5)
+            chunks = pd.read_sql_query(
+                sql_query, mydb, chunksize=10**5, coerce_float=False)
             if USE_CACHE:
                 for df in chunks:
                     store_header = not os.path.exists(file_path)
-                    df.to_csv(file_path, mode="a", index=False, header=store_header)
-                # return pd.read_csv(file_path, dtype=object)
+                    df.to_csv(file_path, mode="a",
+                              index=False, header=store_header)
             else:
                 data = pd.DataFrame()
                 for df in chunks:
                     data = data.append(df)
-                # return data
-        except (KeyboardInterrupt, SystemExit):
+                return data
+        except (KeyboardInterrupt):
             if os.path.exists(file_path):
                 os.remove(file_path)
             close_connection()
             exit()
 
-    if USE_CACHE and os.path.exists(file_path):
+    elif USE_CACHE and os.path.exists(file_path):
         return pd.read_csv(file_path, dtype=object)
     else:
         raise Exception("Cache not found, and db connection is not available")
