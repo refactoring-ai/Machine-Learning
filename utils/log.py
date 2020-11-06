@@ -27,7 +27,8 @@ def log_init(log_name: str = ""):
     else:
         dir_path = path.join(configs.RESULTS_DIR_PATH, "results")
         Path(dir_path).mkdir(parents=True, exist_ok=True)
-        _f = open(path.join(dir_path, f"{random.randint(1, 999999)}-result.txt"), "w+")
+        _f = open(
+            path.join(dir_path, f"{random.randint(1, 999999)}-result.txt"), "w+")
 
     log(r"  __  __ _      _ _    ___      __         _           _           ")
     log(r" |  \/  | |    | | |  | _ \___ / _|__ _ __| |_ ___ _ _(_)_ _  __ _ ")
@@ -45,6 +46,8 @@ def log_close():
 
 
 def log(msg, print_msg: bool = True):
+    if not isinstance(msg, str):
+        msg = json.dumps(msg, indent=2)
     if print_msg:
         print(msg)
     global _f

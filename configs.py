@@ -21,6 +21,9 @@ FILE_TYPE = 0
 # save the results directory in this path, if empty use the local path of the executed python script
 RESULTS_DIR_PATH = ""
 
+# Specify compression for saving joblib models see joblib.dump
+JOBLIB_COMPRESSION = None
+
 # store the cache in this path, if empty use the local path of the executed python script
 CACHE_DIR_PATH = ""
 # endregion

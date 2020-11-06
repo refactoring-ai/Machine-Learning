@@ -1,69 +1,22 @@
 import traceback
+from typing import Dict, Iterable
+
 import pandas as pd
-from sklearn.inspection import permutation_importance
-from configs import SEARCH, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS, TEST, CORE_COUNT, \
-    SCORING
-from ml.preprocessing.feature_reduction import perform_feature_reduction
-from utils.classifier_utils import format_results_single_run
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, GridSearchCV, train_test_split
+from configs import (CORE_COUNT, N_CV_SEARCH, N_ITER_RANDOM_SEARCH, SCORING,
+                     SEARCH, VAL_SPLIT_SIZE, VALIDATION_DATASETS)
+from ml.models.base import SupervisedMLRefactoringModel
+from ml.models.trained_refactoring_model import TrainedRefactoringMLModel
 from ml.pipelines.pipelines import MLPipeline
+from ml.preprocessing.feature_reduction import perform_feature_reduction
 from ml.preprocessing.preprocessing import retrieve_labelled_instances
+from ml.refactoring import LowLevelRefactoring
+from pandas.core.frame import DataFrame
+from sklearn.base import TransformerMixin
+from sklearn.model_selection import (GridSearchCV, RandomizedSearchCV,
+                                     StratifiedKFold, train_test_split)
 from utils.classifier_utils import format_best_parameters
 from utils.date_utils import now
 from utils.log import log
-
-
-def _build_production_model(model_def, best_params, x, y):
-    log("Production model build started at %s\n" % now())
-
-    super_model = model_def.model(best_params)
-    super_model.fit(x, y)
-
-    return super_model
-
-
-def _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids_val_list):
-    """
-    Evaluate the performance of a model by fitting it with the training data and then evaluating it against the val sets.
-
-    Parameter:
-        search: an untrained model with specified parameters, e.g. SVm
-        x_train: the samples of the training data set
-        x_val_list: a collection of the samples for each val data set
-        y_train: the labels for the training data set
-        y_val_list: a collection of the labels for each val data set
-        db_ids_val_list: a collection of database ids for the instances in the val sets
-
-    Return:
-        val_scores: a collection of val scores (accuracy, precision, recall, tn, fp, fn, tp) for each val set
-        val_results: a collection of val results in a dataframe(ids, label, prediction) for each val set
-    """
-    log("val search started at %s\n" % now(), False)
-    search.fit(x_train, y_train)
-    log(format_best_parameters(search))
-    best_estimator = search.best_estimator_
-
-    val_results = []
-    val_scores = {'accuracy': [], 'f1_score': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
-    # Predict unseen results for all validation sets
-    for index, x_val in enumerate(x_val_list):
-        y_pred = best_estimator.predict(x_val)
-        y_val = y_val_list[index]
-        db_ids = db_ids_val_list[index]
-        val_scores["accuracy"] += [accuracy_score(y_val, y_pred)]
-        val_scores["f1_score"] += [f1_score(y_val, y_pred)]
-        val_scores["precision"] += [precision_score(y_val, y_pred)]
-        val_scores["recall"] += [recall_score(y_val, y_pred)]
-        val_scores["tn"] += [confusion_matrix(y_val, y_pred).ravel()[0]]
-        val_scores["fp"] += [confusion_matrix(y_val, y_pred).ravel()[1]]
-        val_scores["fn"] += [confusion_matrix(y_val, y_pred).ravel()[2]]
-        val_scores["tp"] += [confusion_matrix(y_val, y_pred).ravel()[3]]
-        val_scores["permutation_importance"] += [permutation_importance(best_estimator, x_val, y_val, n_repeats=30, random_state=237)]
-        data = {"db_id": db_ids.values, "label": y_val.values, "prediction": y_pred}
-        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]).reset_index())
-
-    return val_scores, val_results
 
 
 class BinaryClassificationPipeline(MLPipeline):
@@ -71,7 +24,7 @@ class BinaryClassificationPipeline(MLPipeline):
     Train models for binary classification
     """
 
-    def __init__(self, models_to_run, refactorings, datasets):
+    def __init__(self, models_to_run: Iterable[SupervisedMLRefactoringModel], refactorings: Iterable[LowLevelRefactoring], datasets: Iterable[str]):
         super().__init__(models_to_run, refactorings, datasets)
 
     def run(self):
@@ -97,95 +50,102 @@ class BinaryClassificationPipeline(MLPipeline):
                 # we have two options to select a val set,
                 # 1.) Predefined in the database
                 if VAL_SPLIT_SIZE < 0 and len(VALIDATION_DATASETS) > 0:
-                    x_train, y_train, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    x_train, y_train, db_ids, scaler = retrieve_labelled_instances(
+                        dataset, refactoring, True)
                     # val if any refactorings were found for the given refactoring type
                     if x_train is None:
-                        log("Skip model building for refactoring type: " + refactoring.name())
+                        log("Skip model building for refactoring type: " +
+                            refactoring.name())
                         continue
 
                     x_val_list, y_val_list, db_ids_val_list, dataset_names = [], [], [], []
                     for validation_dataset in VALIDATION_DATASETS:
                         dataset_names.append(validation_dataset)
-                        x_val, y_val, db_ids_val, _, = retrieve_labelled_instances(validation_dataset, refactoring, False, scaler)
+                        x_val, y_val, db_ids_val, _, = retrieve_labelled_instances(
+                            validation_dataset, refactoring, False, scaler)
                         # val if any refactorings were found for the given refactoring type
                         if x_val is None:
-                            log("Skip val set %s for refactoring type: %s" % (validation_dataset, refactoring.name()))
+                            log("Skip val set %s for refactoring type: %s" %
+                                (validation_dataset, refactoring.name()))
                             continue
                         x_val_list.append(x_val)
                         y_val_list.append(y_val)
                         db_ids_val_list.append(db_ids_val)
                     if len(x_val_list) == 0:
-                        log("Skip model building for refactoring type: " + refactoring.name())
+                        log("Skip model building for refactoring type: " +
+                            refactoring.name())
                         continue
 
                     # X and Y where already shuffled in the retrieve_labelled_instances function
                     x = pd.concat([x_train] + x_val_list)
                     y = pd.concat([y_train] + y_val_list)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train,
+                    self._run_all_models(refactoring, dataset, scaler, x, y, x_train,
                                          x_val_list, y_train, y_val_list, db_ids_val_list, dataset_names)
                 # 2.) random percentage train/ val split
                 else:
-                    x, y, db_ids, scaler = retrieve_labelled_instances(dataset, refactoring, True)
+                    x, y, db_ids, scaler = retrieve_labelled_instances(
+                        dataset, refactoring, True)
                     # val if any refactorings were found for the given refactoring type
                     if x is None:
-                        log("Skip model building for refactoring type: " + refactoring.name())
+                        log("Skip model building for refactoring type: " +
+                            refactoring.name())
                         continue
                     # we split in train and val
                     # (note that we use the same split for all the models)
                     # add the db_ids to x again, in order to keep them aligned during the splitting
                     x["db_id"] = db_ids
-                    x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=VAL_SPLIT_SIZE, random_state=42)
+                    x_train, x_val, y_train, y_val = train_test_split(
+                        x, y, test_size=VAL_SPLIT_SIZE, random_state=42)
                     # drop the db_ids and only store the val db_ids
-                    #TODO: comeup with a better wy of handling the db_ids for this case, it is quite ugly
+                    # TODO: comeup with a better wy of handling the db_ids for this case, it is quite ugly
                     x = x.drop(["db_id"], axis=1)
                     x_train = x_train.drop(["db_id"], axis=1)
                     db_ids_val = x_val["db_id"]
                     x_val = x_val.drop(["db_id"], axis=1)
-                    self._run_all_models(refactoring, refactoring_name, dataset, scaler, x, y, x_train, [x_val], y_train, [y_val], [db_ids_val], ["random split"])
+                    self._run_all_models(refactoring, dataset, scaler, x, y, x_train, [
+                                         x_val], y_train, [y_val], [db_ids_val], ["random split"])
 
-    def _run_all_models(self, refactoring, refactoring_name, dataset, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
+    def _run_all_models(self, refactoring: LowLevelRefactoring, dataset: str, scaler, x, y, x_train, x_val_list, y_train, y_val_list, db_ids, val_names):
         """
         For each model, it:
         1) Performs the hyper parameter search
         2) Performs k-fold cross-validation
         3) Persists evaluation results and the best model
         """
+        refactoring_name = refactoring.name()
         for model in self._models_to_run:
-            model_name = model.name()
-            if TEST:
-                model_name += " val"
             try:
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
-                features, val_scores, val_results, model_to_save = self._run_single_model(model, x, y, x_train, x_val_list, y_train, y_val_list, db_ids)
-
-                # log val scores
-                formatted_results = format_results_single_run(dataset, refactoring_name, val_names, model_name, val_scores["f1_score"], val_scores["precision"],
-                                                              val_scores["recall"], val_scores['accuracy'], val_scores['tn'],
-                                                              val_scores['fp'], val_scores['fn'], val_scores['tp'], val_scores["permutation_importance"],
-                                                              model_to_save, features)
-                log(formatted_results)
+                trained_model = self._run_single_model(
+                    model, x, y, x_train, y_train, val_names, x_val_list, y_val_list, dataset, refactoring_name, scaler)
 
                 # we save the best estimator we had during the search
                 # Also, store the predictions with labels and db_ids, to analyze them later
-                model.persist(dataset, refactoring_name, features, model_to_save, scaler,
-                              val_results, val_names, formatted_results)
+
+                trained_model.persist_model()
+                trained_model.persist_model_parameters()
+
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
                 log("An error occurred while working on refactoring " + refactoring_name + " model " + model.name()
                     + " with datasets: " + str(val_names))
                 log(str(e))
                 log(str(traceback.format_exc()))
+                exit(-1)
 
-    def _run_single_model(self, model_def, X, y, x_train, x_val_list, y_train, y_val_list, db_ids):
-        model = model_def.model()
+    def _run_single_model(self, trainer: SupervisedMLRefactoringModel, X: DataFrame,
+                          y, x_train: DataFrame, y_train, val_names,
+                          x_val_list, y_val_list, dataset_name: str, refactoring_name: str, scaler: TransformerMixin) -> TrainedRefactoringMLModel:
+        model = trainer.model()
 
         # perform the search for the best hyper parameters
-        param_dist = model_def.params_to_tune()
+        param_dist = trainer.params_to_tune()
         search = None
 
-        if model_def.feature_reduction():
-            features, x_train = perform_feature_reduction(model, x_train, y_train)
+        if trainer.feature_reduction():
+            features, x_train = perform_feature_reduction(
+                model, x_train, y_train)
             x_val_list = [X for _, X in [
                 perform_feature_reduction(model, x_val, y_val, features) for x_val, y_val in zip(x_val_list, y_val_list)]]
         else:
@@ -193,18 +153,33 @@ class BinaryClassificationPipeline(MLPipeline):
 
         # choose which search to apply
         if SEARCH == 'randomized':
-            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
+            search = RandomizedSearchCV(model, param_dist, n_iter=N_ITER_RANDOM_SEARCH, cv=StratifiedKFold(
+                n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
         elif SEARCH == 'grid':
-            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
+            search = GridSearchCV(model, param_dist, cv=StratifiedKFold(
+                n_splits=N_CV_SEARCH, shuffle=True), scoring=SCORING, n_jobs=CORE_COUNT)
 
-        # Train and val the model
-        val_scores, val_results = _evaluate_model(search, x_train, x_val_list, y_train, y_val_list, db_ids)
+        log("val search started at %s\n" % now(), False)
+        search.fit(x_train, y_train)
+        log(format_best_parameters(search))
+
+        training_result = TrainedRefactoringMLModel(trainer.name(
+        ), dataset_name, refactoring_name, search.best_estimator_, scaler, features)
+
+        training_result.persist_validation_prediction_results()
+        training_result.persist_validation_statistics(
+            val_names, x_val_list, y_val_list)
 
         # reduce the features for the supermodel:
-        if model_def.feature_reduction():
+        if trainer.feature_reduction():
             features, X = perform_feature_reduction(model, X, y, features)
-        # Run cross validation on whole dataset and safe production ready model
-        super_model = _build_production_model(model_def, search.best_params_, X, y)
+
+        # Run cross validation on whole dataset and save production ready model
+        log("Production model build started at %s\n" % now())
+
+        super_model = trainer.model(search.best_params_)
+        super_model.fit(X, y)
 
         # return the scores and the best estimator
-        return features, val_scores, val_results, super_model
+        return TrainedRefactoringMLModel(
+            trainer.name(), dataset_name, refactoring_name, super_model, scaler, features)
