@@ -1,7 +1,9 @@
+import csv
 import json
 from pathlib import Path
 import os
 import joblib
+
 from utils.log import log
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
@@ -44,3 +46,14 @@ def store_collection(collection, path):
     with open(path, "w") as f:
         f.write("\n".join(str(item) for item in collection))
     log(f"Stored collection at: {path}")
+
+
+def load_joblib(path):
+    return joblib.load(path)
+
+
+def load_csv(path):
+    with open(path) as file:
+        reader = csv.reader(file)
+        data_raw = list(reader)
+        return [item for sublist in data_raw for item in sublist]

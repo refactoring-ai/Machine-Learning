@@ -54,7 +54,7 @@ class TrainedRefactoringMLModel:
             results_dir, "model_parameters.json")
         store_json(self._model_parameters(), model_parameters_path)
 
-    def persist_validation_prediction_results(self, db_ids, y_val, y_pred):
+    def persist_validation_prediction_results(self, db_ids, y_val): #TODO
         results_dir = self._results_dir()
         validation_prediction_results_path = path.join(
             results_dir, "validation_prediction_results.json")

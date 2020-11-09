@@ -1,10 +1,11 @@
 mysql-connector-python
-pandas
-scikit-learn
 numpy
-imbalanced-learn
-configparser
-joblib
+pandas
 matplotlib
 scipy
+joblib
+scikit-learn
+imbalanced-learn
+configparser
 sshtunnel
+openpyxl

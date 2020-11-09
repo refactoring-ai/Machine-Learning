@@ -1,8 +1,7 @@
 from collections import Counter
 import pandas as pd
 from configs import SCALE_DATASET, BALANCE_DATASET, DROP_METRICS, \
-    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, \
-    TRAINING_SAMPLE_FRACTION_POSITIVE, TRAINING_SAMPLE_FRACTION_NEGATIVE, EVALUATION_SAMPLE_FRACTION, MIN_TRAINING_SAMPLE_COUNT_POSITIVE, MIN_TRAINING_SAMPLE_COUNT_NEGATIVE, MIN_EVALUATION_SAMPLE_COUNT
+    DROP_PROCESS_AND_AUTHORSHIP_METRICS, PROCESS_AND_AUTHORSHIP_METRICS, DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS, TRAINING_SAMPLE_RATIO
 from ml.preprocessing.sampling import perform_balancing, sample_reduction
 from ml.preprocessing.scaling import perform_scaling, perform_fit_scaling
 from ml.refactoring import LowLevelRefactoring
@@ -32,15 +31,15 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
         ids: instance ids, to query the actual data from the database
         scaler: the scaler object used in the scaling process.
     """
-    log("---- Retrieve labeled instances for dataset: %s" % dataset)
+    log(f"---- Retrieve labeled instances for dataset: {dataset} and the refactoring {refactoring.name()}")
 
     # get all refactoring examples we have in our dataset
     refactored_instances = refactoring.get_refactored_instances(dataset)
     # load non-refactoring examples
     non_refactored_instances = refactoring.get_non_refactored_instances(dataset)
 
-    log("raw number of refactoring instances: {}".format(refactored_instances.shape[0]), False)
-    log("raw number of non-refactoring instances: {}".format(non_refactored_instances.shape[0]), False)
+    log(f"raw number of refactoring instances: {refactored_instances.shape[0]}", False)
+    log(f"raw number of non-refactoring with K={refactoring.commit_threshold()} instances: {non_refactored_instances.shape[0]}", False)
 
     # if there' still a row with NAs, drop it as it'll cause a failure later on.
     refactored_instances = refactored_instances.dropna()
@@ -48,11 +47,11 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # test if any refactorings were found for the given refactoring type
     if refactored_instances.shape[0] == 0:
-        log("No refactorings found for refactoring type: " + refactoring.name())
+        log(f"No refactorings found for refactoring type: {refactoring.name()}")
         return None, None, None, None
     # test if any refactorings were found for the given refactoring type
     if non_refactored_instances.shape[0] == 0:
-        log("No non-refactorings found for refactoring type: " + refactoring.name())
+        log(f"No non-refactorings found for refactoring type: {refactoring.level()} and K={refactoring.commit_threshold()}")
         return None, None, None, None
 
     log("refactoring instances (after dropping NA)s: {}".format(refactored_instances.shape[0]), False)
@@ -65,15 +64,8 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
     non_refactored_instances["prediction"] = 0
 
     # reduce the amount training samples, if specified, also keep the specified balance
-    if is_training_data and TRAINING_SAMPLE_FRACTION_NEGATIVE < 1:
-        non_refactored_instances = sample_reduction(non_refactored_instances, TRAINING_SAMPLE_FRACTION_NEGATIVE, MIN_TRAINING_SAMPLE_COUNT_NEGATIVE)
-    if is_training_data and TRAINING_SAMPLE_FRACTION_POSITIVE < 1:
-        refactored_instances = sample_reduction(refactored_instances, TRAINING_SAMPLE_FRACTION_POSITIVE, MIN_TRAINING_SAMPLE_COUNT_POSITIVE)
-    # reduce the amount evaluation samples, if specified
-    if not is_training_data and EVALUATION_SAMPLE_FRACTION < 1:
-        refactored_instances = sample_reduction(refactored_instances, EVALUATION_SAMPLE_FRACTION, MIN_EVALUATION_SAMPLE_COUNT)
-        non_refactored_instances = sample_reduction(non_refactored_instances, EVALUATION_SAMPLE_FRACTION, MIN_EVALUATION_SAMPLE_COUNT)
-
+    if is_training_data and 0 < TRAINING_SAMPLE_RATIO < 1 and not BALANCE_DATASET:
+        refactored_instances, non_refactored_instances = sample_reduction(refactored_instances, non_refactored_instances, TRAINING_SAMPLE_RATIO)
 
     # now, combine both datasets (with both TRUE and FALSE predictions)
     if non_refactored_instances.shape[1] != refactored_instances.shape[1]:
@@ -98,7 +90,7 @@ def retrieve_labelled_instances(dataset, refactoring: LowLevelRefactoring, is_tr
 
     # balance the datasets, as we have way more 'non refactored examples' rather than refactoring examples
     # for now, we basically perform under sampling
-    if is_training_data and BALANCE_DATASET:
+    if BALANCE_DATASET:
         log("instances before balancing: {}".format(Counter(y)), False)
         x, y = perform_balancing(x, y)
         assert x.shape[0] == y.shape[0], "Balancing did not work, x and y have different shapes."

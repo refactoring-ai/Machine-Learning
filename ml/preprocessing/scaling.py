@@ -9,7 +9,6 @@ def perform_fit_scaling(x):
     :param x: the feature values
     :return: x, scaled
     """
-
     scaler = MinMaxScaler()  # Default behavior is to scale to [0,1]
     columns = x.columns
     x = scaler.fit_transform(x)

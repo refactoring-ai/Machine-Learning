@@ -44,8 +44,7 @@ class BinaryClassificationPipeline(MLPipeline):
             log("Dataset {}".format(dataset))
 
             for refactoring in self._refactorings:
-                refactoring_name = refactoring.name()
-                log("**** Refactoring Type: %s" % refactoring_name)
+                log(f"**** Refactoring Type: refactoring.name()")
 
                 # we have two options to select a val set,
                 # 1.) Predefined in the database
@@ -128,8 +127,7 @@ class BinaryClassificationPipeline(MLPipeline):
 
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
-                log("An error occurred while working on refactoring " + refactoring_name + " model " + model.name()
-                    + " with datasets: " + str(val_names))
+                log(f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
                 log(str(e))
                 log(str(traceback.format_exc()))
                 exit(-1)
@@ -166,7 +164,7 @@ class BinaryClassificationPipeline(MLPipeline):
         training_result = TrainedRefactoringMLModel(trainer.name(
         ), dataset_name, refactoring_name, search.best_estimator_, scaler, features)
 
-        training_result.persist_validation_prediction_results()
+        # training_result.persist_validation_prediction_results(db_ids, y_val_list)
         training_result.persist_validation_statistics(
             val_names, x_val_list, y_val_list)
 

@@ -8,10 +8,13 @@ TEST = False
 # endregion
 
 # region FileTypes
+
+
 class FileType(Enum):
     only_production = 0
     only_test = 1
     test_and_production = 2
+
 
 # Do we only look at production or test files or both?
 FILE_TYPE = 0
@@ -42,49 +45,31 @@ USE_CACHE = True
 DB_AVAILABLE = True
 # endregion
 
-# region Dataset balancing
-BALANCE_DATASET = False
-
-# how to balance the dataset
-# options = [random, cluster_centroids, nearmiss]
-BALANCE_DATASET_STRATEGY = "random"
-# endregion
-
 # region Dataset scaling
 # scale using MinMaxScaler?
 SCALE_DATASET = True
 # endregion
 
-# region Sample size
-# fraction of the positive samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_POSITIVE = 0.0
+# region Dataset balancing
+BALANCE_DATASET = True
 
-# Min number of positive training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_POSITIVE
-MIN_TRAINING_SAMPLE_COUNT_POSITIVE = 250000
+# how to balance the dataset
+# options = [random, cluster_centroids, nearmiss]
+BALANCE_DATASET_STRATEGY = "random"
 
-# fraction of the negative samples (both true and false) to use for training, [0 - 1]
-TRAINING_SAMPLE_FRACTION_NEGATIVE = 0.0
-
-# Min number of negative training samples, this is the lower boundary for TRAINING_SAMPLE_FRACTION_NEGATIVE
-# if the samples counts don't align make sure to turn of dataset balancing
-MIN_TRAINING_SAMPLE_COUNT_NEGATIVE = 500000
-
-# fraction of the validation or test samples (both true and false) to use for evaluation, [0 - 1]
-# If you choose a random train/ test split, this parameter has no effect, TRAINING_SAMPLE_FRACTION will be used instead
-EVALUATION_SAMPLE_FRACTION = 1.0
-
-# Min number of training samples for each positive and negative samples, this is the lower boundary for EVALUATION_SAMPLE_FRACTION
-MIN_EVALUATION_SAMPLE_COUNT = 5000
-
+# Ratio of the positive and negative samples for the training, e.g. 0.1 -> 10/% positive samples
+# SET BALANCE_DATASET to False, otherwise this setting will be skipped
+TRAINING_SAMPLE_RATIO = 0.1
 # endregion
 
 # region Feature reduction
 # Remove all instances where one of process and authorship metrics is -1 (faulty).
-DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = False
+DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
 # Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
 DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
 # a list of all process and authorship metrics
-PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors", "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
+PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors",
+                                  "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
 
 # Drop these metrics as well
 DROP_METRICS = []
@@ -98,13 +83,13 @@ N_CV_FEATURE_REDUCTION = 2
 # options = [randomized, grid]
 SEARCH = "grid"
 
-SCORING = "f1"
+SCORING = "accuracy"
 
 # number of iterations (if Randomized strategy is chosen)
 N_ITER_RANDOM_SEARCH = 100
 
 # number of folds in the search for best parameters
-N_CV_SEARCH = 5
+N_CV_SEARCH = 7
 # endregion
 
 # region Evaluation: Cross-validation configuration
@@ -114,17 +99,12 @@ VAL_SPLIT_SIZE = -1
 # NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
 VALIDATION_DATASETS = ["test set github", "validation set github"]
 
-# number of folds for the final evaluation
-N_CV = 10
-
-# number of folds for the DNN
-N_CV_DNN = 10
 # endregion
 
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['random-forest']
+MODELS = ['logistic-regression']
 
 # Empty dataset means 'all datasets'
 DATASETS = ["github"]
@@ -132,6 +112,8 @@ DATASETS = ["github"]
 
 # region refactorings
 # refactoring levels
+
+
 class Level(IntEnum):
     NONE = 0
     Class = 1
@@ -140,112 +122,121 @@ class Level(IntEnum):
     Field = 4
     Other = 5
 
+
 # Refactorings to study
-CLASS_LEVEL_REFACTORINGS = ["Extract Class",
-                            "Extract Interface",
-                            "Extract Subclass",
-                            "Extract Superclass",
-                            "Move And Rename Class",
-                            "Move Class",
-                            "Rename Class",
-                            "Introduce Polymorphism",
-                            "Convert Anonymous Class To Type"
-                            ]
+CLASS_LEVEL_REFACTORINGS = [
+    "Extract Class",
+    "Extract Interface",
+    "Extract Subclass",
+    "Extract Superclass",
+    "Move And Rename Class",
+    "Move Class",
+    "Rename Class",
+    "Introduce Polymorphism",
+    "Convert Anonymous Class To Type"
+]
 
-METHOD_LEVEL_REFACTORINGS = ["Extract And Move Method",
-                             "Extract Method",
-                             "Inline Method",
-                             "Move Method",
-                             "Pull Up Method",
-                             "Push Down Method",
-                             "Rename Method",
-                             "Extract And Move Method",
-                             "Change Return Type",
-                             "Move And Inline Method",
-                             "Move And Rename Method",
-                             "Change Parameter Type",
-                             "Split Parameter",
-                             "Merge Parameter"]
+METHOD_LEVEL_REFACTORINGS = [
+    "Extract And Move Method",
+    "Extract Method",
+    "Inline Method",
+    "Move Method",
+    "Pull Up Method",
+    "Push Down Method",
+    "Rename Method",
+    "Extract And Move Method",
+    "Change Return Type",
+    "Move And Inline Method",
+    "Move And Rename Method",
+    "Change Parameter Type",
+    "Split Parameter",
+    "Merge Parameter"]
 
-VARIABLE_LEVEL_REFACTORINGS = ["Extract Variable",
-                               "Inline Variable",
-                               "Parameterize Variable",
-                               "Rename Parameter",
-                               "Rename Variable",
-                               "Replace Variable With Attribute",
-                               "Change Variable Type",
-                               "Split Variable",
-                               "Merge Variable"
-                               ]
+VARIABLE_LEVEL_REFACTORINGS = [
+    "Extract Variable",
+    "Inline Variable",
+    "Parameterize Variable",
+    "Rename Parameter",
+    "Rename Variable",
+    "Replace Variable With Attribute",
+    "Change Variable Type",
+    "Split Variable",
+    "Merge Variable"
+]
 
-FIELD_LEVEL_REFACTORINGS = ["Move Attribute",
-                            "Pull Up Attribute",
-                            "Move And Rename Attribute",
-                            "Push Down Attribute",
-                            "Replace Attribute",
-                            "Rename Attribute",
-                            "Extract Attribute",
-                            "Change Attribute Type"
-                            ]
+FIELD_LEVEL_REFACTORINGS = [
+    "Move Attribute",
+    "Pull Up Attribute",
+    "Move And Rename Attribute",
+    "Push Down Attribute",
+    "Replace Attribute",
+    "Rename Attribute",
+    "Extract Attribute",
+    "Change Attribute Type"
+]
 
 OTHER_LEVEL_REFACTORINGS = [
-    #"Move Source Folder",
-    # "Change Package"
-    ]
+    "Move Source Folder",
+    "Change Package"
+]
 
 # Maps each level onto its refactorings
-LEVEL_MAP = {Level.NONE: [],
-             Level.Class: CLASS_LEVEL_REFACTORINGS,
-             Level.Method: METHOD_LEVEL_REFACTORINGS,
-             Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
-             Level.Field: FIELD_LEVEL_REFACTORINGS,
-             Level.Other: OTHER_LEVEL_REFACTORINGS}
+LEVEL_MAP = {
+    Level.NONE: [],
+    Level.Class: CLASS_LEVEL_REFACTORINGS,
+    Level.Method: METHOD_LEVEL_REFACTORINGS,
+    Level.Variable: VARIABLE_LEVEL_REFACTORINGS,
+    Level.Field: FIELD_LEVEL_REFACTORINGS,
+    Level.Other: OTHER_LEVEL_REFACTORINGS
+}
 # endregion
 
 # region metrics fields
 # the ids are not included as they are the same for every table: id : long
-CLASS_METRICS_Fields = ["classAnonymousClassesQty",
-                      "classAssignmentsQty",
-                      "classCbo",
-                      "classComparisonsQty",
-                      "classLambdasQty",
-                      "classLcom",
-                      "classLoc",
-                        "classLCC",
-                      "classLoopQty",
-                      "classMathOperationsQty",
-                      "classMaxNestedBlocks",
-                      "classNosi",
-                      "classNumberOfAbstractMethods",
-                      "classNumberOfDefaultFields",
-                      "classNumberOfDefaultMethods",
-                      "classNumberOfFields",
-                      "classNumberOfFinalFields",
-                      "classNumberOfFinalMethods",
-                      "classNumberOfMethods",
-                      "classNumberOfPrivateFields",
-                      "classNumberOfPrivateMethods",
-                      "classNumberOfProtectedFields",
-                      "classNumberOfProtectedMethods",
-                      "classNumberOfPublicFields",
-                      "classNumberOfPublicMethods",
-                      "classNumberOfStaticFields",
-                      "classNumberOfStaticMethods",
-                      "classNumberOfSynchronizedFields",
-                      "classNumberOfSynchronizedMethods",
-                      "classNumbersQty",
-                      "classParenthesizedExpsQty",
-                      "classReturnQty",
-                      "classRfc",
-                      "classStringLiteralsQty",
-                      "classSubClassesQty",
-                      "classTryCatchQty",
-                      "classUniqueWordsQty",
-                      "classVariablesQty",
-                      "classWmc",
-                        "classTCC",
-                      "isInnerClass"]
-METHOD_METRICS_FIELDS = [#"fullMethodName", ToDo: decide if and how to include string objects
+CLASS_METRICS_Fields = [
+    "classAnonymousClassesQty",
+    "classAssignmentsQty",
+    "classCbo",
+    "classComparisonsQty",
+    "classLambdasQty",
+    "classLcom",
+    "classLoc",
+    "classLCC",
+    "classLoopQty",
+    "classMathOperationsQty",
+    "classMaxNestedBlocks",
+    "classNosi",
+    "classNumberOfAbstractMethods",
+    "classNumberOfDefaultFields",
+    "classNumberOfDefaultMethods",
+    "classNumberOfFields",
+    "classNumberOfFinalFields",
+    "classNumberOfFinalMethods",
+    "classNumberOfMethods",
+    "classNumberOfPrivateFields",
+    "classNumberOfPrivateMethods",
+    "classNumberOfProtectedFields",
+    "classNumberOfProtectedMethods",
+    "classNumberOfPublicFields",
+    "classNumberOfPublicMethods",
+    "classNumberOfStaticFields",
+    "classNumberOfStaticMethods",
+    "classNumberOfSynchronizedFields",
+    "classNumberOfSynchronizedMethods",
+    "classNumbersQty",
+    "classParenthesizedExpsQty",
+    "classReturnQty",
+    "classRfc",
+    "classStringLiteralsQty",
+    "classSubClassesQty",
+    "classTryCatchQty",
+    "classUniqueWordsQty",
+    "classVariablesQty",
+    "classWmc",
+    "classTCC",
+    "isInnerClass"]
+
+METHOD_METRICS_FIELDS = [  # "fullMethodName", ToDo: decide if and how to include string objects
     "methodAnonymousClassesQty",
     "methodAssignmentsQty",
     "methodCbo",
@@ -266,63 +257,82 @@ METHOD_METRICS_FIELDS = [#"fullMethodName", ToDo: decide if and how to include s
     "methodUniqueWordsQty",
     "methodVariablesQty",
     "methodWmc",
-    #"shortMethodName", ToDo: decide if and how to include string objects
-    "startLine"]
-VARIABLE_METRICS_FIELDS = ["variableAppearances",
-                         #"variableName" ToDo: decide if and how to include string objects
-                         ]
-FIELD_METRICS_FIELDS = ["fieldAppearances",
-                      #"fieldName" ToDo: decide if and how to include string objects
-                      ]
-PROCESS_METRICS_FIELDS = ["authorOwnership",
-                        "bugFixCount",
-                        "qtyMajorAuthors",
-                        "qtyMinorAuthors",
-                        "qtyOfAuthors",
-                        "qtyOfCommits",
-                        "refactoringsInvolved"]
-COMMIT_METADATA_FIELDS = ["commitDate",
-                        "commitId",
-                        "commitMessage",
-                        "commitUrl",
-                        "parentCommitId"]
-PROJECT_FIELDS = ["commitCountThresholds",
-                 "commits",
-                 "datasetName",
-                 "dateOfProcessing",
-                 "exceptionsCount",
-                 "finishedDate",
-                 "gitUrl",
-                 "isLocal",
-                 "javaLoc",
-                 "lastCommitHash",
-                 "numberOfProductionFiles",
-                 "numberOfTestFiles",
-                 "productionLoc",
-                 "projectName",
-                 "projectSizeInBytes",
-                 "testLoc"]
-REFACTORING_COMMIT_FIELDS = ["className",
-                           "filePath",
-                           "isTest",
-                           "level",
-                           # "refactoring", this two fields are not used for the training
-                           # "refactoringSummary"
-                           ]
-STABLE_COMMIT_FIELDS = ["className",
-                      "filePath",
-                      "isTest",
-                      "level"]
+    # "shortMethodName", ToDo: decide if and how to include string objects
+    "startLine"
+]
+
+VARIABLE_METRICS_FIELDS = [
+    "variableAppearances",
+    # "variableName" ToDo: decide if and how to include string objects
+]
+
+FIELD_METRICS_FIELDS = [
+    "fieldAppearances",
+    # "fieldName" ToDo: decide if and how to include string objects
+]
+
+PROCESS_METRICS_FIELDS = [
+    "authorOwnership",
+    "bugFixCount",
+    "qtyMajorAuthors",
+    "qtyMinorAuthors",
+    "qtyOfAuthors",
+    "qtyOfCommits",
+    "refactoringsInvolved"
+]
+
+COMMIT_METADATA_FIELDS = [
+    "commitDate",
+    "commitId",
+    "commitMessage",
+    "commitUrl",
+    "parentCommitId"
+]
+
+PROJECT_FIELDS = [
+    "commitCountThresholds",
+    "commits",
+    "datasetName",
+    "dateOfProcessing",
+    "exceptionsCount",
+    "finishedDate",
+    "gitUrl",
+    "isLocal",
+    "javaLoc",
+    "lastCommitHash",
+    "numberOfProductionFiles",
+    "numberOfTestFiles",
+    "productionLoc",
+    "projectName",
+    "projectSizeInBytes",
+    "testLoc"
+]
+REFACTORING_COMMIT_FIELDS = [
+    "className",
+    "filePath",
+    "isTest",
+    "level",
+    # "refactoring", this two fields are not used for the training
+    # "refactoringSummary"
+]
+STABLE_COMMIT_FIELDS = [
+    "className",
+    "filePath",
+    "isTest",
+    "level"
+]
 # endregion
 
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
-LEVEL_Stable_Thresholds_MAP = {Level.NONE: -1,
-                               Level.Class: 20,
-                               Level.Method: 20,
-                               Level.Variable: 20,
-                               Level.Field: 20,
-                               Level.Other: -1}
+LEVEL_Stable_Thresholds_MAP = {
+    Level.NONE: [],
+    Level.Class: [15],
+    Level.Method: [15],
+    Level.Variable: [15],
+    Level.Field: [15],
+    Level.Other: []
+}
 # endregion
 
 # --------------------------------
@@ -347,4 +357,3 @@ if TEST:
     MIN_TRAINING_SAMPLE_COUNT = 1000
     EVALUATION_SAMPLE_FRACTION = 0.1
     MIN_EVALUATION_SAMPLE_COUNT = 100
-
