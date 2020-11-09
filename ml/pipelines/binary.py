@@ -117,7 +117,7 @@ class BinaryClassificationPipeline(MLPipeline):
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
                 trained_model = self._run_single_model(
-                    model, x, y, x_train, y_train, val_names, x_val_list, y_val_list, dataset, refactoring_name, scaler)
+                    model, x, y, db_ids, x_train, y_train, val_names, x_val_list, y_val_list, dataset, refactoring_name, scaler)
 
                 # we save the best estimator we had during the search
                 # Also, store the predictions with labels and db_ids, to analyze them later
@@ -127,13 +127,14 @@ class BinaryClassificationPipeline(MLPipeline):
 
                 self._finish_time(dataset, model, refactoring)
             except Exception as e:
-                log(f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
+                log(
+                    f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
                 log(str(e))
                 log(str(traceback.format_exc()))
                 exit(-1)
 
     def _run_single_model(self, trainer: SupervisedMLRefactoringModel, X: DataFrame,
-                          y, x_train: DataFrame, y_train, val_names,
+                          y, db_ids, x_train: DataFrame, y_train, val_names,
                           x_val_list, y_val_list, dataset_name: str, refactoring_name: str, scaler: TransformerMixin) -> TrainedRefactoringMLModel:
         model = trainer.model()
 
@@ -164,7 +165,8 @@ class BinaryClassificationPipeline(MLPipeline):
         training_result = TrainedRefactoringMLModel(trainer.name(
         ), dataset_name, refactoring_name, search.best_estimator_, scaler, features)
 
-        # training_result.persist_validation_prediction_results(db_ids, y_val_list)
+        training_result.persist_validation_prediction_results(
+            db_ids, val_names, x_val_list, y_val_list)
         training_result.persist_validation_statistics(
             val_names, x_val_list, y_val_list)
 

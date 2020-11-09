@@ -1,6 +1,7 @@
 from os import path
 from statistics import mean
 from typing import Iterable
+from utils.date_utils import windows_path_friendly_now
 
 from configs import RESULTS_DIR_PATH
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -19,6 +20,7 @@ class TrainedRefactoringMLModel:
         self.model = model
         self.scaler = scaler
         self.feature_names = feature_names
+        self.created_at_path_friendly = windows_path_friendly_now()
 
     def persist_model(self):
         """
@@ -54,23 +56,24 @@ class TrainedRefactoringMLModel:
             results_dir, "model_parameters.json")
         store_json(self._model_parameters(), model_parameters_path)
 
-    def persist_validation_prediction_results(self, db_ids, y_val): #TODO
+    def persist_validation_prediction_results(self, db_ids, val_names, x_val_list, y_val_list):
         results_dir = self._results_dir()
         validation_prediction_results_path = path.join(
             results_dir, "validation_prediction_results.json")
-        store_json(self._val_results(db_ids, y_val, y_pred),
-                   validation_prediction_results_path)
+        res = {val_name: self._val_results(db_id, y_val, x) for val_name, db_id, x, y_val in zip(
+            val_names, db_ids, x_val_list, y_val_list)}
+        store_json(res, validation_prediction_results_path)
 
     def _results_dir(self) -> str:
-        return path.join(RESULTS_DIR_PATH, self.dataset_name, self.target_refactoring, self.model_name)
+        return path.join(RESULTS_DIR_PATH, self.dataset_name, self.target_refactoring, self.model_name, self.created_at_path_friendly)
 
-    def _val_results(self, db_ids, y_val, y_pred):
-        return {db_id: {"real_y": real_y, "predicted_y": predicted_y} for db_id, real_y, predicted_y in zip(db_ids.values, y_val.values, y_pred)}
+    def _val_results(self, db_ids, y_val, x):
+        y_pred = self.model.predict(x).tolist()
+        return {db_id: {"real_y": real_y, "predicted_y": predicted_y} for db_id, real_y, predicted_y in zip(db_ids, y_val, y_pred)}
 
     def _model_parameters(self):
         model = self.model
-        metadata = {}
-        metadata["model_parameters"] = self.model.get_params()
+        metadata = {"model_parameters": self.model.get_params()}
 
         # some models have the 'coef_' attribute, and others have the 'feature_importances_
         # coefficients is also nested in a list so we get the first element.
