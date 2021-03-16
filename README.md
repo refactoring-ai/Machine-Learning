@@ -1,21 +1,21 @@
 # Machine Learning for Software refactoring
-[![Build Status](https://travis-ci.org/refactoring-ai/Machine-Learning.svg?branch=master)](https://travis-ci.org/refactoring-ai/Machine-Learning)
 
 This repository contains the machine learning part on the use
 of machine learning methods to recommend software refactoring.
 
-## Paper and appendix 
+## Paper and appendix
 
-* The paper can be found here: https://arxiv.org/abs/2001.03338
-* The raw dataset can be found here: https://zenodo.org/record/3547639
-* The appendix with our full results can be found here: https://zenodo.org/record/3583980 
+* The paper can be found here: <https://arxiv.org/abs/2001.03338>
+* The raw dataset can be found here: <https://zenodo.org/record/3547639>
+* The appendix with our full results can be found here: <https://zenodo.org/record/3583980> 
 
 ## The machine learning pipeline
 
 This project contains all the Python scripts that are responsible
 for the ML pipeline.
 
-### Installing and configuring the database.
+### Installing and configuring the database
+
 This project requires ```python 3.6``` or higher.
 
 First, install all the dependencies:
