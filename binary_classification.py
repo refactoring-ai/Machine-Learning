@@ -1,37 +1,40 @@
-from configs import DATASETS, Level, RESULTS_DIR_PATH
-from db.DBConnector import close_connection
+from os import path
+
+from configs import DATASETS, RESULTS_DIR_PATH, Level
 from ml.models.builder import build_models
 from ml.pipelines.binary import BinaryClassificationPipeline
 from ml.refactoring import build_refactorings
-from utils.log import log_init, log_close, log
-import datetime
-from os import path
-
+from utils.log import log, log_init
 
 """
 The main entrypoint for the binary classification procedure.
 
 This procedure will:
-    1. Fetch the data for all specified refactorings and levels, see Level and Refactorings in config.
-    2. Setup the models specified models, see models/ for the model configuration and MODELS in config.
-    3. Push the data through the pre-processing pipeline, initialize the classifier training, evaluate the models and store them with relevant describing data.
-       See ml/pipelines/binary for more details. 
+    1. Fetch the data for all specified refactorings and levels, see Level and
+    Refactorings in config.
+    2. Setup the models specified models, see models/ for the model
+    configuration and MODELS in config.
+    3. Push the data through the pre-processing pipeline, initialize the
+    classifier training, evaluate the models and store them with relevant
+    describing data. See ml/pipelines/binary for more details.
 """
 
-log_init(path.join(RESULTS_DIR_PATH, "results", f"classifier_training_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"))
-log("ML4Refactoring: Binary classification")
 
-refactorings = build_refactorings(Level)
+def main():
+    log_init(path.join(RESULTS_DIR_PATH, "log", "classifier_training_.txt"))
+    log("ML4Refactoring: Binary classification")
+    refactorings = build_refactorings(Level)
 
-# Run models
-models = build_models()
-pipeline = None
+    # Run models
+    models = build_models()
+    pipeline = None
 
-pipeline = BinaryClassificationPipeline(models, refactorings, DATASETS)
-pipeline.run()
+    pipeline = BinaryClassificationPipeline(
+        models, refactorings, DATASETS)
+    results = pipeline.run()
 
-# That's it, folks.
-log_close()
-close_connection()
+    return results
 
-exit()
+
+if __name__ == "__main__":
+    main()

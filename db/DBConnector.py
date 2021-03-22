@@ -3,7 +3,9 @@ import pandas as pd
 import hashlib
 import os.path
 import configparser
-from configs import USE_CACHE, DB_AVAILABLE, CACHE_DIR_PATH
+
+from pandas.core.frame import DataFrame
+from configs import USE_CACHE, DB_AVAILABLE, CACHE_DIR_PATH, SHOW_SQL
 from utils.log import log
 import sshtunnel
 
@@ -14,19 +16,19 @@ config.read(os.path.join(os.getcwd(), 'dbconfig.ini'))
 mydb, tunnel = None, None
 if DB_AVAILABLE and config["db"].getboolean("use_tunnel"):
     tunnel = sshtunnel.SSHTunnelForwarder(
-            (config["ssh_tunnel"]["host"],  int(config["ssh_tunnel"]["port"])),
-            ssh_username=config["ssh_tunnel"]["user"],
-            ssh_password=config["ssh_tunnel"]["pwd"],
-            remote_bind_address=(config["db"]["host"], int(config["db"]["port"]))
+        (config["ssh_tunnel"]["host"], int(config["ssh_tunnel"]["port"])),
+        ssh_username=config["ssh_tunnel"]["user"],
+        ssh_password=config["ssh_tunnel"]["pwd"],
+        remote_bind_address=(config["db"]["host"], int(config["db"]["port"]))
     )
     tunnel.start()
     mydb = mysql.connector.connect(
-            user=config["db"]["user"],
-            password=config["db"]["pwd"],
-            host="127.0.0.1",
-            port=tunnel.local_bind_port,
-            database=config["db"]["database"],
-        )
+        user=config["db"]["user"],
+        password=config["db"]["pwd"],
+        host="127.0.0.1",
+        port=tunnel.local_bind_port,
+        database=config["db"]["database"],
+    )
 elif DB_AVAILABLE:
     mydb = mysql.connector.connect(
         host=config['db']["host"],
@@ -38,8 +40,9 @@ elif DB_AVAILABLE:
 
 # this method executes the query and stores the result in a local cache.
 # we do not want to re-execute large queries.
-# derived from https://medium.com/gousto-engineering-techbrunch/hash-caching-query-results-in-python-2d00f8058252
-def execute_query(sql_query):
+# derived from
+# https://medium.com/gousto-engineering-techbrunch/hash-caching-query-results-in-python-2d00f8058252
+def execute_query(sql_query) -> DataFrame:
     """
     Method to query data from Redshift and return pandas dataframe
     Parameters
@@ -51,42 +54,42 @@ def execute_query(sql_query):
     df_raw : DataFrame
         Pandas DataFrame with raw data resulting from query
     """
-    log("Fetch data from the db with this query: {}".format(sql_query), False)
+    if SHOW_SQL:
+        log(f"Fetch data from the db with this query: \n\n{sql_query}\n\n")
 
     # Hash the query
     query_hash = hashlib.sha1(sql_query.encode()).hexdigest()
 
     # Create the filepath
-    cache_dir = os.path.join(CACHE_DIR_PATH, "_cache")
-    file_path = os.path.join(cache_dir, f"{query_hash}.csv")
-
+    cache_dir = os.path.join(CACHE_DIR_PATH, "cache")
+    file_path = os.path.join(cache_dir, f"{query_hash}.ftr")
+    df: DataFrame
     # Read the file or execute query
     if DB_AVAILABLE and not os.path.exists(file_path):
         try:
             if not os.path.isdir(cache_dir):
                 os.makedirs(cache_dir)
-            # split large tables into smaller chunks, to avoid MemoryErrors on small machines
-            chunks = pd.read_sql_query(sql_query, mydb, chunksize=10**5)
+            # split large tables into smaller chunks, to avoid MemoryErrors on
+            # small machines
+            df = pd.read_sql_query(
+                sql_query, mydb, coerce_float=False, index_col="index")
             if USE_CACHE:
-                for df in chunks:
-                    store_header = not os.path.exists(file_path)
-                    df.to_csv(file_path, mode="a", index=False, header=store_header)
-                return pd.read_csv(file_path)
-            else:
-                data = pd.DataFrame()
-                for df in chunks:
-                    data = data.append(df)
-                return data
-        except (KeyboardInterrupt, SystemExit):
+                log(f"saving cache to {file_path}")
+                df.reset_index().to_feather(file_path)
+        except (KeyboardInterrupt):
             if os.path.exists(file_path):
                 os.remove(file_path)
             close_connection()
             exit()
 
     if USE_CACHE and os.path.exists(file_path):
-        return pd.read_csv(file_path)
+        # log(f"using cache at {file_path}")
+        df = pd.read_feather(file_path)
+        df.set_index("index", inplace=True)
     else:
-        raise Exception("Cache not found, and db connection is not available")
+        raise RuntimeError(
+            "Cache not found, and db connection is not available")
+    return df
 
 
 def close_connection():

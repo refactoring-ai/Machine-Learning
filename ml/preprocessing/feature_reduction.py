@@ -17,8 +17,8 @@ def feature_selection_rfecv(estimator, X, y):
     selector = RFECV(estimator, step=1, cv=N_CV_FEATURE_REDUCTION, n_jobs=CORE_COUNT)
 
     selector.fit(X, y)
-    log(f"Feature ranking: {', '.join(str(e) for e in selector.ranking_)}", False)
-    log(f"Feature grid scores: {', '.join(str(e) for e in selector.grid_scores_)}", False)
+    log(f"Feature ranking: {', '.join(str(e) for e in selector.ranking_)}")
+    log(f"Feature grid scores: {', '.join(str(e) for e in selector.grid_scores_)}")
     return X[X.columns[selector.get_support(indices=True)]] # keeping the column names
 
 
@@ -36,14 +36,14 @@ def perform_feature_reduction(estimator, X, y, allowed_features=None):
         features: an array with the features of the instances
         X: X, with only potentially relevant features
     """
-    log(f"Features before reduction (total of {len(X.columns.values)}): {', '.join(X.columns.values)}", False)
+    log(f"Features before reduction (total of {len(X.columns.values)}): {', '.join(X.columns.values)}")
     # let's reduce the number of features in the set
     if allowed_features is None:
         # not all estimators expose coef_ or feature_importances, thus we handle these cases with a default estimator
         try:
             X = feature_selection_rfecv(estimator, X, y)
         except(RuntimeError):
-            log(f"The classifier does not expose coef_ or feature_importances_, thus we use an SVR estimator as a replacement for feature reduction.", False)
+            log(f"The classifier does not expose coef_ or feature_importances_, thus we use an SVR estimator as a replacement for feature reduction.")
             X = feature_selection_rfecv(SVR(kernel="linear"), X, y)
 
     # enforce the specified feature set

@@ -1,5 +1,7 @@
-from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, VARIABLE_METRICS_FIELDS, \
-    FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS, COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, \
+from typing import Iterable
+from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, \
+    VARIABLE_METRICS_FIELDS, FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS,\
+    COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, \
     STABLE_COMMIT_FIELDS, FileType
 
 # region database structure
@@ -8,13 +10,14 @@ commitMetaData: str = "CommitMetaData"
 methodMetrics: str = "MethodMetric"
 fieldMetrics: str = "FieldMetric"
 variableMetrics: str = "VariableMetric"
-processMetrics: str = "ProcessMetrics"
 classMetrics: str = "ClassMetric"
+processMetrics: str = "ProcessMetrics"
 project: str = "project"
 refactoringCommits: str = "RefactoringCommit"
 stableCommits: str = "StableCommit"
 
-# all tables referenced from the instance base class for refactoring commit and stable commit
+# all tables referenced from the instance base class for refactoring
+# commit and stable commit
 instanceReferences = ["classMetrics_id",
                       "commitMetaData_id",
                       "fieldMetrics_id",
@@ -24,15 +27,34 @@ instanceReferences = ["classMetrics_id",
                       "variableMetrics_id"]
 
 # maps table names onto their instance keys and their fields
-tableMap = {commitMetaData: (commitMetaData + "_id", COMMIT_METADATA_FIELDS),
-            methodMetrics: (methodMetrics + "s_id", METHOD_METRICS_FIELDS),
-            fieldMetrics: (fieldMetrics + "s_id", FIELD_METRICS_FIELDS),
-            variableMetrics: (variableMetrics + "s_id", VARIABLE_METRICS_FIELDS),
-            processMetrics: (processMetrics + "_id", PROCESS_METRICS_FIELDS),
-            classMetrics: (classMetrics + "s_id", CLASS_METRICS_Fields),
-            project: (project + "_id", PROJECT_FIELDS),
-            refactoringCommits: ("id", REFACTORING_COMMIT_FIELDS),
-            stableCommits: ("id", STABLE_COMMIT_FIELDS)}
+tableMap = {
+    commitMetaData: (
+        commitMetaData + "_id",
+        COMMIT_METADATA_FIELDS),
+    methodMetrics: (
+        methodMetrics + "s_id",
+        METHOD_METRICS_FIELDS),
+    fieldMetrics: (
+        fieldMetrics + "s_id",
+        FIELD_METRICS_FIELDS),
+    variableMetrics: (
+        variableMetrics + "s_id",
+        VARIABLE_METRICS_FIELDS),
+    processMetrics: (
+        processMetrics + "_id",
+        PROCESS_METRICS_FIELDS),
+    classMetrics: (
+        classMetrics + "s_id",
+        CLASS_METRICS_Fields),
+    project: (
+        project + "_id",
+        PROJECT_FIELDS),
+    refactoringCommits: (
+        "id",
+        REFACTORING_COMMIT_FIELDS),
+    stableCommits: (
+        "id",
+        STABLE_COMMIT_FIELDS)}
 # endregion
 
 
@@ -43,7 +65,8 @@ def join_table(instance_name: str, table_name: str) -> str:
 
     return " INNER JOIN " + table_name + \
            " ON " + instance_name + "." + \
-           join_collumn[0].lower() + join_collumn[1:] + " = " + table_name + ".id"
+           join_collumn[0].lower() + join_collumn[1:] + \
+        " = " + table_name + ".id"
 
 
 def get_metrics_level(level: int):
@@ -54,14 +77,19 @@ def get_metrics_level(level: int):
         level (int):   get the metrics for this level
     """
     if level <= 3:
-        return [(classMetrics, CLASS_METRICS_Fields), (methodMetrics, METHOD_METRICS_FIELDS),
-                (variableMetrics, VARIABLE_METRICS_FIELDS)][:level] + \
-               [(processMetrics, PROCESS_METRICS_FIELDS)]
+        return [(classMetrics,
+                 CLASS_METRICS_Fields),
+                (methodMetrics,
+                 METHOD_METRICS_FIELDS),
+                (variableMetrics,
+                 VARIABLE_METRICS_FIELDS)][:level] + [(processMetrics,
+                                                       PROCESS_METRICS_FIELDS)]
     elif level == 4:
-        return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics, FIELD_METRICS_FIELDS),
-                (processMetrics, PROCESS_METRICS_FIELDS)]
+        return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics,
+                                                       FIELD_METRICS_FIELDS), (processMetrics, PROCESS_METRICS_FIELDS)]
     elif level == 5:
-        return [(classMetrics, CLASS_METRICS_Fields), (processMetrics, PROCESS_METRICS_FIELDS)]
+        return [(classMetrics, CLASS_METRICS_Fields),
+                (processMetrics, PROCESS_METRICS_FIELDS)]
 
 
 def __stable_level_filter(level: int):
@@ -83,7 +111,16 @@ def __stable_level_filter(level: int):
 # Optional conditions: a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
 # Optional dataset: filter the instances based on their project name, e.g. toyproject-1
 # Optional order: order by command, e.g. order by CommitMetaData.commitDate
-def get_instance_fields(instance_name: str, fields, conditions: str = "", dataset: str = "", order: str = "", get_instance_id: bool = False) -> str:
+
+
+def get_instance_fields(
+        instance_name: str,
+        fields,
+        conditions: str = "",
+        datasets: Iterable[str] = [],
+        order: str = "",
+        get_instance_id: bool = False,
+        projects: Iterable[str] = []) -> str:
     """
     Create a sql select statement for the given instance and requested fields.
 
@@ -99,7 +136,7 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
     required_fields: str = ""
     required_tables: str = ""
     if get_instance_id:
-        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS db_id, "
+        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS `index`, "
     for table_name, field_names in fields:
         # don't join the instance with itself
         if (instance_name != table_name):
@@ -107,20 +144,27 @@ def get_instance_fields(instance_name: str, fields, conditions: str = "", datase
 
         for field_name in field_names:
             required_fields += table_name + "." + field_name + ", "
-    if len(dataset) > 0 and f"{project}" not in required_tables:
+    if len(datasets) > 0 and f"{project}" not in required_tables:
         required_tables += join_table(instance_name, project)
     # remove the last chars because it is either a ", " or an " AND "
+    min_method_loc_condition = ''
+    conditions = f'{conditions}{min_method_loc_condition}'
     required_fields = required_fields[:-2]
-
     sql: str = f"SELECT {required_fields} FROM {instance_name}{required_tables} WHERE "
     if len(conditions) > 2:
         if not sql.endswith(' WHERE '):
             sql += " AND "
         sql += conditions
-    if len(dataset) > 0:
+    if len(datasets) > 0:
+        y = '(' + ','.join([f'"{dataset}"' for dataset in datasets]) + ')'
         if not sql.endswith(' WHERE '):
             sql += " AND "
-        sql += f"datasetName = \"{dataset}\""
+        sql += f"datasetName IN {y}"
+        if len(projects) > 0:
+            y = '(' + ','.join([f'"{project}"' for project in projects]) + ')'
+            if not sql.endswith(' WHERE '):
+                sql += " AND "
+            sql += f"projectName IN {y}"
     if sql.endswith(' WHERE '):
         sql = sql[:-7]
     if len(order) > 8:
@@ -142,7 +186,11 @@ def get_refactoring_levels_counts(dataset="") -> str:
            + " group by `level`, refactoring order by count(*) desc"
 
 
-def get_level_refactorings(level: int, m_refactoring: str, dataset: str = "") -> str:
+def get_level_refactorings(
+        level: int,
+        m_refactoring: str,
+        datasets: Iterable[str] = [],
+        projects: Iterable[str] = []) -> str:
     """
     Get all refactoring instances with the given refactoring type and metrics in regard to the level
 
@@ -151,17 +199,29 @@ def get_level_refactorings(level: int, m_refactoring: str, dataset: str = "") ->
         m_refactoring (str) (optional): filter for a specific refactoring type, e.g. "Push Down Attribute"
         dataset (str) (optional):       filter the project dataset for this
     """
-    # only select valid refactorings from the database, if refactorings are selected
+    # only select valid refactorings from the database, if refactorings are
+    # selected
     refactoring_condition: str = f"{refactoringCommits}.level = {str(level)} AND {valid_refactorings_filter(refactoringCommits)} AND {file_type_filter(refactoringCommits)}"
-
     # only select the specified refactoring type from the database
     if m_refactoring != "":
         refactoring_condition += f" AND {refactoringCommits}.refactoring = \"{m_refactoring}\""
-    return get_instance_fields(refactoringCommits, [(refactoringCommits, []), (commitMetaData, [])] + get_metrics_level(level),
-                               refactoring_condition, dataset, "", get_instance_id=True)
+    return get_instance_fields(instance_name=refactoringCommits,
+                               fields=[(refactoringCommits,
+                                        []),
+                                       (commitMetaData,
+                                        [])] + get_metrics_level(level),
+                               conditions=refactoring_condition,
+                               datasets=datasets,
+                               get_instance_id=True,
+                               projects=projects)
 
 
-def get_level_stable(level: int, commit_threshold: int, dataset: str = "", conditions: str = "") -> str:
+def get_level_stable(
+        level: int,
+        commit_threshold: int,
+        dataset: Iterable[str],
+        conditions: str = "",
+        projects: Iterable[str] = []) -> str:
     """
     Get all stable instances with the given level and the corresponding metrics
 
@@ -172,13 +232,22 @@ def get_level_stable(level: int, commit_threshold: int, dataset: str = "", condi
         conditions (str) (optional):    additional sql conditions for this refactoring, e.g. (commitDate BETWEEN A and B).
                                         DON'T add filter for the level or test; this is already done.
     """
-    # only select valid refactorings from the database, if refactorings are selected
+    # only select valid refactorings from the database, if refactorings are
+    # selected
     stable_condition: str = f"{stableCommits}.commitThreshold = {commit_threshold} AND {__stable_level_filter(level)} AND {file_type_filter(stableCommits)}"
 
     if len(conditions) > 0:
-        stable_condition += f" AND {conditions}"
-    return get_instance_fields(stableCommits, [(stableCommits, []), (commitMetaData, [])] + get_metrics_level(level),
-                               stable_condition, dataset, "", get_instance_id=True)
+        stable_condition += f" AND {conditions} AND {methodMetrics}.methodLoc > 5"
+    return get_instance_fields(stableCommits,
+                               [(stableCommits,
+                                 []),
+                                   (commitMetaData,
+                                    [])] + get_metrics_level(level),
+                               stable_condition,
+                               dataset,
+                               "",
+                               get_instance_id=True,
+                               projects=projects)
 
 
 def file_type_filter(instance_name: str) -> str:
@@ -240,4 +309,3 @@ def get_refactoring_types(dataset: str = "") -> str:
         dataset (str) (optional):  filter for these specific projects
     """
     return f"SELECT DISTINCT refactoring FROM ({get_instance_fields(refactoringCommits, [(refactoringCommits, ['refactoring'])], file_type_filter(refactoringCommits), dataset)}) t"
-# endregion

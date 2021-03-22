@@ -2,79 +2,48 @@ import csv
 import json
 from pathlib import Path
 import os
+from typing import Iterable
 import joblib
-import pandas as pd
-
-from utils.date_utils import now
+from sklearn.pipeline import Pipeline
+from uuid import uuid4
 from utils.log import log
-import statistics
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
-from sklearn.inspection import permutation_importance
-
-
-def format_results_single_run(dataset, refactoring_name, validation_names, model_name, f1_scores, precision_scores, recall_scores,
-                              accuracy_scores, tn, fp, fn, tp, permutation_importances, best_model, features, formatted_parameters):
-    """
-    Format all specified scores and other relevant data  of the validation in a json format.
-    """
-    confusion_matrix = ""
-    permutation_importances_dict = {}
-    for index, validation_name in enumerate(validation_names):
-        confusion_matrix += f"\n{validation_name}: tn={tn[index]}, fp={fp[index]}, fn={fn[index]}, tp={tp[index]}"
-        permutation_importance = permutation_importances[index]
-        permutation_importances_dict[validation_name] = {feature: (mean, std) for feature, mean, std in zip(features, permutation_importance.importances_mean, permutation_importance.importances_std)}
-
-    # some models have the 'coef_' attribute, and others have the 'feature_importances_
-    # (do not ask me why...)
-    coefficients = {}
-    feature_importances = {}
-    if hasattr(best_model, "coef_"):
-        # flatten the list, in order to successfully zip it
-        coefs = [y for x in best_model.coef_.tolist() for y in x]
-        coefficients = {feature: coef for feature, coef in zip(features, coefs)}
-    elif hasattr(best_model, "feature_importances_"):
-        feature_importances = {feature: importance for feature, importance in zip(features, best_model.feature_importances_)}
-
-    return json.dumps({"model_name": model_name,
-                       "refactoring type": refactoring_name,
-                       "training_set": dataset,
-                       "validation_sets": str(validation_names),
-                       "f1_scores": ', '.join(list([f"{e:.2f}" for e in f1_scores])),
-                       "mean_f1_score": f"{statistics.mean(f1_scores):.2f}",
-                       "precision_scores": ', '.join(list([f"{e:.2f}" for e in precision_scores])),
-                       "mean_precision": f"{statistics.mean(precision_scores):.2f}",
-                       "recall_scores": ', '.join(list([f"{e:.2f}" for e in recall_scores])),
-                       "mean_recall": f"{statistics.mean(recall_scores):.2f}",
-                       "accuracy_scores": ', '.join(list([f"{e:.2f}" for e in accuracy_scores])),
-                       "mean_accuracy": f"{statistics.mean(accuracy_scores):.2f}",
-                       "confusion_matrix": confusion_matrix,
-                       "feature_coefficients": json.dumps(coefficients, indent=2, sort_keys=False),
-                       "feature_importance":  json.dumps(feature_importances, indent=2, sort_keys=False),
-                       "permutation_importance":  json.dumps(permutation_importances_dict, indent=2, sort_keys=False),
-                       "parameter_set": formatted_parameters
-                       }, indent=2, sort_keys=False)
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+from configs import JOBLIB_COMPRESSION
 
 
 def format_best_parameters(tuned_model):
     """
     Format the best parameters of the tuned model in a json format.
     """
-    return json.dumps({"Hyperparametrization": json.dumps(tuned_model.best_params_, indent=2, sort_keys=True),
-                       "Best_result": str(tuned_model.best_score_)}, indent=2, sort_keys=True)
+    return {"Hyperparametrization": tuned_model.best_params_,
+            "Best_result": str(tuned_model.best_score_)}
 
 
 def store_json(data, path: str):
     Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
     with open(path, 'w') as f:
-        json.dump(data, f, indent=2, sort_keys=True)
+        json.dump(data, f, indent=2)
     log(f"Stored json at: {path}")
 
 
 def store_joblib(data, path):
     Path(os.path.dirname(path)).mkdir(parents=True, exist_ok=True)
-    with open(path, 'w') as f:
-        joblib.dump(data, path)
+    joblib.dump(data, path, compress=JOBLIB_COMPRESSION)
     log(f"Stored joblib at: {path}")
+
+
+def store_onnx(path: str, pipeline: Pipeline, model_type: str, feature_names: Iterable[str], refactoring_type: str, trained_on):
+    doc = {"id": str(uuid4()), "model_type": model_type, "refactoring_type": refactoring_type, "trained_on": trained_on,
+           "feature_names": feature_names.tolist()}
+
+    initial_type = [
+        ('float_input', FloatTensorType([None, len(feature_names)]))]
+    onnx = convert_sklearn(
+        pipeline, initial_types=initial_type, doc_string=json.dumps(doc))
+    with open(path, 'wb') as f:
+        f.write(onnx.SerializeToString())
+    log(f'Stored onnx at: {path}')
 
 
 def store_collection(collection, path):
@@ -93,40 +62,3 @@ def load_csv(path):
         reader = csv.reader(file)
         data_raw = list(reader)
         return [item for sublist in data_raw for item in sublist]
-
-
-
-def evaluate_model(trained_model, x_val_list, y_val_list, db_ids_val_list):
-    """
-    Evaluate the performance of a model by fitting it with the training data and then evaluating it against the val sets.
-
-    Parameter:
-        trained_model: a trained model with specified parameters, e.g. SVM
-        x_val_list: a collection of the samples for each val data set
-        y_val_list: a collection of the labels for each val data set
-        db_ids_val_list: a collection of database ids for the instances in the val sets
-
-    Return:
-        val_scores: a collection of val scores (accuracy, precision, recall, tn, fp, fn, tp) for each val set
-        val_results: a collection of val results in a dataframe(ids, label, prediction) for each val set
-    """
-    val_results = []
-    val_scores = {'accuracy': [], 'f1_score': [], 'precision': [], 'recall': [], 'tn': [], 'fp': [], 'fn': [], 'tp': [], "permutation_importance": []}
-    # Predict unseen results for all validation sets
-    for index, x_val in enumerate(x_val_list):
-        y_pred = trained_model.predict(x_val)
-        y_val = y_val_list[index]
-        db_ids = db_ids_val_list[index]
-        val_scores["accuracy"] += [accuracy_score(y_val, y_pred)]
-        val_scores["f1_score"] += [f1_score(y_val, y_pred)]
-        val_scores["precision"] += [precision_score(y_val, y_pred)]
-        val_scores["recall"] += [recall_score(y_val, y_pred)]
-        val_scores["tn"] += [confusion_matrix(y_val, y_pred).ravel()[0]]
-        val_scores["fp"] += [confusion_matrix(y_val, y_pred).ravel()[1]]
-        val_scores["fn"] += [confusion_matrix(y_val, y_pred).ravel()[2]]
-        val_scores["tp"] += [confusion_matrix(y_val, y_pred).ravel()[3]]
-        val_scores["permutation_importance"] += [permutation_importance(trained_model, x_val, y_val, n_repeats=30, random_state=237)]
-        data = {"db_id": db_ids.values, "label": y_val.values, "prediction": y_pred}
-        val_results.append(pd.DataFrame(data, columns=["db_id", "label", "prediction"]))
-
-    return val_scores, val_results

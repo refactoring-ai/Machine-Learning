@@ -1,6 +1,6 @@
 import json
 from os import path
-import random
+from utils import date_utils
 from pathlib import Path
 import configs
 
@@ -14,9 +14,10 @@ def log_config():
     config_dict = configs.__dict__
     # filter to get only the public fields that we created
     config_dict = {k: v for k, v in config_dict.items() if k.isupper()}
-    # log the config with some nice json formatting, but hide it from the terminal
-    log_msg = json.dumps(config_dict, indent=2, sort_keys=True), False
-    log(f"--------------\nConfiguration:\n{log_msg}\n--------------", False)
+    # log the config with some nice json formatting, but hide it from the
+    # terminal
+    # log_msg = json.dumps(config_dict, indent=2, sort_keys=True)
+    log(f"--------------\nConfiguration:\n{config_dict}\n--------------")
 
 
 def log_init(log_name: str = ""):
@@ -27,16 +28,11 @@ def log_init(log_name: str = ""):
     else:
         dir_path = path.join(configs.RESULTS_DIR_PATH, "results")
         Path(dir_path).mkdir(parents=True, exist_ok=True)
-        _f = open(path.join(dir_path, f"{random.randint(1, 999999)}-result.txt"), "w+")
-
-    log(r"  __  __ _      _ _    ___      __         _           _           ")
-    log(r" |  \/  | |    | | |  | _ \___ / _|__ _ __| |_ ___ _ _(_)_ _  __ _ ")
-    log(r" | |\/| | |__  |_  _| |   / -_)  _/ _` / _|  _/ _ \ '_| | ' \/ _` |")
-    log(r" |_|  |_|____|   |_|  |_|_\___|_| \__,_\__|\__\___/_| |_|_||_\__, |")
-    log(r"                                                             |___/ ")
-    log("")
-
-    log_config()
+        _f = open(
+            path.join(
+                dir_path,
+                f"{date_utils.windows_path_friendly_now()}.log"),
+            "w+")
 
 
 def log_close():
@@ -44,9 +40,10 @@ def log_close():
     _f.close()
 
 
-def log(msg, print_msg: bool = True):
-    if print_msg:
-        print(msg)
+def log(msg):
+    if not isinstance(msg, str):
+        msg = json.dumps(msg, indent=2)
+    print(msg)
     global _f
     _f.write(msg)
     _f.write("\n")

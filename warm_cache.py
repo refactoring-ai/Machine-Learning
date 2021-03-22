@@ -20,7 +20,7 @@ log_init(path.join(CACHE_DIR_PATH, "results", f"warm-up_cache_{datetime.datetime
 log('Begin cache warm-up')
 start_time = time.time()
 
-for dataset in [""] + DATASETS + VALIDATION_DATASETS:
+for dataset in DATASETS + VALIDATION_DATASETS:
     for level in [Level.Class, Level.Method, Level.Variable, Level.Field, Level.Other]:
         log(f"-- non refactored instances for {level} for dataset: {dataset}")
         for k in [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]:
@@ -39,5 +39,3 @@ for dataset in [""] + DATASETS + VALIDATION_DATASETS:
 log('Cache warm-up took %s seconds.' % (time.time() - start_time))
 log_close()
 close_connection()
-
-exit()
