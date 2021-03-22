@@ -36,5 +36,3 @@ class SupervisedMLRefactoringModel(MLModel):
     @abstractmethod
     def model(self, params: Dict[str, any] = None) -> BaseEstimator:
         ...
-
-

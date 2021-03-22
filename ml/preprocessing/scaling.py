@@ -10,9 +10,8 @@ def perform_fit_scaling(x):
     :return: x, scaled
     """
     scaler = MinMaxScaler()  # Default behavior is to scale to [0,1]
-    columns = x.columns
     x = scaler.fit_transform(x)
-    x = pd.DataFrame(x, columns=columns)  # keeping the column names
+    x = pd.DataFrame(x, columns=x.columns, index=x.index)
 
     return x, scaler
 
@@ -25,8 +24,7 @@ def perform_scaling(x, scaler):
     :param scaler: a predefined and fitted scaler, e.g. a MinMaxScaler
     :return: x, scaled
     """
-    columns = x.columns
     x = scaler.transform(x)
-    x = pd.DataFrame(x, columns=columns)  # keeping the column names
+    x = pd.DataFrame(x, columns=x.columns, index=x.index)
 
     return x

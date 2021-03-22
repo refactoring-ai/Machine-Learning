@@ -13,7 +13,4 @@ class GaussianNaiveBayesRefactoringModel(SupervisedMLRefactoringModel):
     def model(self, best_params=None):
         if best_params is not None:
             return GaussianNB(var_smoothing=best_params["var_smoothing"])
-
         return GaussianNB()
-
-

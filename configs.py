@@ -21,13 +21,15 @@ FILE_TYPE = 0
 # endregion
 
 # region output
-# save the results directory in this path, if empty use the local path of the executed python script
+# save the results directory in this path, if empty use the local path of
+# the executed python script
 RESULTS_DIR_PATH = ""
 
 # Specify compression for saving joblib models see joblib.dump
 JOBLIB_COMPRESSION = None
 
-# store the cache in this path, if empty use the local path of the executed python script
+# store the cache in this path, if empty use the local path of the
+# executed python script
 CACHE_DIR_PATH = ""
 # endregion
 
@@ -52,24 +54,33 @@ SCALE_DATASET = True
 
 # region Dataset balancing
 BALANCE_DATASET = True
-
+SHOW_SQL = True
 # how to balance the dataset
 # options = [random, cluster_centroids, nearmiss]
 BALANCE_DATASET_STRATEGY = "random"
-
+PERM_PAR = -1
+PERM_REPEATS = 50
 # Ratio of the positive and negative samples for the training, e.g. 0.1 -> 10/% positive samples
 # SET BALANCE_DATASET to False, otherwise this setting will be skipped
 TRAINING_SAMPLE_RATIO = 0.1
 # endregion
-
+SEED = 26
 # region Feature reduction
-# Remove all instances where one of process and authorship metrics is -1 (faulty).
+# Remove all instances where one of process and authorship metrics is -1
+# (faulty).
 DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS = True
-# Use (or drop) process and authorship metrics, this cancels DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
+# Use (or drop) process and authorship metrics, this cancels
+# DROP_FAULTY_PROCESS_AND_AUTHORSHIP_METRICS.
 DROP_PROCESS_AND_AUTHORSHIP_METRICS = True
 # a list of all process and authorship metrics
-PROCESS_AND_AUTHORSHIP_METRICS = ["authorOwnership", "bugFixCount", "qtyMajorAuthors",
-                                  "qtyMinorAuthors", "qtyOfAuthors", "qtyOfCommits", "refactoringsInvolved"]
+PROCESS_AND_AUTHORSHIP_METRICS = [
+    "authorOwnership",
+    "bugFixCount",
+    "qtyMajorAuthors",
+    "qtyMinorAuthors",
+    "qtyOfAuthors",
+    "qtyOfCommits",
+    "refactoringsInvolved"]
 
 # Drop these metrics as well
 DROP_METRICS = []
@@ -94,20 +105,28 @@ N_CV_SEARCH = 7
 
 # region Evaluation: Cross-validation configuration
 # Specify either a train/ test split, e.g. 0.2 -> 80/ 20 split
-VAL_SPLIT_SIZE = -1
+VAL_SPLIT_SIZE = 0.2
 # Or specify test data sets in the database
-# NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the given datasets instead of a random train/ test split
-VALIDATION_DATASETS = ["test set github", "validation set github"]
+# NOTE: set TEST_SPLIT_SIZE value to < 0, in order to indicate to use the
+# given datasets instead of a random train/ test split
+VALIDATION_DATASETS = []
 
 # endregion
 
 # region Models and datasets
 # models and datasets we have configured, see ml/models for all available models and their configurations.
 # For many models hyper tuning of their parameters is performed.
-MODELS = ['logistic-regression']
+MODELS = [
+    'naive-bayes',
+    # 'svm',
+    # 'decision-tree',
+    # 'logistic-regression',
+    # 'random-forest',
+    # 'svm-non-linear',
+    # 'extra-trees',
+]
 
-# Empty dataset means 'all datasets'
-DATASETS = ["github"]
+DATASETS = ["industry"]
 # endregion
 
 # region refactorings
@@ -326,12 +345,12 @@ STABLE_COMMIT_FIELDS = [
 # region non-refactored instances
 # Maps each level onto it stable commit thresholds
 LEVEL_Stable_Thresholds_MAP = {
-    Level.NONE: [],
-    Level.Class: [15],
-    Level.Method: [15],
-    Level.Variable: [15],
-    Level.Field: [15],
-    Level.Other: []
+    Level.NONE: [20],
+    Level.Class: [20],
+    Level.Method: [20],
+    Level.Variable: [20],
+    Level.Field: [15, 20],
+    Level.Other: [20]
 }
 # endregion
 

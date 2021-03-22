@@ -2,12 +2,15 @@ import csv
 import json
 from pathlib import Path
 import os
+from typing import Iterable
 import joblib
-
+from sklearn.pipeline import Pipeline
+from uuid import uuid4
 from utils.log import log
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 from configs import JOBLIB_COMPRESSION
+
 
 def format_best_parameters(tuned_model):
     """
@@ -30,12 +33,14 @@ def store_joblib(data, path):
     log(f"Stored joblib at: {path}")
 
 
-def store_onnx(path: str, pipeline, features):
-    feature_names = ','.join(features)
+def store_onnx(path: str, pipeline: Pipeline, model_type: str, feature_names: Iterable[str], refactoring_type: str, trained_on):
+    doc = {"id": str(uuid4()), "model_type": model_type, "refactoring_type": refactoring_type, "trained_on": trained_on,
+           "feature_names": feature_names.tolist()}
+
     initial_type = [
-        ('float_input', FloatTensorType([None, len(features)]))]
+        ('float_input', FloatTensorType([None, len(feature_names)]))]
     onnx = convert_sklearn(
-        pipeline, initial_types=initial_type, doc_string=feature_names)
+        pipeline, initial_types=initial_type, doc_string=json.dumps(doc))
     with open(path, 'wb') as f:
         f.write(onnx.SerializeToString())
     log(f'Stored onnx at: {path}')
