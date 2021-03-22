@@ -1,0 +1,709 @@
+ML4Refactoring: Binary classification
+Built refactoring objects for         50 refactoring types.
+**** Refactoring Type: Extract Class
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract Class
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract Class" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             0
+raw number of non-refactoring with K=20             instances: 833
+No refactorings found for refactoring type:                 Extract Class
+Skip model building for refactoring type: Extract Class
+**** Refactoring Type: Extract Interface
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract Interface
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract Interface" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             112
+raw number of non-refactoring with K=20             instances: 833
+refactoring instances (after dropping NA)s: 112
+non-refactoring instances (after dropping NA)s: 833
+refactoring instances (after dropping duplicates)s: 92
+non-refactoring instances (after dropping duplicates)s: 677
+instances before balancing: Counter({0: 677, 1: 92})
+instances after balancing: Counter({0: 92, 1: 92})
+Got 184 instances with 41        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 1/50
+Started at 2021-03-22T15:56:51.135863
+val search started at 2021-03-22T15:56:51.136075
+
+train size=147
+            test size=37
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-06
+  },
+  "Best_result": "0.8095238095238095"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/pipeline.onnx
+Production model build started at 2021-03-22T15:56:54.244196
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Interface/balanced/industry/2021-03-22T15-56-53-191203/model_parameters.json
+Finished at 2021-03-22T15:56:54.265088
+TIME,Extract Interface,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:56:54.265088
+**** Refactoring Type: Extract Subclass
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract Subclass
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract Subclass" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             0
+raw number of non-refactoring with K=20             instances: 833
+No refactorings found for refactoring type:                 Extract Subclass
+Skip model building for refactoring type: Extract Subclass
+**** Refactoring Type: Extract Superclass
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract Superclass
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract Superclass" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             300
+raw number of non-refactoring with K=20             instances: 833
+refactoring instances (after dropping NA)s: 300
+non-refactoring instances (after dropping NA)s: 833
+refactoring instances (after dropping duplicates)s: 245
+non-refactoring instances (after dropping duplicates)s: 677
+instances before balancing: Counter({0: 677, 1: 245})
+instances after balancing: Counter({0: 245, 1: 245})
+Got 490 instances with 41        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 2/50
+Started at 2021-03-22T15:56:54.343337
+val search started at 2021-03-22T15:56:54.343430
+
+train size=392
+            test size=98
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-08
+  },
+  "Best_result": "0.7244897959183673"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/pipeline.onnx
+Production model build started at 2021-03-22T15:56:55.441683
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Superclass/balanced/industry/2021-03-22T15-56-54-440613/model_parameters.json
+Finished at 2021-03-22T15:56:55.461180
+TIME,Extract Superclass,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:56:55.461180
+**** Refactoring Type: Move And Rename Class
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Move And Rename Class
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Move And Rename Class" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             396
+raw number of non-refactoring with K=20             instances: 833
+refactoring instances (after dropping NA)s: 396
+non-refactoring instances (after dropping NA)s: 833
+refactoring instances (after dropping duplicates)s: 276
+non-refactoring instances (after dropping duplicates)s: 677
+instances before balancing: Counter({0: 677, 1: 276})
+instances after balancing: Counter({0: 276, 1: 276})
+Got 552 instances with 41        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 3/50
+Started at 2021-03-22T15:56:55.532174
+val search started at 2021-03-22T15:56:55.532270
+
+train size=441
+            test size=111
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-07
+  },
+  "Best_result": "0.7505668934240363"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/pipeline.onnx
+Production model build started at 2021-03-22T15:56:56.577844
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-And-Rename-Class/balanced/industry/2021-03-22T15-56-55-616885/model_parameters.json
+Finished at 2021-03-22T15:56:56.596962
+TIME,Move And Rename Class,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:56:56.596962
+**** Refactoring Type: Move Class
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Move Class
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Move Class" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             2507
+raw number of non-refactoring with K=20             instances: 833
+refactoring instances (after dropping NA)s: 2507
+non-refactoring instances (after dropping NA)s: 833
+refactoring instances (after dropping duplicates)s: 1835
+non-refactoring instances (after dropping duplicates)s: 677
+instances before balancing: Counter({1: 1835, 0: 677})
+instances after balancing: Counter({0: 677, 1: 677})
+Got 1354 instances with 41        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 4/50
+Started at 2021-03-22T15:56:56.665280
+val search started at 2021-03-22T15:56:56.665369
+
+train size=1083
+            test size=271
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-07
+  },
+  "Best_result": "0.7470225626907654"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/pipeline.onnx
+Production model build started at 2021-03-22T15:56:57.758626
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Class/balanced/industry/2021-03-22T15-56-56-765526/model_parameters.json
+Finished at 2021-03-22T15:56:57.779453
+TIME,Move Class,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:56:57.779453
+**** Refactoring Type: Rename Class
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Rename Class
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Rename Class" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             1368
+raw number of non-refactoring with K=20             instances: 833
+refactoring instances (after dropping NA)s: 1368
+non-refactoring instances (after dropping NA)s: 833
+refactoring instances (after dropping duplicates)s: 1000
+non-refactoring instances (after dropping duplicates)s: 677
+instances before balancing: Counter({1: 1000, 0: 677})
+instances after balancing: Counter({0: 677, 1: 677})
+Got 1354 instances with 41        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 5/50
+Started at 2021-03-22T15:56:57.845934
+val search started at 2021-03-22T15:56:57.846019
+
+train size=1083
+            test size=271
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-06
+  },
+  "Best_result": "0.7405589801903166"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/pipeline.onnx
+Production model build started at 2021-03-22T15:56:58.938921
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Rename-Class/balanced/industry/2021-03-22T15-56-57-945345/model_parameters.json
+Finished at 2021-03-22T15:56:58.960039
+TIME,Rename Class,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:56:58.960039
+**** Refactoring Type: Introduce Polymorphism
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Introduce Polymorphism
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Introduce Polymorphism" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             0
+raw number of non-refactoring with K=20             instances: 833
+No refactorings found for refactoring type:                 Introduce Polymorphism
+Skip model building for refactoring type: Introduce Polymorphism
+**** Refactoring Type: Convert Anonymous Class To Type
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Convert Anonymous Class To Type
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 1 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Convert Anonymous Class To Type" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 1 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             0
+raw number of non-refactoring with K=20             instances: 833
+No refactorings found for refactoring type:                 Convert Anonymous Class To Type
+Skip model building for refactoring type: Convert Anonymous Class To Type
+**** Refactoring Type: Extract And Move Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract And Move Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract And Move Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             416
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 416
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 336
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 336})
+instances after balancing: Counter({0: 336, 1: 336})
+Got 672 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 6/50
+Started at 2021-03-22T15:56:59.125709
+val search started at 2021-03-22T15:56:59.125799
+
+train size=537
+            test size=135
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-07
+  },
+  "Best_result": "0.9497119421931451"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/pipeline.onnx
+Production model build started at 2021-03-22T15:57:00.757595
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-And-Move-Method/balanced/industry/2021-03-22T15-56-59-226019/model_parameters.json
+Finished at 2021-03-22T15:57:00.779376
+TIME,Extract And Move Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:00.779376
+**** Refactoring Type: Extract Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Extract Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Extract Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             2519
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 2519
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 1951
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 1951})
+instances after balancing: Counter({0: 1951, 1: 1951})
+Got 3902 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 7/50
+Started at 2021-03-22T15:57:00.902776
+val search started at 2021-03-22T15:57:00.902876
+
+train size=3121
+            test size=781
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-05
+  },
+  "Best_result": "0.9247119032023552"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/pipeline.onnx
+Production model build started at 2021-03-22T15:57:02.740075
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Extract-Method/balanced/industry/2021-03-22T15-57-01-128713/model_parameters.json
+Finished at 2021-03-22T15:57:02.762036
+TIME,Extract Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:02.762036
+**** Refactoring Type: Inline Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Inline Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Inline Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             669
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 669
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 539
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 539})
+instances after balancing: Counter({0: 539, 1: 539})
+Got 1078 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 8/50
+Started at 2021-03-22T15:57:02.885247
+val search started at 2021-03-22T15:57:02.885351
+
+train size=862
+            test size=216
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-07
+  },
+  "Best_result": "0.9222490727211419"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/pipeline.onnx
+Production model build started at 2021-03-22T15:57:04.469301
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Inline-Method/balanced/industry/2021-03-22T15-57-02-990009/model_parameters.json
+Finished at 2021-03-22T15:57:04.489192
+TIME,Inline Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:04.489192
+**** Refactoring Type: Move Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Move Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Move Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             1813
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 1813
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 1479
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 1479})
+instances after balancing: Counter({0: 1479, 1: 1479})
+Got 2958 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 9/50
+Started at 2021-03-22T15:57:04.612533
+val search started at 2021-03-22T15:57:04.612624
+
+train size=2366
+            test size=592
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-05
+  },
+  "Best_result": "0.8300929839391378"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/pipeline.onnx
+Production model build started at 2021-03-22T15:57:06.351850
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Move-Method/balanced/industry/2021-03-22T15-57-04-820121/model_parameters.json
+Finished at 2021-03-22T15:57:06.372079
+TIME,Move Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:06.372079
+**** Refactoring Type: Pull Up Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Pull Up Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Pull Up Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             635
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 635
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 481
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 481})
+instances after balancing: Counter({0: 481, 1: 481})
+Got 962 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 10/50
+Started at 2021-03-22T15:57:06.492387
+val search started at 2021-03-22T15:57:06.492476
+
+train size=769
+            test size=193
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-05
+  },
+  "Best_result": "0.9557726676992732"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/pipeline.onnx
+Production model build started at 2021-03-22T15:57:08.089812
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Pull-Up-Method/balanced/industry/2021-03-22T15-57-06-599066/model_parameters.json
+Finished at 2021-03-22T15:57:08.109876
+TIME,Pull Up Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:08.109876
+**** Refactoring Type: Push Down Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Push Down Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Push Down Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             322
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 322
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 205
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 205})
+instances after balancing: Counter({0: 205, 1: 205})
+Got 410 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 11/50
+Started at 2021-03-22T15:57:08.227800
+val search started at 2021-03-22T15:57:08.227890
+
+train size=328
+            test size=82
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-05
+  },
+  "Best_result": "0.9543412184485265"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/model_parameters.json
+predicting on val set
+calculating perm importance
+calculating confusion matrix
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/validation_statistics.json
+Stored collection at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/feature_names
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/pipeline.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/model.joblib
+Stored joblib at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/scaler.joblib
+Stored onnx at: models/training/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/pipeline.onnx
+Production model build started at 2021-03-22T15:57:09.841724
+
+Stored collection at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/feature_names
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/pipeline.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/model.joblib
+Stored joblib at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/scaler.joblib
+Stored onnx at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/pipeline.onnx
+Stored json at: models/production/20/GaussianNaiveBayesRefactoringModel/Push-Down-Method/balanced/industry/2021-03-22T15-57-08-316483/model_parameters.json
+Finished at 2021-03-22T15:57:09.861247
+TIME,Push Down Method,GaussianNaiveBayesRefactoringModel,None,2021-03-22T15:57:09.861247
+**** Refactoring Type: Rename Method
+---- Retrieve labeled instances for dataset: ['industry'] and the             refactoring Rename Method
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'RefactoringCommit', RefactoringCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM RefactoringCommit INNER JOIN CommitMetaData ON RefactoringCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON RefactoringCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON RefactoringCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON RefactoringCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON RefactoringCommit.project_id = project.id WHERE RefactoringCommit.level = 2 AND RefactoringCommit.isValid = TRUE AND RefactoringCommit.isTest = 0 AND RefactoringCommit.refactoring = "Rename Method" AND datasetName IN ("industry")
+
+
+Fetch data from the db with this query: 
+
+SELECT CONCAT_WS('.', 'StableCommit', StableCommit.id) AS `index`, ClassMetric.classAnonymousClassesQty, ClassMetric.classAssignmentsQty, ClassMetric.classCbo, ClassMetric.classComparisonsQty, ClassMetric.classLambdasQty, ClassMetric.classLcom, ClassMetric.classLoc, ClassMetric.classLCC, ClassMetric.classLoopQty, ClassMetric.classMathOperationsQty, ClassMetric.classMaxNestedBlocks, ClassMetric.classNosi, ClassMetric.classNumberOfAbstractMethods, ClassMetric.classNumberOfDefaultFields, ClassMetric.classNumberOfDefaultMethods, ClassMetric.classNumberOfFields, ClassMetric.classNumberOfFinalFields, ClassMetric.classNumberOfFinalMethods, ClassMetric.classNumberOfMethods, ClassMetric.classNumberOfPrivateFields, ClassMetric.classNumberOfPrivateMethods, ClassMetric.classNumberOfProtectedFields, ClassMetric.classNumberOfProtectedMethods, ClassMetric.classNumberOfPublicFields, ClassMetric.classNumberOfPublicMethods, ClassMetric.classNumberOfStaticFields, ClassMetric.classNumberOfStaticMethods, ClassMetric.classNumberOfSynchronizedFields, ClassMetric.classNumberOfSynchronizedMethods, ClassMetric.classNumbersQty, ClassMetric.classParenthesizedExpsQty, ClassMetric.classReturnQty, ClassMetric.classRfc, ClassMetric.classStringLiteralsQty, ClassMetric.classSubClassesQty, ClassMetric.classTryCatchQty, ClassMetric.classUniqueWordsQty, ClassMetric.classVariablesQty, ClassMetric.classWmc, ClassMetric.classTCC, ClassMetric.isInnerClass, MethodMetric.methodAnonymousClassesQty, MethodMetric.methodAssignmentsQty, MethodMetric.methodCbo, MethodMetric.methodComparisonsQty, MethodMetric.methodLambdasQty, MethodMetric.methodLoc, MethodMetric.methodLoopQty, MethodMetric.methodMathOperationsQty, MethodMetric.methodMaxNestedBlocks, MethodMetric.methodNumbersQty, MethodMetric.methodParametersQty, MethodMetric.methodParenthesizedExpsQty, MethodMetric.methodReturnQty, MethodMetric.methodRfc, MethodMetric.methodStringLiteralsQty, MethodMetric.methodSubClassesQty, MethodMetric.methodTryCatchQty, MethodMetric.methodUniqueWordsQty, MethodMetric.methodVariablesQty, MethodMetric.methodWmc, MethodMetric.startLine, ProcessMetrics.authorOwnership, ProcessMetrics.bugFixCount, ProcessMetrics.qtyMajorAuthors, ProcessMetrics.qtyMinorAuthors, ProcessMetrics.qtyOfAuthors, ProcessMetrics.qtyOfCommits, ProcessMetrics.refactoringsInvolved FROM StableCommit INNER JOIN CommitMetaData ON StableCommit.commitMetaData_id = CommitMetaData.id INNER JOIN ClassMetric ON StableCommit.classMetrics_id = ClassMetric.id INNER JOIN MethodMetric ON StableCommit.methodMetrics_id = MethodMetric.id INNER JOIN ProcessMetrics ON StableCommit.processMetrics_id = ProcessMetrics.id INNER JOIN project ON StableCommit.project_id = project.id WHERE StableCommit.commitThreshold = 20 AND StableCommit.`level` = 2 AND StableCommit.isTest = 0 AND datasetName IN ("industry")
+
+
+raw number of refactoring instances:             4251
+raw number of non-refactoring with K=20             instances: 22649
+refactoring instances (after dropping NA)s: 4251
+non-refactoring instances (after dropping NA)s: 22649
+refactoring instances (after dropping duplicates)s: 3278
+non-refactoring instances (after dropping duplicates)s: 22134
+instances before balancing: Counter({0: 22134, 1: 3278})
+instances after balancing: Counter({0: 3278, 1: 3278})
+Got 6556 instances with 62        features for the dataset: ['industry']        at threshold 20.
+
+Building Model GaussianNaiveBayesRefactoringModel
+Execution: 12/50
+Started at 2021-03-22T15:57:09.996086
+val search started at 2021-03-22T15:57:09.996191
+
+train size=5244
+            test size=1312
+{
+  "Hyperparametrization": {
+    "var_smoothing": 1e-05
+  },
+  "Best_result": "0.8829146163138152"
+}
+Stored json at: models/training/20/GaussianNaiveBayesRefactoringModel/Rename-Method/balanced/industry/2021-03-22T15-57-10-217171/model_parameters.json
+predicting on val set
+calculating perm importance

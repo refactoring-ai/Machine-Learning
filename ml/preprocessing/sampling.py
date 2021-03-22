@@ -1,17 +1,20 @@
 import pandas as pd
 from imblearn.over_sampling import RandomOverSampler
-from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids, NearMiss
+from imblearn.under_sampling import RandomUnderSampler,\
+    ClusterCentroids, NearMiss
 from configs import BALANCE_DATASET_STRATEGY, CORE_COUNT, SEED
 from utils.log import log
 
 
 def sample_reduction(positive_samples, negative_samples, ratio: float):
     """
-    Reduce the number of training samples in the dataset to the match the given ratio
+    Reduce the number of training samples in the dataset
+    to the match the given ratio
     Parameter:
         positive_samples (DataFrame):    The positive training samples
         negative_samples (DataFrame):   The negative training samples
-        ratio  (float):                 Ratio of the positive and negative samples for the training, e.g. 0.1 -> 10/% positive samples
+        ratio  (float):                 Ratio of the positive and
+        negative samples for the training, e.g. 0.1 -> 10/% positive samples
     """
     # apply the lower boundary to the fraction, ensure the fraction is still
     # in range 0 - 1
@@ -32,14 +35,17 @@ def sample_reduction(positive_samples, negative_samples, ratio: float):
     positive_samples = positive_samples.sample(frac=fraction_positive)
     negative_samples = negative_samples.sample(frac=fraction_negative)
     log(
-        f"Reduced the number of samples to {len(positive_samples.index)}/ {len(negative_samples.index)} ({ratio}/ {1-ratio})",
+        f"Reduced the number of samples to\
+             {len(positive_samples.index)}/\
+                  {len(negative_samples.index)} ({ratio}/ {1-ratio})",
         False)
     return positive_samples, negative_samples
 
 
 def perform_balancing(x, y, strategy=None):
     """
-    Performs under/over sampling, according to the number of true and false instances of the x, y dataset.
+    Performs under/over sampling, according to the
+    number of true and false instances of the x, y dataset.
     :param x: feature values
     :param y: labels
     :return: a balanced x, y

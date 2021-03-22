@@ -1,5 +1,5 @@
 import traceback
-from typing import Dict, Iterable
+from typing import Iterable
 
 import pandas as pd
 from sklearn.utils import shuffle
@@ -51,7 +51,9 @@ class BinaryClassificationPipeline(MLPipeline):
         """
         results = []
         # if there is no datasets, refactorings, and models to run, just stop
-        if not self._datasets or not self._refactorings or not self._models_to_run:
+        if not self._datasets or\
+            not self._refactorings or\
+                not self._models_to_run:
             return
 
         for refactoring in self._refactorings:
@@ -74,12 +76,12 @@ class BinaryClassificationPipeline(MLPipeline):
                         refactoring.name())
                     continue
                 x_train, y_train = shuffle(x_train, y_train, random_state=SEED)
-                x_val_list, y_val_list, db_ids_val_list, dataset_names = [], [], [], []
+                x_val_list, y_val_list, dataset_names = [], [], []
                 if len(val_proj) >= 1:
                     print(f'getting val data for project {val_proj}')
                     x_val, y_val, _, = retrieve_labelled_instances(
-                        "industry", refactoring, False, scaler, projects=val_proj)
-                    print(f"val_len")
+                        "industry", refactoring, False, scaler,
+                        projects=val_proj)
                     if x_val is None:
                         log("Skip val set %s for refactoring type: %s" %
                             (val_proj[0], refactoring.name()))
@@ -94,7 +96,8 @@ class BinaryClassificationPipeline(MLPipeline):
                     for validation_dataset in VALIDATION_DATASETS:
                         dataset_names.append(validation_dataset)
                         x_val, y_val, _, = retrieve_labelled_instances(
-                            validation_dataset, refactoring, False, scaler, projects=projects)
+                            validation_dataset, refactoring, False, scaler,
+                            projects=projects)
                         # val if any refactorings were found for the given
                         # refactoring type
                         if x_val is None:
@@ -136,11 +139,13 @@ class BinaryClassificationPipeline(MLPipeline):
                     continue
                 # we split in train and val
                 # (note that we use the same split for all the models)
-                # add the db_ids to x again, in order to keep them aligned during the splitting
+                # add the db_ids to x again,
+                # in order to keep them aligned during the splitting
                 # x["db_id"] = db_ids
 
                 x_train, x_val, y_train, y_val = train_test_split(
-                    x, y, test_size=VAL_SPLIT_SIZE, random_state=SEED, stratify=y)
+                    x, y, test_size=VAL_SPLIT_SIZE, random_state=SEED,
+                    stratify=y)
                 results.append(
                     self._run_all_models(
                         refactoring,
@@ -178,7 +183,9 @@ class BinaryClassificationPipeline(MLPipeline):
                 log("\nBuilding Model {}".format(model.name()))
                 self._start_time()
                 production_model, trained_model = self._run_single_model(
-                    model, X, y, x_train, y_train, val_names, x_val_list, y_val_list, refactoring_name, scaler, refactoring.commit_threshold())
+                    model, X, y, x_train, y_train, val_names, x_val_list,
+                    y_val_list, refactoring_name, scaler,
+                    refactoring.commit_threshold())
 
                 # we save the best estimator we had during the search
                 # Also, store the predictions with labels and db_ids, to
@@ -188,7 +195,9 @@ class BinaryClassificationPipeline(MLPipeline):
                 results[model.name()] = production_model, trained_model
             except Exception as e:
                 log(
-                    f"An error occurred while working on refactoring {refactoring.name()} and model {model.name()} for datasets: {str(val_names)}")
+                    f"An error occurred while working on refactoring\
+                         {refactoring.name()} and model {model.name()}\
+                              for datasets: {str(val_names)}")
                 log(str(e))
                 log(str(traceback.format_exc()))
                 exit(-1)
@@ -250,7 +259,8 @@ class BinaryClassificationPipeline(MLPipeline):
         log("val search started at %s\n" % now())
 
         log(
-            f'train size = {len(x_train.index)}\ntest size = {len(x_val_list[0].index)}')
+            f'train size={len(x_train.index)}\n\
+            test size={len(x_val_list[0].index)}')
 
         search.fit(x_train, y_train)
         log(format_best_parameters(search))

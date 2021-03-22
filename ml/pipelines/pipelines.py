@@ -8,7 +8,8 @@ class MLPipeline:
     """
     Represents a generic pipeline.
 
-    The `run` method is the one that does the magic. Other methods mostly support logging.
+    The `run` method is the one that does the magic.
+    Other methods mostly support logging.
     """
 
     def __init__(
@@ -27,7 +28,9 @@ class MLPipeline:
         finish_hour = now()
         log("Finished at %s" % finish_hour)
         log(("TIME,%s,%s,%s,%s" % (refactoring.name(),
-                                   model.name(), self._start_datetime, finish_hour)))
+                                   model.name(),
+                                   self._start_datetime,
+                                   finish_hour)))
 
     def _start_time(self):
         self._count_execution()
