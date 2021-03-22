@@ -14,7 +14,8 @@ if __name__ == "__main__":
         path.join(
             RESULTS_DIR_PATH,
             "log",
-            f"classifier_training_{date_utils.windows_path_friendly_now()}.txt"))
+            f"classifier_training_{date_utils.windows_path_friendly_now()}.txt"
+        ))
     projects = [
         'MaintenanceAPI',
         'AgreementPreferencesAPI',

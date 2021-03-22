@@ -1,6 +1,7 @@
 from typing import Iterable
-from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, VARIABLE_METRICS_FIELDS, \
-    FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS, COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, \
+from configs import FILE_TYPE, CLASS_METRICS_Fields, METHOD_METRICS_FIELDS, \
+    VARIABLE_METRICS_FIELDS, FIELD_METRICS_FIELDS, PROCESS_METRICS_FIELDS,\
+    COMMIT_METADATA_FIELDS, PROJECT_FIELDS, REFACTORING_COMMIT_FIELDS, \
     STABLE_COMMIT_FIELDS, FileType
 
 # region database structure
@@ -10,6 +11,7 @@ methodMetrics: str = "MethodMetric"
 fieldMetrics: str = "FieldMetric"
 variableMetrics: str = "VariableMetric"
 classMetrics: str = "ClassMetric"
+processMetrics: str = "ProcessMetrics"
 project: str = "project"
 refactoringCommits: str = "RefactoringCommit"
 stableCommits: str = "StableCommit"
