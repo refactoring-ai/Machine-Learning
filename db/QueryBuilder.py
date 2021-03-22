@@ -71,7 +71,8 @@ def join_table(instance_name: str, table_name: str) -> str:
 
 def get_metrics_level(level: int):
     """
-    Get a list of all metrics for the given level, e.g. classMetricsFields, methodMetricsFields and processMetricsFields for level 2 method level
+    Get a list of all metrics for the given level, e.g. classMetricsFields,
+    methodMetricsFields and processMetricsFields for level 2 method level
 
     Parameters:
         level (int):   get the metrics for this level
@@ -85,8 +86,11 @@ def get_metrics_level(level: int):
                  VARIABLE_METRICS_FIELDS)][:level] + [(processMetrics,
                                                        PROCESS_METRICS_FIELDS)]
     elif level == 4:
-        return [(classMetrics, CLASS_METRICS_Fields), (fieldMetrics,
-                                                       FIELD_METRICS_FIELDS), (processMetrics, PROCESS_METRICS_FIELDS)]
+        return [
+            (classMetrics, CLASS_METRICS_Fields),
+            (fieldMetrics, FIELD_METRICS_FIELDS),
+            (processMetrics, PROCESS_METRICS_FIELDS)
+        ]
     elif level == 5:
         return [(classMetrics, CLASS_METRICS_Fields),
                 (processMetrics, PROCESS_METRICS_FIELDS)]
@@ -94,7 +98,8 @@ def get_metrics_level(level: int):
 
 def __stable_level_filter(level: int):
     """
-    Get a filter to select distinct stable instances for the given level, e.g. for level 2 get stable instances with level 2 and 3
+    Get a filter to select distinct stable instances for the given level,
+     e.g. for level 2 get stable instances with level 2 and 3
 
     Parameters:
         level (int):   get the instances for this level
@@ -105,11 +110,18 @@ def __stable_level_filter(level: int):
         return f"{stableCommits}.`level` = {level}"
 
 # Create a sql select statement for the given instance and requested fields
-# instance name: name of the instance table you are querying, e.g. RefactoringCommit or stablecommit, this is also given in the fields
-# fields: a list containing the table name as string and all required fields from the table as a list of strings e.g [CommitMetaData, commitMetaDataFields]
-# an instance has to be part of fields together with at least one field, either refactoring commit or stablecommit
-# Optional conditions: a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
-# Optional dataset: filter the instances based on their project name, e.g. toyproject-1
+# instance name: name of the instance table you are querying,
+#  e.g. RefactoringCommit or stablecommit, this is also given in the fields
+# fields: a list containing the table name
+#  as string and all required fields
+# from the table as a list of strings e.g
+# [CommitMetaData, commitMetaDataFields]
+# an instance has to be part of fields together with at least one field,
+#  either refactoring commit or stablecommit
+# Optional conditions: a string with additional conditions for the instances,
+#  e.g. cm.isInnerClass = 1
+# Optional dataset: filter the instances based on their project name, e.g.
+#  toyproject-1
 # Optional order: order by command, e.g. order by CommitMetaData.commitDate
 
 
@@ -125,18 +137,28 @@ def get_instance_fields(
     Create a sql select statement for the given instance and requested fields.
 
     Parameter:
-        instance name (str): name of the instance table you are querying, e.g. RefactoringCommit or stablecommit, this is also given in the fields
-        fields (list): a list containing the table name as string and all required fields from the table as a list of strings e.g [CommitMetaData, commitMetaDataFields], an instance has to be part of fields together with at least one field, either refactoring commit or stablecommit
-        conditions (str) (optional): a string with additional conditions for the instances, e.g. cm.isInnerClass = 1
-        dataset (str) (optional): filter the instances based on their project name, e.g. toyproject-1
-        order (str) (optional): order by command, e.g. order by CommitMetaData.commitDate
-        get_instance_id (bool) (optional): do you want the original instance id, e.g. StableCommit.2541?
+        instance name (str): name of the instance table you are querying, e.g.
+        RefactoringCommit or stablecommit, this is also given in the fields
+        fields (list): a list containing the table name as string and all
+        required fields from the table as a list of strings e.g
+        [CommitMetaData, commitMetaDataFields], an instance has to be part of
+         fields together with at least one field,
+          either refactoring commit or stablecommit
+        conditions (str) (optional): a string with additional conditions for
+         the instances, e.g. cm.isInnerClass = 1
+        dataset (str) (optional): filter the instances based on their project
+         name, e.g. toyproject-1
+        order (str) (optional): order by command,
+         e.g. order by CommitMetaData.commitDate
+        get_instance_id (bool) (optional):
+         do you want the original instance id, e.g. StableCommit.2541?
     """
     # combine the required fields with their table names
     required_fields: str = ""
     required_tables: str = ""
     if get_instance_id:
-        required_fields += f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS `index`, "
+        required_fields += \
+            f"CONCAT_WS(\'.\', \'{instance_name}\', {instance_name}.id) AS `index`, "
     for table_name, field_names in fields:
         # don't join the instance with itself
         if (instance_name != table_name):

@@ -4,7 +4,8 @@ from ml.models.extra_tree import ExtraTreeRefactoringModel
 from ml.models.logistic_regression import LogisticRegressionRefactoringModel
 from ml.models.naive_bayes import GaussianNaiveBayesRefactoringModel
 from ml.models.random_forest import RandomForestRefactoringModel
-from ml.models.svm import LinearSVMRefactoringModel, NonLinearSVMRefactoringModel
+from ml.models.svm import LinearSVMRefactoringModel,\
+    NonLinearSVMRefactoringModel
 
 
 def build_models():

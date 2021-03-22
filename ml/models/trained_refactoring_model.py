@@ -17,7 +17,8 @@ from sklearn.inspection import permutation_importance
 from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
                              precision_score, recall_score)
 from sklearn.pipeline import make_pipeline
-from utils.classifier_utils import store_collection, store_joblib, store_json, store_onnx
+from utils.classifier_utils import \
+    store_collection, store_joblib, store_json, store_onnx
 
 
 class TrainedRefactoringMLModel:
@@ -49,7 +50,8 @@ class TrainedRefactoringMLModel:
 
     def persist_model(self):
         """
-        Persist this model with reference to its dataset, refactoring_type, features, model
+        Persist this model with reference to its dataset,
+        refactoring_type, features, model
         and if specified also the prediction results for the validation sets.
         """
         results_dir = self._results_dir()
@@ -61,8 +63,12 @@ class TrainedRefactoringMLModel:
 
         if scaler is not None:
             pipeline = make_pipeline(scaler, model)
-            for model, filename in zip([pipeline, model, scaler], [
-                                       'pipeline.joblib', 'model.joblib', 'scaler.joblib']):
+            for model, filename in zip([pipeline, model, scaler],
+                                       [
+                                       'pipeline.joblib',
+                                       'model.joblib',
+                                       'scaler.joblib'
+                                       ]):
                 store_joblib(model, path.join(results_dir, filename))
             store_onnx(
                 path.join(
@@ -138,9 +144,10 @@ class TrainedRefactoringMLModel:
                    validation_prediction_results_path)
 
     def _results_dir(self) -> str:
+        model_type = "production" if self._is_production_model else "training"
         return path.join(RESULTS_DIR_PATH,
                          "models",
-                         "production" if self._is_production_model else "training",
+                         model_type,
                          str(self._commit_threshold),
                          self._model_name,
                          self._target_refactoring,
@@ -163,8 +170,7 @@ class TrainedRefactoringMLModel:
         else:
             metadata["balanced"] = False
 
-        # some models have the 'coef_' attribute, and others have the 'feature_importances_
-        # coefficients is also nested in a list so we get the first element.
+        # coefficients is nested in a list so we get the first element.
         if hasattr(model, "coef_"):
             coefficients = {feature: coef for feature,
                             coef in zip(self._feature_names, model.coef_[0])}
@@ -246,7 +252,8 @@ class TrainedRefactoringMLModel:
             val_sets_x_list,
             val_sets_y_list):
         """
-        Format all specified scores and other relevant data of the validation in a json format.
+        Format all specified scores
+        and other relevant data of the validation in a json format.
         """
         val_names_results = {
             name: self.calculate_validation_metrics(
